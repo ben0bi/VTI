@@ -6,7 +6,7 @@
 
 $CUD=$_POST['CUD'];
 $whichtable=$_POST['whichtable'];
-$id = $_POST['id'];
+$dbid=-1; // set this for delete or update.
 
 echo("CUD: $CUD $whichtable");
 
@@ -39,7 +39,7 @@ function get_Next_DBID()
 	global $whichtable;
 	$id=0;
 	$q=0;
-	foreach($json_data[$wichtable] as $e)
+	foreach($json_data[$whichtable] as $e)
 	{
 		$q++;
 		$i=intval($e['ID']);
@@ -83,8 +83,11 @@ if($CUD=='create')
 	switch($whichtable)
 	{
 		case "TRANSACTIONS":
-			$nen['DESC']=$_POST['DESC'];
-			$nen['']=$_POST[''];
+			$nen['PROJECTID']=$_POST['PROJECTID'];
+			$nen['DESC'=$_POST['DESC'];
+			$nen['LINK']=$_POST['LINK'];
+			$nen['REIN']=$_POST['REIN'];
+			$nen['RAUS']=$_POST['RAUS'];
 			break;
 		case "PROJECTS":
 			break;
@@ -97,16 +100,13 @@ if($CUD=='create')
 		// set a new id.
 		$nen['ID'] = get_Next_DBID();
 		// add the entry
-		$json_data['EVENTS'][] = $nen;
+		$json_data[$whichtable][] = $nen;
 	}else{
 		// we found the entry, change it.
 		if($idx>=0)
 		{
-			// maybe first delete the old audio file.
-			deleteAudioFile($idx);
-			// set new old id
 			$nen['ID'] = $dbid;
-			$json_data['EVENTS'][$idx] = $nen;
+			$json_data[$whichtabl][$idx] = $nen;
 		}else{
 			echo("Entry with ID $dbid not found.");
 		}
@@ -120,14 +120,12 @@ if($CUD=='delete')
 {
 	if($dbid>=0)
 	{
-		deleteAudioFile($idx);
-		$n=[];
-		$n['EVENTS']=[];
+		$n[$whichtable]=[];
 		// copy all except the one to delete.
-		foreach($json_data['EVENTS'] as $itm)
+		foreach($json_data[$whichtable] as $itm)
 		{
 			if($itm['ID']!=$dbid)
-				$n['EVENTS'][] = $itm;
+				$n[$whichtable][] = $itm;
 		}
 		$json_data = $n;
 		saveJsonData();

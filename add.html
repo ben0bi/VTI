@@ -189,14 +189,14 @@ function addTransaction()
 	if(raus=="NaN")
 		raus=0;
 	var projectid = $('#input_transaction_projectid').val();
-
+	var date = new Date();
 	log("Add: "+rein+"-"+raus+": "+desc+" / "+link+" @for: "+projectid);
 	
-	var data = {projectid: projectid,
-				desc: desc,
-				link: link,
-				rein: rein,
-				raus: raus,
+	var data = {PROJECTID: projectid,
+				DESC: desc,
+				LINK: link,
+				REIN: rein,
+				RAUS: raus,
 				whichtable: 'TRANSACTIONS'
 				CUD: 'create'
 				};			// the CUD event to do.
