@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <title>VTI &lt;+&gt; Benis Finanzen</title>
+<script src="jquery-3.3.1.min.js"></script>
 <script src="gimli-parser.js"></script>
 <style type="text/css">
 	html, body
@@ -176,8 +177,50 @@ function loadTable(which, id=0)
 	}
 }
 
+// save a new transaction.
+function addTransaction()
+{
+	var desc = $('#input_transaction_desc').val();
+	var link = $('#input_transaction_productlink').val();
+	var rein = parseFloat($('#input_transaction_rein').val());
+	var raus = parseFloat($('#input_transaction_raus').val());
+	if(rein=="NaN")
+		rein=0;
+	if(raus=="NaN")
+		raus=0;
+	var projectid = $('#input_transaction_projectid').val();
+
+	log("Add: "+rein+"-"+raus+": "+desc+" / "+link+" @for: "+projectid);
+	
+	var data = {projectid: projectid,
+				desc: desc,
+				link: link,
+				rein: rein,
+				raus: raus,
+				whichtable: 'TRANSACTIONS'
+				CUD: 'create'
+				};			// the CUD event to do.
+					// ^if CUD == 'create', it will create OR update an object.
+					// if CUD == 'delete', it will delete the object.
+		
+	// success function.
+	var success = function(data)
+	{
+		console.log("CUD event result:" +data);
+		loadTable('TRANSACTIONS');
+		// hideBlocker(); render will load all events and show blocker in the meanwhile.
+	}
+
+	$.ajax({
+		type: 'POST',
+		url: 'ajax_CUD_event.php,
+		data: data,
+		success: success,
+		dataType: 'text'
+	});
+}
+
 // show all transactions or only the ones for a specific project.
-var g_transactionSort = 'id-';
 function showTransactions(proid)
 {
 	var parser = GMLParser.getParser("DataParser");
@@ -214,11 +257,11 @@ function showTransactions(proid)
 	txt+="</td><td>";
 	txt+="(auto)";
 	txt+="</td><td>";
-	txt+="<input type='text' class='fw' />";
+	txt+="<input type='text' class='fw' id='input_transaction_desc' />";
 	txt+="</td><td>";
 	if(proid<0)
 	{
-		txt+="<select name='projectselector'>";
+		txt+="<select name='projectselector' id='input_transaction_projectid'>";
 		for(var i=0;i<parser.projects.length;i++)
 		{
 			var p = parser.projects[i];
@@ -227,11 +270,11 @@ function showTransactions(proid)
 		txt+="</select>";
 		txt+="</td><td>";
 	}
-	txt+="<input type='text' class='fw' />";
+	txt+="<input type='text' class='fw' id='input_transaction_productlink' />";
 	txt+="</td><td>";	
-	txt+="<input type='text' class='fw' />";
+	txt+="<input type='text' class='fw' id='input_transaction_rein' />";
 	txt+="</td><td>";
-	txt+="<input type='text' class='fw' />";
+	txt+="<input type='text' class='fw' id='input_transaction_raus' />";
 	txt+="</td><td>";
 	txt+="<a href='javascript:' class='btn' onclick='addTransaction();'><nobr>&lt;= NEU</nobr></a>";
 	txt+="</td></tr>";

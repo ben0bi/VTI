@@ -5,62 +5,52 @@
 // new > 2.5.4: json saveing.
 
 $CUD=$_POST['CUD'];
-$dbid=$_POST['dbid'];
-$startdate=$_POST['startdate'];
-$enddate=$_POST['enddate'];
-$title=$_POST['title'];
-$summary=$_POST['summary'];
-$audiofile=$_POST['audiofile'];
-$color=$_POST['color'];
-$eventtype=$_POST['eventtype'];
-$userid=$_POST['userid'];
+$whichtable=$_POST['whichtable'];
+$id = $_POST['id'];
 
-echo("TO DB: $CUD $dbid $startdate $enddate $title $summary $color $audiofile");
+echo("CUD: $CUD $whichtable");
 
-$datafile = '../DATA/becaldatabase.gml';
+$datafile = 'database.gml';
 
 // Read JSON file
 $json = file_get_contents($datafile);
 
 //Decode JSON
+$json_data = [];
 $json_data = json_decode($json,true);
 
 //echo("OS: $json ".sizeof($json_data['EVENTS']));
 
 // maybe create a new data chunk.
-if(sizeof($json_data['EVENTS'])<=0)
+if(sizeof($json_data['TRANSACTIONS'])<=0)
 {
-	$json_data = [];
-	$json_data['EVENTS']=[];
+	$json_data['TRANSACTIONS']=[];
+}
+
+if(sizeof($json_data['PROJECTS'])<=0)
+{
+	$json_data['PROJECTS']=[];
 }
 
 // get the next unique id.
 function get_Next_DBID()
 {
 	global $json_data;
+	global $whichtable;
 	$id=0;
 	$q=0;
-	foreach($json_data['EVENTS'] as $e)
+	foreach($json_data[$wichtable] as $e)
 	{
 		$q++;
 		$i=intval($e['ID']);
 		if($i>=$id)
 			$id=$i+1;
 	}
-	echo("Next DB ID: $id");
+	echo("Next Transaction DB ID: $id");
 	return $id;
 }
 
-// delete an audio file if it exists.
-function deleteAudioFile($dbindex)
-{
-	global $json_data;
-	$audiofilename = $json_data['EVENTS'][$dbindex]['AUDIOFILE'];
-	if($audiofilename!=$summary && $audiofilename!="")
-		unlink("../DATA/AUDIO/$audiofilename");
-
-}
-
+// save the json data.
 function saveJsonData()
 {
 	global $json_data;
@@ -70,16 +60,15 @@ function saveJsonData()
 	{
 		echo("File saved.");
 	}else{
-	        echo "Error while saving the database.";
+	    echo "Error while saving the database.";
 	}
 }
 
-// get old audio file name and delete the file when the name does not match the new one.
 $idx = -1;	// the real index.
 // search for the given id
-for($i=0;$i<sizeof($json_data['EVENTS']);$i++)
+for($i=0;$i<sizeof($json_data[$whichtable]);$i++)
 {
-	if(intval($json_data['EVENTS'][$i]['ID'])==$dbid)
+	if(intval($json_data[$whichtable][$i]['ID'])==$dbid)
 	{
 		$idx=$i;
 		break;
@@ -89,16 +78,19 @@ for($i=0;$i<sizeof($json_data['EVENTS']);$i++)
 // create or update an entry.
 if($CUD=='create')
 {
-	// create an entry..
 	$nen = [];
-		$nen['TITLE']=$title;
-		$nen['STARTDATE']=$startdate;
-		$nen['ENDDATE']=$enddate;
-		$nen['EVENTTYPE']=$eventtype;
-		$nen['COLOR']=$color;
-		$nen['AUDIOFILE']=$audiofile;
-		$nen['SUMMARY']=$summary;
-		$nen['USERID']=$userid;
+	// create an entry..
+	switch($whichtable)
+	{
+		case "TRANSACTIONS":
+			$nen['DESC']=$_POST['DESC'];
+			$nen['']=$_POST[''];
+			break;
+		case "PROJECTS":
+			break;
+		default:
+			break;
+	}
 
 	if($dbid==-1)
 	{
