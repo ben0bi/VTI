@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>VTI &lt;+&gt; Benis Finanzen</title>
+<script src="gimli-parser.js"></script>
+<style type="text/css">
+	html, body
+	{
+		background-color: #000033;
+		color: #FFFFFA;
+	}
+	a, a:visited
+	{
+		color: #FFAA00;
+	}
+	a:hover
+	{
+		color: #FFFF33;
+	}
+	.btn, .btn:visited
+	{
+		padding-left: 5px;
+		padding-right: 5px;
+		background-color: #FFAA00;
+		color: #000033;
+		text-decoration: none;
+	}
+	.btn:hover
+	{
+		background-color: #000033;
+		color: #FFFF33;
+		text-decoration: none;
+	}
+	.fw
+	{
+		min-width: 99%;
+	}
+	.tdr {text-align: right;}
+	#ubermenu
+	{
+		padding-bottom: 10px;
+		margin-bottom: 10px;
+		border-bottom: 1px solid #FFFFFA;
+		font-size: 15pt;
+		font-weight: bold;
+	}
+</style>
+</head>
+<body>
+	<div id="pagetitle">
+		<div id="title">
+		<h1>Volle Transparenz Initiative</h1>
+		<h2>Benis Projektfinanzen</h2>
+		</div>
+	</div>
+	<div id="pagecontent">
+		Bitte warten...Daten werden geladen.
+	</div>
+</body>
+
+<script>
+
+// a transaction for a specific project.
+var Data_Transaction = function()
+{
+	var me = this;
+	this.id = 0;
+	this.desc = "Nothing";
+	this.link = "";
+	this.projectid = 0;
+	this.in = 0.0;
+	this.out = 0.0;
+	this.datum = new Date();
+	this.datum.setFullYear(1900);
+	this.datum.setMonth(0);
+	this.datum.setDate(1);
+	this.parseGML = function(json, rootpath)
+	{
+		if(__defined(json['ID']))
+			me.id = parseInt(json['ID']);
+		if(__defined(json['PROJECTID']))
+			me.projectid = parseInt(json['PROJECTID']);
+		if(__defined(json['DATE']))
+			me.datum = new Date(json['DATE']);
+		if(__defined(json['DESC']))
+			me.desc = json['DESC'];
+		if(__defined(json['LINK']))
+			me.link = json['LINK'];
+		if(__defined(json['IN']))
+			me.in = json['IN'];
+		if(__defined(json['OUT']))
+			me.out = json['OUT'];
+	}
+}
+
+// a project.
+var Data_Project = function()
+{
+	var me = this;
+	this.id = 0;
+	this.name = "Namenloses Projekt";
+	this.desc = "Dieses Projekt hat keine Beschreibung.";
+	this.parseGML = function(json, rootpath)
+	{
+		if(__defined(json['ID']))
+			me.id = parseInt(json['ID']);
+		if(__defined(json['NAME']))
+			me.name = json['NAME'];
+		if(__defined(json['DESC']))
+			me.desc = json['DESC'];
+	}
+}
+
+// the parser for this application.
+var DataParser = function()
+{
+	var me = this;
+	
+	this.projects = [];
+	this.transactions = [];
+	
+	this.parseGML = function(json, rootpath)
+	{
+		if(__defined(json['TRANSACTIONS']))
+		{
+			for(var i = 0; i<json['TRANSACTIONS'].length; i++)
+			{
+				var tr = new Data_Transaction();
+				tr.parseGML(json['TRANSACTIONS'][i]);
+				me.transactions.push(tr);
+			}
+		}
+		if(__defined(json['PROJECTS']))
+		{
+			for(var i = 0; i<json['PROJECTS'].length; i++)
+			{
+				var pr = new Data_Project();
+				pr.parseGML(json['PROJECTS'][i]);
+				me.projects.push(pr);
+			}
+		}
+	}
+	
+	this.clear = function() 
+	{
+		me.projects = [];
+		me.transactions = [];
+	}
+}
+
+// add our parser to the parsers.
+GMLParser.addParser("DataParser", new DataParser());
+var g_idToShow = 0; // used for showing the transactions for a specific project.
+
+// load the tables and fire a specific function after it.
+function loadTable(which, id=0)
+{
+	log("Loading data...");
+	switch(which)
+	{
+		case 3:
+		case 'project':
+			m_idToShow = id;
+			PARSEGMLFILE("database.gml", singleProjectLoaded);
+			break;
+		case 2:
+		case 'projects':
+			PARSEGMLFILE("database.gml", projectsLoaded);
+			break;
+		case 1:
+		case 'transactions':
+		default:
+			PARSEGMLFILE("database.gml", transactionsLoaded);
+			break;
+	}
+}
+
+// show all transactions or only the ones for a specific project.
+var g_transactionSort = 'id-';
+function showTransactions(proid)
+{
+	var parser = GMLParser.getParser("DataParser");
+
+	var colsp = 4;
+	
+	var txt = "";
+	txt+= '<table border="1">';
+	txt+="<tr><td>";
+	txt+="ID";
+	txt+="</td><td>";
+	txt+="Datum";
+	txt+="</td><td>";
+	txt+="Beschreibung";
+	txt+="</td><td>";
+	if(proid<0)
+	{
+		txt+="Projekt-ID";
+		txt+="</td><td>";
+		colsp+=1;
+	}
+	txt+="Produktlink";
+	txt+="</td><td>";	
+	txt+="REIN";
+	txt+="</td><td>";
+	txt+="RAUS";
+	txt+="</td><td>";
+	txt+="GESAMT";
+	txt+="</td></tr>";
+
+	// add the inputs
+	txt+="<tr><td>";
+	txt+="<a href='javascript:' class='btn' onclick='addTransaction();'><nobr>NEU =&gt;</nobr></a>";
+	txt+="</td><td>";
+	txt+="(auto)";
+	txt+="</td><td>";
+	txt+="<input type='text' class='fw' />";
+	txt+="</td><td>";
+	if(proid<0)
+	{
+		txt+="<select name='projectselector'>";
+		for(var i=0;i<parser.projects.length;i++)
+		{
+			var p = parser.projects[i];
+			txt+='<option value="'+p.id+'">'+p.id+": "+p.name+'</option>';
+		}
+		txt+="</select>";
+		txt+="</td><td>";
+	}
+	txt+="<input type='text' class='fw' />";
+	txt+="</td><td>";	
+	txt+="<input type='text' class='fw' />";
+	txt+="</td><td>";
+	txt+="<input type='text' class='fw' />";
+	txt+="</td><td>";
+	txt+="<a href='javascript:' class='btn' onclick='addTransaction();'><nobr>&lt;= NEU</nobr></a>";
+	txt+="</td></tr>";
+	
+	var gesamtvalue = 0;
+	var gesamtrein = 0;
+	var gesamtraus = 0;
+	for(var i = parser.transactions.length-1; i >0; i--)
+	{
+		var t = parser.transactions[i];
+		if(proid>=0 && t.projectid!=proid)
+			continue;
+		txt+="<tr><td>";
+		txt+=t.id;
+		txt+="</td><td>";
+		txt+=t.datum.getDate()+"."+(t.datum.getMonth()+1)+"."+t.datum.getFullYear();
+		txt+="</td><td>";
+		txt+=t.desc;
+		if(proid<0)
+			txt+="</td><td><a href='javascript:' onclick='g_idToShow="+t.projectid+";singleProjectLoaded();'>["+t.projectid+"]</a>";
+		txt+="</td><td>";
+		if(t.link.length>0)
+		{
+			txt+='<a href="'+t.link+'" target="vti_productlink">[Link]</a>';
+		}else{
+			txt+="---";
+		}
+		txt+="</td><td class='tdr'><font color='#33FF33'>";
+		if(t.in!=0)
+			txt+=Math.abs(t.in);
+		txt+="</font></td><td class='tdr'><font color='#FF3333'>";
+		if(t.out!=0)
+			txt+=Math.abs(t.out);
+		var q = t.in-t.out;
+		var col = "#33FF33";
+		if(q<0)
+			col="#FF3333";
+		txt+="</font></td><td class='tdr'><font color='"+col+"'>";
+		txt+=q;
+		txt+="</font></td></tr>";
+		gesamtrein+=t.in;
+		gesamtraus+=t.out;
+		gesamtvalue+=q;
+	}
+	
+	txt+='<tr>';
+	txt+='<td colspan="'+colsp+'"></td>';
+	col='#33FF33';
+	if(gesamtvalue<0)
+		col='#FF3333';
+	txt+='<td class="tdr"><font color="#33FF33">'+gesamtrein+'</font></td>';
+	txt+='<td class="tdr"><font color="#FF3333">'+gesamtraus+'</font></td>';
+	txt+='<td class="tdr"><font color="'+col+'">'+gesamtvalue+'</font></td>';
+	txt+='</tr>';
+	txt+='</table>';
+	return txt;
+}
+
+function transactionsLoaded()
+{
+	log("Transactions loaded.");
+	
+	var txt="";
+	txt+='<div id="ubermenu">';
+	txt+='Transaktionen | ';
+	txt+='<a href="javascript:" onclick="loadTable(2);">Projekte</a>';
+	txt+='</div>';
+	
+	txt+='Transaktionen ohne Werte wurden gefunden, geschenkt oder waren schon im Inventar.<br />';
+	txt+=showTransactions(-1);
+	document.getElementById("pagecontent").innerHTML=txt;
+}
+
+function projectsLoaded()
+{
+	log("Projects loaded.");
+	var parser = GMLParser.getParser("DataParser");
+
+	var txt="";
+	txt+='<div id="ubermenu">';
+	txt+='<a href="javascript:" onclick="loadTable(1)">Transaktionen</a> | ';
+	txt+='Projekte</div>';
+
+	txt+='<table border="1">';
+	txt+="<tr><td>";
+	txt+="ID";
+	txt+="</td><td>";
+	txt+="Name";
+	txt+="</td><td>";
+	txt+="Beschreibung";
+	txt+="</td><td>";
+	txt+="Balanz";
+	txt+="</td></tr>";
+
+	// add the inputs
+	txt+="<tr><td>";
+	txt+="<a href='javascript:' class='btn' onclick='addProject();'><nobr>NEU =&gt;</nobr></a>";
+	txt+="</td><td>";
+	txt+="<input type='text' class='fw' />";
+	txt+="</td><td>";
+	txt+="<input type='text' class='fw' />";
+	txt+="</td><td>";
+	txt+="(auto)";
+	txt+="</td></tr>";
+
+	for(var i = 0; i < parser.projects.length; i++)
+	{
+		var p = parser.projects[i];
+		txt+="<tr><td><a href='javascript:' onclick='g_idToShow="+p.id+";singleProjectLoaded();'>["+p.id+"]</a>";
+		txt+="</td><td><a href='javascript:' onclick='g_idToShow="+p.id+";singleProjectLoaded();'>"+p.name+"</a>";
+		var balanz = 0;
+		var col="#33FF33";
+		for(var pq = 0; pq<parser.transactions.length;pq++)
+		{
+			var t = parser.transactions[pq];
+			if(t.projectid==p.id)
+			{
+				balanz=balanz+t.in-t.out;
+			}
+		}
+		if(balanz<0)
+			col="#FF3333";
+		txt+="</td><td>"+p.desc;
+		txt+="</td><td class='tdr'><font color='"+col+"'>"+balanz+"</font>";
+		txt+="</td></tr>";
+	}
+	txt+='</table>';
+	document.getElementById("pagecontent").innerHTML=txt;
+}
+
+function getProjectByID(id)
+{
+	var parser = GMLParser.getParser("DataParser");
+	for(var i = 0; i < parser.projects.length; i++)
+	{
+		var p = parser.projects[i];
+		if(p.id==id)
+			return p;
+	}
+	return new Data_Project();
+}
+
+function singleProjectLoaded()
+{
+	log("Project loaded.");
+	var parser = GMLParser.getParser("DataParser");
+	var proj = getProjectByID(g_idToShow);
+	var txt="";
+	txt+='<div id="ubermenu">';
+	txt+='<a href="javascript:" onclick="loadTable(1)">Transaktionen</a> | ';
+	txt+='<a href="javascript:" onclick="loadTable(2)">Projekte</a></div>';
+
+	txt+="<h1>"+proj.name+"</h1>";
+	txt+="ID: "+proj.id+"<br />";
+	txt+="Beschreibung: "+proj.desc;
+	txt+="<br /><br />Transaktionen für dieses Projekt:<br />";
+
+
+	txt+=showTransactions(proj.id);
+	document.getElementById("pagecontent").innerHTML=txt;
+}
+
+function addEntryToTable()
+{
+	console.log("Adding entry to table.");
+}
+
+loadTable('transactions');
+</script>
+</html>
