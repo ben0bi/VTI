@@ -334,7 +334,7 @@ function showTransactions(proid)
 	txt+="</td><td>";
 	if(proid<0)
 	{
-		txt+="<select name='projectselector' id='input_transaction_projectid'>";
+		txt+="<select name='projectselector' class='fw' id='input_transaction_projectid'>";
 		for(var i=0;i<parser.projects.length;i++)
 		{
 			var p = parser.projects[i];
@@ -445,6 +445,8 @@ function projectsLoaded()
 	txt+="Link";
 	txt+="</td><td>";
 	txt+="Balanz";
+	txt+="</td><td>";
+	txt+="!DEL!";
 	txt+="</td></tr>";
 
 	// add the inputs
@@ -458,6 +460,8 @@ function projectsLoaded()
 	txt+="<input type='text' id='input_project_link' class='fw' />";
 	txt+="</td><td>";
 	txt+="<a href='javascript:' class='btn' onclick='addProject();'><nobr>&lt;= NEU</nobr></a>";
+	txt+="</td><td>";
+	txt+="! v !";
 	txt+="</td></tr>";
 
 	for(var i = 0; i < parser.projects.length; i++)
@@ -480,7 +484,8 @@ function projectsLoaded()
 		txt+="</td><td>"+p.desc;
 		txt+="</td><td><a href='"+p.link+"'>"+p.link+"</a>";
 		txt+="</td><td class='tdr'><font color='"+col+"'>"+balanz+"</font>";
-		txt+="</td></tr>";
+		txt+="</td><td><a href='javascript:' onclick='deleteEntry(\"PROJECTS\",\""+p.id+"\")'>!DEL!</a>";
+		txt+="</tr>";
 	}
 	txt+='</table>';
 	document.getElementById("pagecontent").innerHTML=txt;
