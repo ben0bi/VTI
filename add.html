@@ -88,10 +88,15 @@ var Data_Transaction = function()
 			me.desc = json['DESC'];
 		if(__defined(json['LINK']))
 			me.link = json['LINK'];
-		if(__defined(json['IN']))
-			me.in = json['IN'];
-		if(__defined(json['OUT']))
-			me.out = json['OUT'];
+		if(__defined(json['REIN']))
+			me.in = parseFloat(json['REIN']);
+		if(__defined(json['RAUS']))
+			me.out = parseFloat(json['RAUS']);
+
+		if(isNaN(me.in))
+			me.in = 0.0;
+		if(isNaN(me.out))
+			me.out = 0.0;
 	}
 }
 
@@ -187,21 +192,22 @@ function addTransaction()
 	var link = $('#input_transaction_productlink').val();
 	var rein = parseFloat($('#input_transaction_rein').val());
 	var raus = parseFloat($('#input_transaction_raus').val());
-	if(rein=="NaN")
+	if(isNaN(rein))
 		rein=0;
-	if(raus=="NaN")
+	if(isNaN(raus))
 		raus=0;
 	var projectid = $('#input_transaction_projectid').val();
-	var date = new Date();
+	var dt = new Date();
 	log("Add: "+rein+"-"+raus+": "+desc+" / "+link+" @for: "+projectid);
 	
 	var data = {PROJECTID: projectid,
-				DESC: desc,
-				LINK: link,
-				REIN: rein,
-				RAUS: raus,
-				whichtable: 'TRANSACTIONS',
-				CUD: 'create'
+		DESC: desc,
+		LINK: link,
+		REIN: rein,
+		RAUS: raus,
+		DATE: dt.toString(),
+		whichtable: 'TRANSACTIONS',
+		CUD: 'create'
 				};			// the CUD event to do.
 					// ^if CUD == 'create', it will create OR update an object.
 					// if CUD == 'delete', it will delete the object.

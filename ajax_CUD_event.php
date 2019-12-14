@@ -88,6 +88,7 @@ if($CUD=='create')
 			$nen["LINK"]=$_POST["LINK"];
 			$nen["REIN"]=$_POST["REIN"];
 			$nen["RAUS"]=$_POST["RAUS"];
+			$nen["DATE"]=$_POST["DATE"];
 			break;
 		case "PROJECTS":
 			$nen["NAME"]=$_POST["NAME"];
