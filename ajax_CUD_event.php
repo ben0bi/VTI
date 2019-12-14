@@ -123,16 +123,17 @@ if($CUD=='create')
 // delete an entry.
 if($CUD=='delete')
 {
+	$dbid=$_POST["ID"];
 	if($dbid>=0)
 	{
-		$n[$whichtable]=[];
+		$n=[];
 		// copy all except the one to delete.
 		foreach($json_data[$whichtable] as $itm)
 		{
 			if($itm["ID"]!=$dbid)
-				$n[$whichtable][] = $itm;
+				$n[] = $itm;
 		}
-		$json_data = $n;
+		$json_data[$whichtable] = $n;
 		saveJsonData();
 	}else{
 		echo (" Delete failed: DBID < 0 [$dbid]");

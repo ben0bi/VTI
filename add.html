@@ -265,6 +265,32 @@ function addProject()
 	});
 }
 
+function deleteEntry(whichtable, id)
+{
+	var data = {ID: id,
+		whichtable: whichtable,
+		CUD: 'delete'
+		};			// the CUD event to do.
+					// ^if CUD == 'create', it will create OR update an object.
+					// if CUD == 'delete', it will delete the object.
+		
+	// success function.
+	var success = function(data)
+	{
+		console.log("CUD event result:" +data);
+		loadTable(whichtable.toLowerCase());
+		// hideBlocker(); render will load all events and show blocker in the meanwhile.
+	}
+
+	$.ajax({
+		type: 'POST',
+		url: 'ajax_CUD_event.php',
+		data: data,
+		success: success,
+		dataType: 'text'
+	});
+}
+
 // show all transactions or only the ones for a specific project.
 function showTransactions(proid)
 {
@@ -294,6 +320,8 @@ function showTransactions(proid)
 	txt+="RAUS";
 	txt+="</td><td>";
 	txt+="GESAMT";
+	txt+="</td><td>";
+	txt+="!DEL!";
 	txt+="</td></tr>";
 
 	// add the inputs
@@ -322,6 +350,7 @@ function showTransactions(proid)
 	txt+="<input type='text' class='fw' id='input_transaction_raus' />";
 	txt+="</td><td>";
 	txt+="<a href='javascript:' class='btn' onclick='addTransaction();'><nobr>&lt;= NEU</nobr></a>";
+	txt+="</td><td>! v !";
 	txt+="</td></tr>";
 	
 	var gesamtvalue = 0;
@@ -359,7 +388,9 @@ function showTransactions(proid)
 			col="#FF3333";
 		txt+="</font></td><td class='tdr'><font color='"+col+"'>";
 		txt+=q;
-		txt+="</font></td></tr>";
+		txt+="</font></td>";
+		txt+="<td><a href='javascript:' onclick='deleteEntry(\"TRANSACTIONS\",\""+t.id+"\")'>!DEL!</a>";
+		txt+="</tr>";
 		gesamtrein+=t.in;
 		gesamtraus+=t.out;
 		gesamtvalue+=q;
