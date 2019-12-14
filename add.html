@@ -102,6 +102,7 @@ var Data_Project = function()
 	this.id = 0;
 	this.name = "Namenloses Projekt";
 	this.desc = "Dieses Projekt hat keine Beschreibung.";
+	this.link = "";
 	this.parseGML = function(json, rootpath)
 	{
 		if(__defined(json['ID']))
@@ -110,6 +111,8 @@ var Data_Project = function()
 			me.name = json['NAME'];
 		if(__defined(json['DESC']))
 			me.desc = json['DESC'];
+		if(__defined(json['LINK']))
+			me.link = json['LINK'];
 	}
 }
 
@@ -207,7 +210,43 @@ function addTransaction()
 	var success = function(data)
 	{
 		console.log("CUD event result:" +data);
-		loadTable('TRANSACTIONS');
+		loadTable('transactions');
+		// hideBlocker(); render will load all events and show blocker in the meanwhile.
+	}
+
+	$.ajax({
+		type: 'POST',
+		url: 'ajax_CUD_event.php',
+		data: data,
+		success: success,
+		dataType: 'text'
+	});
+}
+
+// save a new project.
+function addProject()
+{
+	var name = $('#input_project_name').val();
+	var link = $('#input_project_link').val();
+	var desc = $('#input_project_desc').val();
+	var date = new Date();
+	log("Add: "+name+"/ "+desc+" / "+link);
+	
+	var data = {DESC: desc,
+		LINK: link,
+		NAME: name,
+		DATE: date.toString(),
+		whichtable: 'PROJECTS',
+		CUD: 'create'
+	};	// the CUD event to do.
+		// ^if CUD == 'create', it will create OR update an object.
+		// if CUD == 'delete', it will delete the object.
+		
+	// success function.
+	var success = function(data)
+	{
+		console.log("CUD event result:" +data);
+		loadTable('projects');
 		// hideBlocker(); render will load all events and show blocker in the meanwhile.
 	}
 
@@ -366,6 +405,8 @@ function projectsLoaded()
 	txt+="</td><td>";
 	txt+="Beschreibung";
 	txt+="</td><td>";
+	txt+="Link";
+	txt+="</td><td>";
 	txt+="Balanz";
 	txt+="</td></tr>";
 
@@ -373,11 +414,13 @@ function projectsLoaded()
 	txt+="<tr><td>";
 	txt+="<a href='javascript:' class='btn' onclick='addProject();'><nobr>NEU =&gt;</nobr></a>";
 	txt+="</td><td>";
-	txt+="<input type='text' class='fw' />";
+	txt+="<input type='text' id='input_project_name' class='fw' />";
 	txt+="</td><td>";
-	txt+="<input type='text' class='fw' />";
+	txt+="<input type='text' id='input_project_desc' class='fw' />";
 	txt+="</td><td>";
-	txt+="(auto)";
+	txt+="<input type='text' id='input_project_link' class='fw' />";
+	txt+="</td><td>";
+	txt+="<a href='javascript:' class='btn' onclick='addProject();'><nobr>&lt;= NEU</nobr></a>";
 	txt+="</td></tr>";
 
 	for(var i = 0; i < parser.projects.length; i++)
@@ -385,6 +428,7 @@ function projectsLoaded()
 		var p = parser.projects[i];
 		txt+="<tr><td><a href='javascript:' onclick='g_idToShow="+p.id+";singleProjectLoaded();'>["+p.id+"]</a>";
 		txt+="</td><td><a href='javascript:' onclick='g_idToShow="+p.id+";singleProjectLoaded();'>"+p.name+"</a>";
+		txt+="</td><td><a href='"+p.link+"'>"+p.link+"</a>";
 		var balanz = 0;
 		var col="#33FF33";
 		for(var pq = 0; pq<parser.transactions.length;pq++)
@@ -428,6 +472,8 @@ function singleProjectLoaded()
 	txt+='<a href="javascript:" onclick="loadTable(2)">Projekte</a></div>';
 
 	txt+="<h1>"+proj.name+"</h1>";
+	if(proj.link!="")
+		txt+="<a href='"+proj.link+"'><h2>Projekt Seite</h2></a>";
 	txt+="ID: "+proj.id+"<br />";
 	txt+="Beschreibung: "+proj.desc;
 	txt+="<br /><br />Transaktionen für dieses Projekt:<br />";

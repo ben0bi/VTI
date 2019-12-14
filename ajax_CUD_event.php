@@ -27,9 +27,9 @@ if(sizeof($json_data["TRANSACTIONS"])<=0)
 	$json_data["TRANSACTIONS"]=[];
 }
 
-if(sizeof($json_data['PROJECTS'])<=0)
+if(sizeof($json_data["PROJECTS"])<=0)
 {
-	$json_data['PROJECTS']=[];
+	$json_data["PROJECTS"]=[];
 }
 
 // get the next unique id.
@@ -90,6 +90,10 @@ if($CUD=='create')
 			$nen["RAUS"]=$_POST["RAUS"];
 			break;
 		case "PROJECTS":
+			$nen["NAME"]=$_POST["NAME"];
+			$nen["LINK"]=$_POST["LINK"];
+			$nen["DESC"]=$_POST["DESC"];
+			$nen["DATE"]=$_POST["DATE"];
 			break;
 		default:
 			break;
