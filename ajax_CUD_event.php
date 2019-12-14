@@ -1,11 +1,11 @@
 <?php
 
-// CUD - create, update or delete an item.
+ // CUD - create, update or delete an item.
 
 // new > 2.5.4: json saveing.
 
-$CUD=$_POST['CUD'];
-$whichtable=$_POST['whichtable'];
+$CUD=$_POST["CUD"];
+$whichtable=$_POST["whichtable"];
 $dbid=-1; // set this for delete or update.
 
 echo("CUD: $CUD $whichtable");
@@ -22,9 +22,9 @@ $json_data = json_decode($json,true);
 //echo("OS: $json ".sizeof($json_data['EVENTS']));
 
 // maybe create a new data chunk.
-if(sizeof($json_data['TRANSACTIONS'])<=0)
+if(sizeof($json_data["TRANSACTIONS"])<=0)
 {
-	$json_data['TRANSACTIONS']=[];
+	$json_data["TRANSACTIONS"]=[];
 }
 
 if(sizeof($json_data['PROJECTS'])<=0)
@@ -42,7 +42,7 @@ function get_Next_DBID()
 	foreach($json_data[$whichtable] as $e)
 	{
 		$q++;
-		$i=intval($e['ID']);
+		$i=intval($e["ID"]);
 		if($i>=$id)
 			$id=$i+1;
 	}
@@ -68,7 +68,7 @@ $idx = -1;	// the real index.
 // search for the given id
 for($i=0;$i<sizeof($json_data[$whichtable]);$i++)
 {
-	if(intval($json_data[$whichtable][$i]['ID'])==$dbid)
+	if(intval($json_data[$whichtable][$i]["ID"])==$dbid)
 	{
 		$idx=$i;
 		break;
@@ -83,11 +83,11 @@ if($CUD=='create')
 	switch($whichtable)
 	{
 		case "TRANSACTIONS":
-			$nen['PROJECTID']=$_POST['PROJECTID'];
-			$nen['DESC'=$_POST['DESC'];
-			$nen['LINK']=$_POST['LINK'];
-			$nen['REIN']=$_POST['REIN'];
-			$nen['RAUS']=$_POST['RAUS'];
+			$nen["PROJECTID"]=$_POST["PROJECTID"];
+			$nen["DESC"]=$_POST["DESC"];
+			$nen["LINK"]=$_POST["LINK"];
+			$nen["REIN"]=$_POST["REIN"];
+			$nen["RAUS"]=$_POST["RAUS"];
 			break;
 		case "PROJECTS":
 			break;
@@ -98,15 +98,15 @@ if($CUD=='create')
 	if($dbid==-1)
 	{
 		// set a new id.
-		$nen['ID'] = get_Next_DBID();
+		$nen["ID"] = get_Next_DBID();
 		// add the entry
 		$json_data[$whichtable][] = $nen;
 	}else{
 		// we found the entry, change it.
 		if($idx>=0)
 		{
-			$nen['ID'] = $dbid;
-			$json_data[$whichtabl][$idx] = $nen;
+			$nen["ID"] = $dbid;
+			$json_data[$whichtable][$idx] = $nen;
 		}else{
 			echo("Entry with ID $dbid not found.");
 		}
@@ -124,7 +124,7 @@ if($CUD=='delete')
 		// copy all except the one to delete.
 		foreach($json_data[$whichtable] as $itm)
 		{
-			if($itm['ID']!=$dbid)
+			if($itm["ID"]!=$dbid)
 				$n[$whichtable][] = $itm;
 		}
 		$json_data = $n;
