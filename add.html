@@ -121,6 +121,22 @@ var Data_Project = function()
 	}
 }
 
+// a "folder" in a project for transactions.
+var Data_Combinator = function()
+{
+	var me = this;
+	this.id = 0;
+	this.name="/";
+	this.projectid=0;
+	this.parseGML = function(json, rootpath)
+	{
+		if(__defined(json['PROJECTID']))
+			me.projectid = json['PROJECTID'];
+		if(__defined(json['NAME']))
+			me.name = json['NAME'];
+	}
+}
+
 // the parser for this application.
 var DataParser = function()
 {
@@ -128,6 +144,7 @@ var DataParser = function()
 	
 	this.projects = [];
 	this.transactions = [];
+	this.combinators = [];
 	
 	this.parseGML = function(json, rootpath)
 	{
@@ -149,12 +166,22 @@ var DataParser = function()
 				me.projects.push(pr);
 			}
 		}
+		if(__defined(json['COMBINATORS']))
+		{
+			for(var i = 0; i<json['COMBINATORS'].length;i++)
+			{
+				var cm = new Data_Combinator();
+				cm.parseGML(json['COMBINATORS'][i]);
+				me.combinators.push(cm);
+			}
+		}
 	}
 	
 	this.clear = function() 
 	{
 		me.projects = [];
 		me.transactions = [];
+		me.combinators = [];
 	}
 }
 
@@ -168,6 +195,11 @@ function loadTable(which, id=0)
 	log("Loading data...");
 	switch(which)
 	{
+		case 4:
+		case 'combinators':
+			m_idToShow = id;
+			PARSEGMLFILE("database.gml", combinatorsLoaded);
+			break;
 		case 3:
 		case 'project':
 			m_idToShow = id;
@@ -186,6 +218,7 @@ function loadTable(which, id=0)
 }
 
 // save a new transaction.
+var g_projectID = -1;
 function addTransaction()
 {
 	var desc = $('#input_transaction_desc').val();
@@ -197,6 +230,8 @@ function addTransaction()
 	if(isNaN(raus))
 		raus=0;
 	var projectid = $('#input_transaction_projectid').val();
+	if(g_projectID!=-1)
+		projectid = g_projectID;
 	var dt = new Date();
 	log("Add: "+rein+"-"+raus+": "+desc+" / "+link+" @for: "+projectid);
 	
@@ -342,6 +377,9 @@ function showTransactions(proid)
 		}
 		txt+="</select>";
 		txt+="</td><td>";
+		g_projectID = -1;
+	}else{
+		g_projectID = proid;
 	}
 	txt+="<input type='text' class='fw' id='input_transaction_productlink' />";
 	txt+="</td><td>";	
@@ -368,7 +406,10 @@ function showTransactions(proid)
 		txt+="</td><td>";
 		txt+=t.desc;
 		if(proid<0)
-			txt+="</td><td><a href='javascript:' onclick='g_idToShow="+t.projectid+";singleProjectLoaded();'>["+t.projectid+"]</a>";
+		{
+			var prname = getProjectByID(t.projectid).name;
+			txt+="</td><td><a href='javascript:' onclick='g_idToShow="+t.projectid+";singleProjectLoaded();'>["+t.projectid+"] "+prname+"</a>";
+		}
 		txt+="</td><td>";
 		if(t.link.length>0)
 		{
@@ -496,6 +537,11 @@ function projectsLoaded()
 	txt+='<tr><td colspan="4"></td><td class="tdr"><font color="'+col+'">'+fullbalanz+'</font></td><td></td></tr>';
 	txt+='</table>';
 	document.getElementById("pagecontent").innerHTML=txt;
+}
+
+function combinatorsLoaded()
+{
+	console.log("Showing data for combinator "+m_idToShow);
 }
 
 function getProjectByID(id)
