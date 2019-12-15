@@ -92,7 +92,6 @@ var Data_Transaction = function()
 			me.in = parseFloat(json['REIN']);
 		if(__defined(json['RAUS']))
 			me.out = parseFloat(json['RAUS']);
-
 		if(isNaN(me.in))
 			me.in = 0.0;
 		if(isNaN(me.out))
@@ -108,6 +107,7 @@ var Data_Project = function()
 	this.name = "Namenloses Projekt";
 	this.desc = "Dieses Projekt hat keine Beschreibung.";
 	this.link = "";
+	
 	this.parseGML = function(json, rootpath)
 	{
 		if(__defined(json['ID']))
@@ -121,22 +121,6 @@ var Data_Project = function()
 	}
 }
 
-// a "folder" in a project for transactions.
-var Data_Combinator = function()
-{
-	var me = this;
-	this.id = 0;
-	this.name="/";
-	this.projectid=0;
-	this.parseGML = function(json, rootpath)
-	{
-		if(__defined(json['PROJECTID']))
-			me.projectid = json['PROJECTID'];
-		if(__defined(json['NAME']))
-			me.name = json['NAME'];
-	}
-}
-
 // the parser for this application.
 var DataParser = function()
 {
@@ -144,7 +128,6 @@ var DataParser = function()
 	
 	this.projects = [];
 	this.transactions = [];
-	this.combinators = [];
 	
 	this.parseGML = function(json, rootpath)
 	{
@@ -166,22 +149,12 @@ var DataParser = function()
 				me.projects.push(pr);
 			}
 		}
-		if(__defined(json['COMBINATORS']))
-		{
-			for(var i = 0; i<json['COMBINATORS'].length;i++)
-			{
-				var cm = new Data_Combinator();
-				cm.parseGML(json['COMBINATORS'][i]);
-				me.combinators.push(cm);
-			}
-		}
 	}
 	
 	this.clear = function() 
 	{
 		me.projects = [];
 		me.transactions = [];
-		me.combinators = [];
 	}
 }
 
@@ -195,11 +168,6 @@ function loadTable(which, id=0)
 	log("Loading data...");
 	switch(which)
 	{
-		case 4:
-		case 'combinators':
-			m_idToShow = id;
-			PARSEGMLFILE("database.gml", combinatorsLoaded);
-			break;
 		case 3:
 		case 'project':
 			m_idToShow = id;
@@ -537,11 +505,6 @@ function projectsLoaded()
 	txt+='<tr><td colspan="4"></td><td class="tdr"><font color="'+col+'">'+fullbalanz+'</font></td><td></td></tr>';
 	txt+='</table>';
 	document.getElementById("pagecontent").innerHTML=txt;
-}
-
-function combinatorsLoaded()
-{
-	console.log("Showing data for combinator "+m_idToShow);
 }
 
 function getProjectByID(id)
