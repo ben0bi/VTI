@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <title>VTI &lt;+&gt; Benis Finanzen</title>
+<script src="jquery-3.3.1.min.js"></script>
 <script src="gimli-parser.js"></script>
 <style type="text/css">
 	html, body
@@ -10,12 +11,16 @@
 		background-color: #FFFFFA;
 		color: #000069;
 	}
+	.fw
+	{
+		min-width: 99%;
+	}
 	.tdr {text-align: right;}
 	#ubermenu
 	{
 		padding-bottom: 10px;
 		margin-bottom: 10px;
-		border-bottom: 1px solid #000069;
+		border-bottom: 1px solid #FFFFFA;
 		font-size: 15pt;
 		font-weight: bold;
 	}
@@ -61,10 +66,15 @@ var Data_Transaction = function()
 			me.desc = json['DESC'];
 		if(__defined(json['LINK']))
 			me.link = json['LINK'];
-		if(__defined(json['IN']))
-			me.in = json['IN'];
-		if(__defined(json['OUT']))
-			me.out = json['OUT'];
+		if(__defined(json['REIN']))
+			me.in = parseFloat(json['REIN']);
+		if(__defined(json['RAUS']))
+			me.out = parseFloat(json['RAUS']);
+
+		if(isNaN(me.in))
+			me.in = 0.0;
+		if(isNaN(me.out))
+			me.out = 0.0;
 	}
 }
 
@@ -154,7 +164,6 @@ function loadTable(which, id=0)
 }
 
 // show all transactions or only the ones for a specific project.
-var g_transactionSort = 'id-';
 function showTransactions(proid)
 {
 	var parser = GMLParser.getParser("DataParser");
@@ -184,7 +193,7 @@ function showTransactions(proid)
 	txt+="</td><td>";
 	txt+="GESAMT";
 	txt+="</td></tr>";
-	
+
 	var gesamtvalue = 0;
 	var gesamtrein = 0;
 	var gesamtraus = 0;
@@ -220,7 +229,8 @@ function showTransactions(proid)
 			col="#FF3333";
 		txt+="</font></td><td class='tdr'><font color='"+col+"'>";
 		txt+=q;
-		txt+="</font></td></tr>";
+		txt+="</font></td>";
+		txt+="</tr>";
 		gesamtrein+=t.in;
 		gesamtraus+=t.out;
 		gesamtvalue+=q;
@@ -228,10 +238,10 @@ function showTransactions(proid)
 	
 	txt+='<tr>';
 	txt+='<td colspan="'+colsp+'"></td>';
-	col='#00aa00';
+	col='#00AA00';
 	if(gesamtvalue<0)
 		col='#FF3333';
-	txt+='<td class="tdr"><font color="#00aa00">'+gesamtrein+'</font></td>';
+	txt+='<td class="tdr"><font color="#00AA00">'+gesamtrein+'</font></td>';
 	txt+='<td class="tdr"><font color="#FF3333">'+gesamtraus+'</font></td>';
 	txt+='<td class="tdr"><font color="'+col+'">'+gesamtvalue+'</font></td>';
 	txt+='</tr>';
@@ -262,8 +272,7 @@ function projectsLoaded()
 	var txt="";
 	txt+='<div id="ubermenu">';
 	txt+='<a href="javascript:" onclick="loadTable(1)">Transaktionen</a> | ';
-	txt+='Projekte';
-	txt+='</div>';
+	txt+='Projekte</div>';
 
 	txt+='<table border="1">';
 	txt+="<tr><td>";
@@ -273,16 +282,20 @@ function projectsLoaded()
 	txt+="</td><td>";
 	txt+="Beschreibung";
 	txt+="</td><td>";
+	txt+="Link";
+	txt+="</td><td>";
 	txt+="Balanz";
 	txt+="</td></tr>";
 
+	var fullbalanz = 0;
+	var col = "";
 	for(var i = 0; i < parser.projects.length; i++)
 	{
 		var p = parser.projects[i];
 		txt+="<tr><td><a href='javascript:' onclick='g_idToShow="+p.id+";singleProjectLoaded();'>["+p.id+"]</a>";
 		txt+="</td><td><a href='javascript:' onclick='g_idToShow="+p.id+";singleProjectLoaded();'>"+p.name+"</a>";
 		var balanz = 0;
-		var col="#00aa00";
+		col="#00AA00";
 		for(var pq = 0; pq<parser.transactions.length;pq++)
 		{
 			var t = parser.transactions[pq];
@@ -294,9 +307,15 @@ function projectsLoaded()
 		if(balanz<0)
 			col="#FF3333";
 		txt+="</td><td>"+p.desc;
+		txt+="</td><td><a href='"+p.link+"'>"+p.link+"</a>";
 		txt+="</td><td class='tdr'><font color='"+col+"'>"+balanz+"</font>";
-		txt+="</td></tr>";
+		txt+="</tr>";
+		fullbalanz+=balanz;
 	}
+	col="#00AA00";
+	if(fullbalanz<0)
+		col="#FF3333";
+	txt+='<tr><td colspan="4"></td><td class="tdr"><font color="'+col+'">'+fullbalanz+'</font></td><td></td></tr>';
 	txt+='</table>';
 	document.getElementById("pagecontent").innerHTML=txt;
 }
@@ -325,7 +344,7 @@ function singleProjectLoaded()
 
 	txt+="<h1>"+proj.name+"</h1>";
 	if(proj.link!="")
-		txt+="<h2><a href='"+proj.link+"' target='vti_project_site'>Projekt Seite</a></h2>";
+		txt+="<a href='"+proj.link+"'><h2>Projekt Seite</h2></a>";
 	txt+="ID: "+proj.id+"<br />";
 	txt+="Beschreibung: "+proj.desc;
 	txt+="<br /><br />Transaktionen für dieses Projekt:<br />";
