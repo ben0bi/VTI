@@ -464,13 +464,15 @@ function projectsLoaded()
 	txt+="! v !";
 	txt+="</td></tr>";
 
+	var fullbalanz = 0;
+	var col = "";
 	for(var i = 0; i < parser.projects.length; i++)
 	{
 		var p = parser.projects[i];
 		txt+="<tr><td><a href='javascript:' onclick='g_idToShow="+p.id+";singleProjectLoaded();'>["+p.id+"]</a>";
 		txt+="</td><td><a href='javascript:' onclick='g_idToShow="+p.id+";singleProjectLoaded();'>"+p.name+"</a>";
 		var balanz = 0;
-		var col="#33FF33";
+		col="#33FF33";
 		for(var pq = 0; pq<parser.transactions.length;pq++)
 		{
 			var t = parser.transactions[pq];
@@ -486,7 +488,12 @@ function projectsLoaded()
 		txt+="</td><td class='tdr'><font color='"+col+"'>"+balanz+"</font>";
 		txt+="</td><td><a href='javascript:' onclick='deleteEntry(\"PROJECTS\",\""+p.id+"\")'>!DEL!</a>";
 		txt+="</tr>";
+		fullbalanz+=balanz;
 	}
+	col="#33FF33";
+	if(fullbalanz<0)
+		col="#FF3333";
+	txt+='<tr><td colspan="4"></td><td class="tdr"><font color="'+col+'">'+fullbalanz+'</font></td><td></td></tr>';
 	txt+='</table>';
 	document.getElementById("pagecontent").innerHTML=txt;
 }
