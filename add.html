@@ -387,10 +387,10 @@ function showTransactions(proid)
 		}
 		txt+="</td><td class='tdr'><font color='#33FF33'>";
 		if(t.in!=0)
-			txt+=Math.abs(t.in);
+			txt+=Math.abs(parseFloat(t.in)).toFixed(2);
 		txt+="</font></td><td class='tdr'><font color='#FF3333'>";
 		if(t.out!=0)
-			txt+=Math.abs(t.out);
+			txt+=Math.abs(parseFloat(t.out)).toFixed(2);
 		var q = t.in-t.out;
 		var col = "#33FF33";
 		if(q<0)
@@ -410,9 +410,9 @@ function showTransactions(proid)
 	col='#33FF33';
 	if(gesamtvalue<0)
 		col='#FF3333';
-	txt+='<td class="tdr"><font color="#33FF33">'+gesamtrein+'</font></td>';
-	txt+='<td class="tdr"><font color="#FF3333">'+gesamtraus+'</font></td>';
-	txt+='<td class="tdr"><font color="'+col+'">'+gesamtvalue+'</font></td>';
+	txt+='<td class="tdr"><font color="#33FF33">'+parseFloat(gesamtrein).toFixed(2)+'</font></td>';
+	txt+='<td class="tdr"><font color="#FF3333">'+parseFloat(gesamtraus).toFixed(2)+'</font></td>';
+	txt+='<td class="tdr"><font color="'+col+'">'+parseFloat(gesamtvalue).toFixed(2)+'</font></td>';
 	txt+='</tr>';
 	txt+='</table>';
 	return txt;
