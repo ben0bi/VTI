@@ -219,26 +219,29 @@ function showTransactions(proid)
 		}
 		txt+="</td><td class='tdr'><font color='#00AA00'>";
 		if(t.in!=0)
-			txt+=Math.abs(t.in);
+			txt+=Math.abs(t.in).toFixed(2);
 		txt+="</font></td><td class='tdr'><font color='#FF3333'>";
 		if(t.out!=0)
-			txt+=Math.abs(t.out);
-		var q = t.in-t.out;
+			txt+=Math.abs(t.out).toFixed(2);
+
 		var col = "#00AA00";
-		if(q<0)
+		if(t.in-t.out<0)
 			col="#FF3333";
 		txt+="</font></td><td class='tdr'><font color='"+col+"'>";
-		txt+=q;
+		txt+=parseFloat(t.in-t.out).toFixed(2);
 		txt+="</font></td>";
 		txt+="</tr>";
 		gesamtrein+=t.in;
 		gesamtraus+=t.out;
-		gesamtvalue+=q;
+		gesamtvalue+=t.in-t.out;
 	}
 	
 	txt+='<tr>';
 	txt+='<td colspan="'+colsp+'"></td>';
 	col='#00AA00';
+	gesamtrein = parseFloat(gesamtrein).toFixed(2);
+	gesamtraus = parseFloat(gesamtraus).toFixed(2);
+	gesamtvalue = parseFloat(gesamtvalue).toFixed(2);
 	if(gesamtvalue<0)
 		col='#FF3333';
 	txt+='<td class="tdr"><font color="#00AA00">'+gesamtrein+'</font></td>';
@@ -308,14 +311,14 @@ function projectsLoaded()
 			col="#FF3333";
 		txt+="</td><td>"+p.desc;
 		txt+="</td><td><a href='"+p.link+"'>"+p.link+"</a>";
-		txt+="</td><td class='tdr'><font color='"+col+"'>"+balanz+"</font>";
+		txt+="</td><td class='tdr'><font color='"+col+"'>"+parseFloat(balanz).toFixed(2)+"</font>";
 		txt+="</tr>";
 		fullbalanz+=balanz;
 	}
 	col="#00AA00";
 	if(fullbalanz<0)
 		col="#FF3333";
-	txt+='<tr><td colspan="4"></td><td class="tdr"><font color="'+col+'">'+fullbalanz+'</font></td><td></td></tr>';
+	txt+='<tr><td colspan="4"></td><td class="tdr"><font color="'+col+'">'+parseFloat(fullbalanz).toFixed(2)+'</font></td><td></td></tr>';
 	txt+='</table>';
 	document.getElementById("pagecontent").innerHTML=txt;
 }
