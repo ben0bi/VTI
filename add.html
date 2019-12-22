@@ -396,7 +396,7 @@ function showTransactions(proid)
 		if(q<0)
 			col="#FF3333";
 		txt+="</font></td><td class='tdr'><font color='"+col+"'>";
-		txt+=q;
+		txt+=parseFloat(q).toFixed(2);
 		txt+="</font></td>";
 		txt+="<td><a href='javascript:' onclick='deleteEntry(\"TRANSACTIONS\",\""+t.id+"\")'>!DEL!</a>";
 		txt+="</tr>";
@@ -494,7 +494,7 @@ function projectsLoaded()
 			col="#FF3333";
 		txt+="</td><td>"+p.desc;
 		txt+="</td><td><a href='"+p.link+"'>"+p.link+"</a>";
-		txt+="</td><td class='tdr'><font color='"+col+"'>"+balanz+"</font>";
+		txt+="</td><td class='tdr'><font color='"+col+"'>"+parseFloat(balanz).toFixed(2)+"</font>";
 		txt+="</td><td><a href='javascript:' onclick='deleteEntry(\"PROJECTS\",\""+p.id+"\")'>!DEL!</a>";
 		txt+="</tr>";
 		fullbalanz+=balanz;
@@ -502,7 +502,7 @@ function projectsLoaded()
 	col="#33FF33";
 	if(fullbalanz<0)
 		col="#FF3333";
-	txt+='<tr><td colspan="4"></td><td class="tdr"><font color="'+col+'">'+fullbalanz+'</font></td><td></td></tr>';
+	txt+='<tr><td colspan="4"></td><td class="tdr"><font color="'+col+'">'+parseFloat(fullbalanz).toFixed(2)+'</font></td><td></td></tr>';
 	txt+='</table>';
 	document.getElementById("pagecontent").innerHTML=txt;
 }
