@@ -102,7 +102,7 @@ function addTransaction()
 		projectid = g_projectID;
 	var dt = new Date();
 	log("Add: "+rein+"-"+raus+": "+desc+" / "+link+" @for: "+projectid);
-	
+		
 	var data = {PROJECTID: projectid,
 		DESC: desc,
 		LINK: link,
@@ -169,15 +169,21 @@ function addProject()
 }
 
 // save a new deckel.
+var g_deckelName = -1;
 function addDeckel()
 {
 	var name = $('#input_deckel_name').val();
+	if(g_deckelName!=-1)
+		name = g_deckelName;
 	var produkt = $('#input_deckel_product').val();
 	var summe = $('#input_deckel_summe').val();
+	if(isNaN(summe))
+		summe=0;
 	var date = new Date();
 	log("Add: "+name+"/ "+produkt+" / "+summe);
 	
-	var data = {NAME: name,
+	var data = {
+		NAME: name,
 		PRODUKT: produkt,
 		DATE: date.toString(),
 		SUMME: summe,
@@ -501,6 +507,7 @@ function loadDeckelsForID()
 		log("NO DECKELS FOUND!");
 		return;
 	}
+	g_deckelName = dar[0].name;
 
 	var fullbalanz = 0;
 
@@ -531,6 +538,7 @@ function loadDeckelsForID()
 function deckelsLoaded()
 {
 	log("Deckels loaded.");
+	g_deckelName = -1;
 	var parser = GMLParser.getParser("DataParser");
 	var fullbalanz = 0;
 
