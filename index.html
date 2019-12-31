@@ -12,6 +12,18 @@
 		background-color: #FFFFFA;
 		color: #000069;
 	}
+	.deckel
+	{
+		background-image: url('deckel.png');
+		background-repeat: no-repeat;
+		width: 220px;
+		height: 220px;
+		text-align: center;
+		color: #3333CC;
+		font-family: "Permanent Marker", serif;
+		font-size: 30pt;
+		padding-top: 80px;
+	}
 	.fw
 	{
 		min-width: 99%;
@@ -206,6 +218,129 @@ function projectsLoaded()
 	txt+='<tr><td colspan="4"></td><td class="tdr"><font color="'+col+'">'+parseFloat(fullbalanz).toFixed(2)+'</font></td><td></td></tr>';
 	txt+='</table>';
 	document.getElementById("obergesamtfeld").innerHTML="VOLLE BALANZ: <font color='"+col+"'>"+parseFloat(fullbalanz).toFixed(2)+"</font>";
+	document.getElementById("pagecontent").innerHTML=txt;
+}
+
+function showDeckelStandards(which, ommitname=false,deckel = null)
+{
+	var txt="";
+	// table header
+	if(which==0)
+	{
+		txt+='<table border="1">';
+		txt+="<tr><td>";
+		txt+="ID";
+		txt+="</td><td>";
+		if(!ommitname)
+		{
+			txt+="Name";
+			txt+="</td><td>";
+		}
+		txt+="Produkt";
+		txt+="</td><td>";
+		txt+="Deckelsumme";
+		txt+="</td><td>";
+		txt+="+GUT+";
+		txt+="</td><td>";
+		txt+="!DEL!";
+		txt+="</td></tr>";
+
+		// add the inputs
+		txt+="<tr><td>";
+		txt+="<a href='javascript:' class='btn' onclick='addDeckel();'><nobr>NEU =&gt;</nobr></a>";
+		txt+="</td><td>";
+		if(!ommitname)
+		{
+			txt+="<input type='text' id='input_deckel_product' class='fw' />";
+			txt+="</td><td>";
+		}
+		txt+="<input type='text' id='input_deckel_product' class='fw' />";
+		txt+="</td><td>";
+		txt+="<input type='text' id='input_deckel_summe' class='fw' />";
+		txt+="</td><td>";
+		txt+="<a href='javascript:' class='btn' onclick='addDeckel();'><nobr>&lt;= NEU</nobr></a>";
+		txt+="</td><td>";
+		txt+="! v !";
+		txt+="</td></tr>";
+	}
+	// entry
+	if(which==1)
+	{
+		txt+="<tr><td>"+deckel.id+"</a>";
+		if(!ommitname)
+			txt+="</td><td><a href='javascript:' onclick='g_idToShow="+deckel.id+";loadDeckelsForID();'>"+deckel.name+"</a>";
+		
+		txt+="</td><td>"+deckel.produkt;
+		txt+="</td><td>"+parseFloat(deckel.summe).toFixed(2);
+		txt+="</td><td>TODO:GUT";
+		txt+="</td><td><a href='javascript:' onclick='deleteEntry(\"DECKELS\",\""+deckel.id+"\")'>!DEL!</a>";
+		txt+="</tr>";
+	}
+	return txt;
+}
+
+function loadDeckelsForID()
+{
+	var dar = getDeckelsForID(g_idToShow);
+	
+	if(dar.length<=0)
+	{
+		log("NO DECKELS FOUND!");
+		return;
+	}
+	g_deckelName = dar[0].name;
+
+	var fullbalanz = 0;
+
+	var txt="";
+	txt+=showTopBar(0);
+
+	txt+="<h1>Deckel von "+dar[0].name+"</h1>";
+
+	txt+=showDeckelStandards(0,true);
+
+	var fullbalanz = 0.0;
+	for(var i = 0; i < dar.length; i++)
+	{
+		var d = dar[i];
+		txt+=showDeckelStandards(1,true,d);
+		fullbalanz+=parseFloat(d.summe);
+	}
+	
+	txt+='</table>';
+	
+	var deckel = "<div class='deckel'>"+parseFloat(fullbalanz).toFixed(2)+"</div>";
+	
+	document.getElementById("obergesamtfeld").innerHTML=deckel;
+	document.getElementById("pagecontent").innerHTML=txt;
+}
+
+// show all deckels
+function deckelsLoaded()
+{
+	log("Deckels loaded.");
+	g_deckelName = -1;
+	var parser = GMLParser.getParser("DataParser");
+	var fullbalanz = 0;
+
+	var txt="";
+	txt+=showTopBar(3);
+
+	txt+=showDeckelStandards(0,false);
+
+	var fullbalanz = 0;
+	for(var i = 0; i < parser.deckels.length; i++)
+	{
+		var d = parser.deckels[i];
+		txt+=showDeckelStandards(1,false,d);
+		fullbalanz+=parseFloat(d.summe);
+	}
+	
+	txt+='</table>';
+	
+	var deckel = "<div class='deckel'>"+parseFloat(fullbalanz).toFixed(2)+"</div>";
+	
+	document.getElementById("obergesamtfeld").innerHTML=deckel;
 	document.getElementById("pagecontent").innerHTML=txt;
 }
 
