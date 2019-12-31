@@ -434,6 +434,51 @@ function projectsLoaded()
 	document.getElementById("pagecontent").innerHTML=txt;
 }
 
+function showDeckelStandards(which, deckel = null)
+{
+	var txt="";
+	// table header
+	if(which==0)
+	{
+		txt+='<table border="1">';
+		txt+="<tr><td>";
+		txt+="ID";
+		txt+="</td><td>";
+		txt+="Produkt";
+		txt+="</td><td>";
+		txt+="Deckelsumme";
+		txt+="</td><td>";
+		txt+="+GUT+";
+		txt+="</td><td>";
+		txt+="!DEL!";
+		txt+="</td></tr>";
+
+		// add the inputs
+		txt+="<tr><td>";
+		txt+="<a href='javascript:' class='btn' onclick='addDeckel();'><nobr>NEU =&gt;</nobr></a>";
+		txt+="</td><td>";
+		txt+="<input type='text' id='input_deckel_product' class='fw' />";
+		txt+="</td><td>";
+		txt+="<input type='text' id='input_deckel_summe' class='fw' />";
+		txt+="</td><td>";
+		txt+="<a href='javascript:' class='btn' onclick='addDeckel();'><nobr>&lt;= NEU</nobr></a>";
+		txt+="</td><td>";
+		txt+="! v !";
+		txt+="</td></tr>";
+	}
+	// entry
+	if(which==1)
+	{
+		txt+="<tr><td>"+deckel.id+"</a>";
+		txt+="</td><td>"+deckel.produkt;
+		txt+="</td><td>"+parseFloat(deckel.summe).toFixed(2);
+		txt+="</td><td>TODO:GUT";
+		txt+="</td><td><a href='javascript:' onclick='deleteEntry(\"DECKELS\",\""+deckel.id+"\")'>!DEL!</a>";
+		txt+="</tr>";
+	}
+	return txt;
+}
+
 function loadDeckelsForID()
 {
 	var dar = getDeckelsForID(g_idToShow);
@@ -451,42 +496,13 @@ function loadDeckelsForID()
 
 	txt+="<h1>Deckel von "+dar[0].name+"</h1>";
 
-	txt+='<table border="1">';
-	txt+="<tr><td>";
-	txt+="ID";
-	txt+="</td><td>";
-	txt+="Produkt";
-	txt+="</td><td>";
-	txt+="Deckelsumme";
-	txt+="</td><td>";
-	txt+="+GUT+";
-	txt+="</td><td>";
-	txt+="!DEL!";
-	txt+="</td></tr>";
-
-	// add the inputs
-	txt+="<tr><td>";
-	txt+="<a href='javascript:' class='btn' onclick='addDeckel();'><nobr>NEU =&gt;</nobr></a>";
-	txt+="</td><td>";
-	txt+="<input type='text' id='input_deckel_product' class='fw' />";
-	txt+="</td><td>";
-	txt+="<input type='text' id='input_deckel_summe' class='fw' />";
-	txt+="</td><td>";
-	txt+="<a href='javascript:' class='btn' onclick='addDeckel();'><nobr>&lt;= NEU</nobr></a>";
-	txt+="</td><td>";
-	txt+="! v !";
-	txt+="</td></tr>";
+	txt+=showDeckelStandards(0);
 
 	var fullbalanz = 0.0;
 	for(var i = 0; i < dar.length; i++)
 	{
 		var d = dar[i];
-		txt+="<tr><td>"+d.id+"</a>";
-		txt+="</td><td>"+d.produkt;
-		txt+="</td><td>"+parseFloat(d.summe).toFixed(2);
-		txt+="</td><td>TODO:GUT";
-		txt+="</td><td><a href='javascript:' onclick='deleteEntry(\"DECKELS\",\""+d.id+"\")'>!DEL!</a>";
-		txt+="</tr>";
+		txt+=showDeckelStandards(1,d);
 		fullbalanz+=parseFloat(d.summe);
 	}
 	
@@ -508,47 +524,13 @@ function deckelsLoaded()
 	var txt="";
 	txt+=showTopBar(3);
 
-	txt+='<table border="1">';
-	txt+="<tr><td>";
-	txt+="ID";
-	txt+="</td><td>";
-	txt+="Name";
-	txt+="</td><td>";
-	txt+="Produkt";
-	txt+="</td><td>";
-	txt+="Deckelsumme";
-	txt+="</td><td>";
-	txt+="+GUT+";
-	txt+="</td><td>";
-	txt+="!DEL!";
-	txt+="</td></tr>";
-
-	// add the inputs
-	txt+="<tr><td>";
-	txt+="<a href='javascript:' class='btn' onclick='addDeckel();'><nobr>NEU =&gt;</nobr></a>";
-	txt+="</td><td>";
-	txt+="<input type='text' id='input_deckel_name' class='fw' />";
-	txt+="</td><td>";
-	txt+="<input type='text' id='input_deckel_product' class='fw' />";
-	txt+="</td><td>";
-	txt+="<input type='text' id='input_deckel_summe' class='fw' />";
-	txt+="</td><td>";
-	txt+="<a href='javascript:' class='btn' onclick='addDeckel();'><nobr>&lt;= NEU</nobr></a>";
-	txt+="</td><td>";
-	txt+="! v !";
-	txt+="</td></tr>";
+	txt+=showDeckelStandards(0);
 
 	var fullbalanz = 0;
 	for(var i = 0; i < parser.deckels.length; i++)
 	{
 		var d = parser.deckels[i];
-		txt+="<tr><td>"+d.id+"</a>";
-		txt+="</td><td><a href='javascript:' onclick='g_idToShow="+d.id+";loadDeckelsForID();'>"+d.name+"</a>";
-		txt+="</td><td>"+d.produkt;
-		txt+="</td><td>"+parseFloat(d.summe).toFixed(2);
-		txt+="</td><td>TODO:GUT";
-		txt+="</td><td><a href='javascript:' onclick='deleteEntry(\"DECKELS\",\""+d.id+"\")'>!DEL!</a>";
-		txt+="</tr>";
+		txt+=showDeckelStandards(1,d);
 		fullbalanz+=parseFloat(d.summe);
 	}
 	
