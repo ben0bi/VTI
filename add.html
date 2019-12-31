@@ -434,7 +434,7 @@ function projectsLoaded()
 	document.getElementById("pagecontent").innerHTML=txt;
 }
 
-function showDeckelStandards(which, deckel = null)
+function showDeckelStandards(which, ommitname=false,deckel = null)
 {
 	var txt="";
 	// table header
@@ -444,6 +444,11 @@ function showDeckelStandards(which, deckel = null)
 		txt+="<tr><td>";
 		txt+="ID";
 		txt+="</td><td>";
+		if(!ommitname)
+		{
+			txt+="Name";
+			txt+="</td><td>";
+		}
 		txt+="Produkt";
 		txt+="</td><td>";
 		txt+="Deckelsumme";
@@ -457,6 +462,11 @@ function showDeckelStandards(which, deckel = null)
 		txt+="<tr><td>";
 		txt+="<a href='javascript:' class='btn' onclick='addDeckel();'><nobr>NEU =&gt;</nobr></a>";
 		txt+="</td><td>";
+		if(!ommitname)
+		{
+			txt+="<input type='text' id='input_deckel_product' class='fw' />";
+			txt+="</td><td>";
+		}
 		txt+="<input type='text' id='input_deckel_product' class='fw' />";
 		txt+="</td><td>";
 		txt+="<input type='text' id='input_deckel_summe' class='fw' />";
@@ -470,7 +480,9 @@ function showDeckelStandards(which, deckel = null)
 	if(which==1)
 	{
 		txt+="<tr><td>"+deckel.id+"</a>";
-		txt+="</td><td><a href='javascript:' onclick='g_idToShow="+deckel.id+";loadDeckelsForID();'>"+deckel.name+"</a>";
+		if(!ommitname)
+			txt+="</td><td><a href='javascript:' onclick='g_idToShow="+deckel.id+";loadDeckelsForID();'>"+deckel.name+"</a>";
+		
 		txt+="</td><td>"+deckel.produkt;
 		txt+="</td><td>"+parseFloat(deckel.summe).toFixed(2);
 		txt+="</td><td>TODO:GUT";
@@ -497,13 +509,13 @@ function loadDeckelsForID()
 
 	txt+="<h1>Deckel von "+dar[0].name+"</h1>";
 
-	txt+=showDeckelStandards(0);
+	txt+=showDeckelStandards(0,true);
 
 	var fullbalanz = 0.0;
 	for(var i = 0; i < dar.length; i++)
 	{
 		var d = dar[i];
-		txt+=showDeckelStandards(1,d);
+		txt+=showDeckelStandards(1,true,d);
 		fullbalanz+=parseFloat(d.summe);
 	}
 	
@@ -525,13 +537,13 @@ function deckelsLoaded()
 	var txt="";
 	txt+=showTopBar(3);
 
-	txt+=showDeckelStandards(0);
+	txt+=showDeckelStandards(0,false);
 
 	var fullbalanz = 0;
 	for(var i = 0; i < parser.deckels.length; i++)
 	{
 		var d = parser.deckels[i];
-		txt+=showDeckelStandards(1,d);
+		txt+=showDeckelStandards(1,false,d);
 		fullbalanz+=parseFloat(d.summe);
 	}
 	
