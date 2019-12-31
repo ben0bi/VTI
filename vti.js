@@ -87,6 +87,28 @@ var Data_Project = function()
 	}
 }
 
+// a deckel/future.
+var Data_Deckel = function()
+{
+	var me = this;
+	this.id = 0;
+	this.name = "Niemand";
+	this.produkt = "Nichts";
+	this.summe = 0;
+	
+	this.parseGML = function(json, rootpath)
+	{
+		if(__defined(json['ID']))
+			me.id = parseInt(json['ID']);
+		if(__defined(json['NAME']))
+			me.name = json['NAME'];
+		if(__defined(json['PRODUKT']))
+			me.produkt = json['PRODUKT'];
+		if(__defined(json['SUMME']))
+			me.summe = json['SUMME'];
+	}
+}
+
 // the parser for this application.
 var DataParser = function()
 {
@@ -94,9 +116,11 @@ var DataParser = function()
 	
 	this.projects = [];
 	this.transactions = [];
+	this.deckels = [];
 	
 	this.parseGML = function(json, rootpath)
 	{
+		// transaction database.
 		if(__defined(json['TRANSACTIONS']))
 		{
 			for(var i = 0; i<json['TRANSACTIONS'].length; i++)
@@ -106,6 +130,8 @@ var DataParser = function()
 				me.transactions.push(tr);
 			}
 		}
+		
+		// project database
 		if(__defined(json['PROJECTS']))
 		{
 			for(var i = 0; i<json['PROJECTS'].length; i++)
@@ -115,12 +141,24 @@ var DataParser = function()
 				me.projects.push(pr);
 			}
 		}
+		
+		// deckels/futures
+		if(__defined(json['DECKELS']))
+		{
+			for(var i=0;i<json['DECKELS'].length; i++)
+			{
+				var de = new Data_Deckel();
+				de.parseGML(json['DECKELS'][i]);
+				me.deckels.push(de);
+			}
+		}
 	}
 	
 	this.clear = function() 
 	{
 		me.projects = [];
 		me.transactions = [];
+		me.deckels = [];
 	}
 }
 
@@ -200,4 +238,34 @@ function singleProjectLoaded()
 
 	txt+=showTransactions(proj.id);
 	document.getElementById("pagecontent").innerHTML=txt;
+}
+
+// get all deckels with the same name like the deckel with this id.
+function getDeckelsForID(id)
+{
+	var parser = GMLParser.getParser("DataParser");
+	var found = [];
+	var dk = null;
+	// get the deckel with the given ID.
+	for(var i=0;i<parser.deckels.length;i++)
+	{
+		if(parser.deckels[i].id==id)
+		{
+			dk=parser.deckels[i];
+			break;
+		}
+	}
+	if(dk==null)
+	{
+		log("No deckel found for id "+id);
+		return;
+	}
+	// get all deckels with the same name.
+	for(var i=0;i<parser.deckels.length;i++)
+	{
+		if(dk.name.toLowerCase()==parser.deckels[i].name.toLowerCase())
+			found.push(parser.deckels[i]);
+	}
+	
+	return found;
 }

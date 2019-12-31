@@ -398,6 +398,70 @@ function projectsLoaded()
 	document.getElementById("pagecontent").innerHTML=txt;
 }
 
+function loadDeckelsForID()
+{
+	var dar = getDeckelsForID(g_idToShow);
+	
+	if(dar.length<=0)
+	{
+		log("NO DECKELS FOUND!");
+		return;
+	}
+
+	var fullbalanz = 0;
+
+	var txt="";
+	txt+=showTopBar(0);
+
+	txt+="<h1>Deckel von "+dar[0].name+"</h1>";
+
+	txt+='<table border="1">';
+	txt+="<tr><td>";
+	txt+="ID";
+	txt+="</td><td>";
+	txt+="Produkt";
+	txt+="</td><td>";
+	txt+="Deckelsumme";
+	txt+="</td><td>";
+	txt+="+GUT+";
+	txt+="</td><td>";
+	txt+="!DEL!";
+	txt+="</td></tr>";
+
+	// add the inputs
+	txt+="<tr><td>";
+	txt+="<a href='javascript:' class='btn' onclick='addDeckel();'><nobr>NEU =&gt;</nobr></a>";
+	txt+="</td><td>";
+	txt+="<input type='text' id='input_deckel_product' class='fw' />";
+	txt+="</td><td>";
+	txt+="<input type='text' id='input_deckel_summe' class='fw' />";
+	txt+="</td><td>";
+	txt+="<a href='javascript:' class='btn' onclick='addDeckel();'><nobr>&lt;= NEU</nobr></a>";
+	txt+="</td><td>";
+	txt+="! v !";
+	txt+="</td></tr>";
+
+	var fullbalanz = 0.0;
+	for(var i = 0; i < dar.length; i++)
+	{
+		var d = dar[i];
+		txt+="<tr><td>"+d.id+"</a>";
+		txt+="</td><td>"+d.produkt;
+		txt+="</td><td>"+parseFloat(d.summe).toFixed(2);
+		txt+="</td><td>TODO:GUT";
+		txt+="</td><td><a href='javascript:' onclick='deleteEntry(\"DECKELS\",\""+d.id+"\")'>!DEL!</a>";
+		txt+="</tr>";
+		fullbalanz+=parseFloat(d.summe);
+	}
+	
+	txt+='</table>';
+	
+	var deckel = "<div class='deckel'>"+parseFloat(fullbalanz).toFixed(2)+"</div>";
+	
+	document.getElementById("obergesamtfeld").innerHTML=deckel;
+	document.getElementById("pagecontent").innerHTML=txt;
+}
+
 // show all deckels
 function deckelsLoaded()
 {
@@ -438,37 +502,19 @@ function deckelsLoaded()
 	txt+="! v !";
 	txt+="</td></tr>";
 
-/*	var fullbalanz = 0;
-	var col = "";
-	for(var i = 0; i < parser.projects.length; i++)
+	var fullbalanz = 0;
+	for(var i = 0; i < parser.deckels.length; i++)
 	{
-		var p = parser.projects[i];
-		txt+="<tr><td><a href='javascript:' onclick='g_idToShow="+p.id+";singleProjectLoaded();'>["+p.id+"]</a>";
-		txt+="</td><td><a href='javascript:' onclick='g_idToShow="+p.id+";singleProjectLoaded();'>"+p.name+"</a>";
-		var balanz = 0;
-		col="#33FF33";
-		for(var pq = 0; pq<parser.transactions.length;pq++)
-		{
-			var t = parser.transactions[pq];
-			if(t.projectid==p.id)
-			{
-				balanz=balanz+t.in-t.out;
-			}
-		}
-		if(balanz<0)
-			col="#FF3333";
-		txt+="</td><td>"+p.desc;
-		txt+="</td><td><a href='"+p.link+"'>"+p.link+"</a>";
-		txt+="</td><td class='tdr'><font color='"+col+"'>"+parseFloat(balanz).toFixed(2)+"</font>";
-		txt+="</td><td><a href='javascript:' onclick='deleteEntry(\"PROJECTS\",\""+p.id+"\")'>!DEL!</a>";
+		var d = parser.deckels[i];
+		txt+="<tr><td>"+d.id+"</a>";
+		txt+="</td><td><a href='javascript:' onclick='g_idToShow="+d.id+";loadDeckelsForID();'>"+d.name+"</a>";
+		txt+="</td><td>"+d.produkt;
+		txt+="</td><td>"+parseFloat(d.summe).toFixed(2);
+		txt+="</td><td>TODO:GUT";
+		txt+="</td><td><a href='javascript:' onclick='deleteEntry(\"DECKELS\",\""+d.id+"\")'>!DEL!</a>";
 		txt+="</tr>";
-		fullbalanz+=balanz;
+		fullbalanz+=parseFloat(d.summe);
 	}
-	col="#33FF33";
-	if(fullbalanz<0)
-		col="#FF3333";
-	txt+='<tr><td colspan="4"></td><td class="tdr"><font color="'+col+'">'+parseFloat(fullbalanz).toFixed(2)+'</font></td><td></td></tr>';
-	*/
 	
 	txt+='</table>';
 	
