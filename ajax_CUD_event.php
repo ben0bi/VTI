@@ -32,6 +32,11 @@ if(sizeof($json_data["PROJECTS"])<=0)
 	$json_data["PROJECTS"]=[];
 }
 
+if(sizeof($json_data["DECKELS"])<=0)
+{
+	$json_data["DECKELS"]=[];
+}
+
 // get the next unique id.
 function get_Next_DBID()
 {
@@ -89,7 +94,7 @@ if($CUD=='create')
 			$nen["REIN"]=$_POST["REIN"];
 			$nen["RAUS"]=$_POST["RAUS"];
 			$nen["DATE"]=$_POST["DATE"];
-			$nen["COMBI"]=$_POST["COMBI"];
+// NOT USED			$nen["COMBI"]=$_POST["COMBI"];
 			break;
 		case "PROJECTS":
 			$nen["NAME"]=$_POST["NAME"];
@@ -97,10 +102,17 @@ if($CUD=='create')
 			$nen["DESC"]=$_POST["DESC"];
 			$nen["DATE"]=$_POST["DATE"];
 			break;
-		case "COMBINATORS":
+		case "DECKELS":
+			$nen["NAME"]=$_POST["NAME"];
+			$nen["PROJEKT"]=$_POST["PROJEKT"];
+			$nen["SUMME"]=$_POST["SUMME"];
+			$nen["DATE"]=$_POST["DATE"];
+			break;
+/* NOT USED		case "COMBINATORS":
 			$nen["PROJECTID"]=$_POST["PROJECTID"];
 			$nen["NAME"]=$_POST["NAME"];
 			break;
+			*/
 		default:
 			break;
 	}

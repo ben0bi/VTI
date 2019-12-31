@@ -168,6 +168,42 @@ function addProject()
 	});
 }
 
+// save a new deckel.
+function addDeckel()
+{
+	var name = $('#input_deckel_name').val();
+	var produkt = $('#input_deckel_product').val();
+	var summe = $('#input_deckel_summe').val();
+	var date = new Date();
+	log("Add: "+name+"/ "+produkt+" / "+summe);
+	
+	var data = {NAME: name,
+		PRODUKT: produkt,
+		DATE: date.toString(),
+		SUMME: summe,
+		whichtable: 'DECKELS',
+		CUD: 'create'
+	};	// the CUD event to do.
+		// ^if CUD == 'create', it will create OR update an object.
+		// if CUD == 'delete', it will delete the object.
+		
+	// success function.
+	var success = function(data)
+	{
+		console.log("CUD event result:" +data);
+		loadTable('deckels');
+		// hideBlocker(); render will load all events and show blocker in the meanwhile.
+	}
+
+	$.ajax({
+		type: 'POST',
+		url: 'ajax_CUD_event.php',
+		data: data,
+		success: success,
+		dataType: 'text'
+	});
+}
+
 function deleteEntry(whichtable, id)
 {
 	var data = {ID: id,
