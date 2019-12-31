@@ -240,29 +240,8 @@ function showDeckelStandards(which, ommitname=false,deckel = null)
 		txt+="Produkt";
 		txt+="</td><td>";
 		txt+="Deckelsumme";
-		txt+="</td><td>";
-		txt+="+GUT+";
-		txt+="</td><td>";
-		txt+="!DEL!";
 		txt+="</td></tr>";
 
-		// add the inputs
-		txt+="<tr><td>";
-		txt+="<a href='javascript:' class='btn' onclick='addDeckel();'><nobr>NEU =&gt;</nobr></a>";
-		txt+="</td><td>";
-		if(!ommitname)
-		{
-			txt+="<input type='text' id='input_deckel_product' class='fw' />";
-			txt+="</td><td>";
-		}
-		txt+="<input type='text' id='input_deckel_product' class='fw' />";
-		txt+="</td><td>";
-		txt+="<input type='text' id='input_deckel_summe' class='fw' />";
-		txt+="</td><td>";
-		txt+="<a href='javascript:' class='btn' onclick='addDeckel();'><nobr>&lt;= NEU</nobr></a>";
-		txt+="</td><td>";
-		txt+="! v !";
-		txt+="</td></tr>";
 	}
 	// entry
 	if(which==1)
@@ -273,8 +252,6 @@ function showDeckelStandards(which, ommitname=false,deckel = null)
 		
 		txt+="</td><td>"+deckel.produkt;
 		txt+="</td><td>"+parseFloat(deckel.summe).toFixed(2);
-		txt+="</td><td>TODO:GUT";
-		txt+="</td><td><a href='javascript:' onclick='deleteEntry(\"DECKELS\",\""+deckel.id+"\")'>!DEL!</a>";
 		txt+="</tr>";
 	}
 	return txt;
