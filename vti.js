@@ -1,6 +1,33 @@
 // VTI Volle Transparenz Initiative
 // Shared functions.
 
+var showTopBar =function(which)
+{
+	// 0 = all
+	
+	var txt="<div id='ubermenu'>";
+	// 1 = transactions
+	if(which==1)
+		txt+="Transaktionen | ";
+	else
+		txt+='<a href="javascript:" onclick="loadTable(1)">Transaktionen</a> | ';
+
+	// 2 = projects
+	if(which==2)
+		txt+="Projekte | ";
+	else
+		txt+='<a href="javascript:" onclick="loadTable(2)">Projekte</a> | ';
+
+	// 3 = deckel
+	if(which==3)
+		txt+="Deckel/Futures";
+	else
+		txt+='<a href="javascript:" onclick="loadTable(4)">Deckel/Futures</a>';
+
+	txt+="</div>";
+	return txt;
+}
+
 // a transaction for a specific project.
 var Data_Transaction = function()
 {
@@ -107,6 +134,10 @@ function loadTable(which, id=0)
 	log("Loading data...");
 	switch(which)
 	{
+		case 4:
+		case 'deckel':
+			PARSEGMLFILE("database.gml", deckelsLoaded);
+			break;
 		case 3:
 		case 'project':
 			m_idToShow = id;
@@ -130,10 +161,7 @@ function transactionsLoaded()
 	log("Transactions loaded.");
 	
 	var txt="";
-	txt+='<div id="ubermenu">';
-	txt+='Transaktionen | ';
-	txt+='<a href="javascript:" onclick="loadTable(2);">Projekte</a>';
-	txt+='</div>';
+	txt+=showTopBar(1);
 	
 	txt+='Transaktionen ohne Werte wurden gefunden, geschenkt oder waren schon im Inventar.<br />';
 	txt+=showTransactions(-1);
@@ -160,14 +188,12 @@ function singleProjectLoaded()
 	var parser = GMLParser.getParser("DataParser");
 	var proj = getProjectByID(g_idToShow);
 	var txt="";
-	txt+='<div id="ubermenu">';
-	txt+='<a href="javascript:" onclick="loadTable(1)">Transaktionen</a> | ';
-	txt+='<a href="javascript:" onclick="loadTable(2)">Projekte</a></div>';
 
-	txt+="<h1>"+proj.name+"</h1>";
+	txt+=showTopBar(0);
+
+	txt+="<h1>Projekt #"+proj.id+":<br />"+proj.name+"</h1>";
 	if(proj.link!="")
 		txt+="<a href='"+proj.link+"'><h2>Projekt Seite</h2></a>";
-	txt+="ID: "+proj.id+"<br />";
 	txt+="Beschreibung: "+proj.desc;
 	txt+="<br /><br />Transaktionen für dieses Projekt:<br />";
 
