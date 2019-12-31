@@ -219,7 +219,10 @@ function showTransactions(proid)
 		txt+="</td><td>";
 		txt+=t.desc;
 		if(proid<0)
-			txt+="</td><td><a href='javascript:' onclick='g_idToShow="+t.projectid+";singleProjectLoaded();'>["+t.projectid+"]</a>";
+		{
+			var prname = getProjectByID(t.projectid).name
+			txt+="</td><td><a href='javascript:' onclick='g_idToShow="+t.projectid+";singleProjectLoaded();'>["+t.projectid+"] "+prname+"</a>";
+		}
 		txt+="</td><td>";
 		if(t.link.length>0)
 		{
