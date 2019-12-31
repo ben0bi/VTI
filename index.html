@@ -24,6 +24,15 @@
 		font-size: 15pt;
 		font-weight: bold;
 	}
+	
+	/* show the gesamt value also in the upper right.*/
+	#obergesamtfeld
+	{
+		position: absolute;
+		top: 10px;
+		right: 10px;
+	}
+
 </style>
 </head>
 <body>
@@ -33,6 +42,7 @@
 		<h2>Benis Projektfinanzen</h2>
 		</div>
 	</div>
+	<div id="obergesamtfeld">Wert wird berechnet..</div>
 	<div id="pagecontent">
 		Bitte warten...Daten werden geladen.
 	</div>
@@ -244,11 +254,18 @@ function showTransactions(proid)
 	gesamtvalue = parseFloat(gesamtvalue).toFixed(2);
 	if(gesamtvalue<0)
 		col='#FF3333';
-	txt+='<td class="tdr"><font color="#00AA00">'+gesamtrein+'</font></td>';
-	txt+='<td class="tdr"><font color="#FF3333">'+gesamtraus+'</font></td>';
-	txt+='<td class="tdr"><font color="'+col+'">'+gesamtvalue+'</font></td>';
-	txt+='</tr>';
-	txt+='</table>';
+
+	var gesamttxt = "";
+	gesamttxt+='<td class="tdr"><font color="#00AA00">'+parseFloat(gesamtrein).toFixed(2)+'</font></td>';
+	gesamttxt+='<td class="tdr"><font color="#FF3333">'+parseFloat(gesamtraus).toFixed(2)+'</font></td>';
+	gesamttxt+='<td class="tdr"><font color="'+col+'">'+parseFloat(gesamtvalue).toFixed(2)+'</font></td>';
+	gesamttxt+='</tr>';
+	gesamttxt+='</table>';
+
+	txt+=gesamttxt;
+	
+	var g = "<table border='1'><tr><td>REIN</td><td>RAUS</td><td>DIFF</td></tr><tr>"+gesamttxt;
+	document.getElementById('obergesamtfeld').innerHTML=g;
 	return txt;
 }
 
@@ -320,6 +337,7 @@ function projectsLoaded()
 		col="#FF3333";
 	txt+='<tr><td colspan="4"></td><td class="tdr"><font color="'+col+'">'+parseFloat(fullbalanz).toFixed(2)+'</font></td><td></td></tr>';
 	txt+='</table>';
+	document.getElementById("obergesamtfeld").innerHTML="VOLLE BALANZ: <font color='"+col+"'>"+parseFloat(fullbalanz).toFixed(2)+"</font>";
 	document.getElementById("pagecontent").innerHTML=txt;
 }
 
