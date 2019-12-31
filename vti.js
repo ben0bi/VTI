@@ -174,6 +174,7 @@ function loadTable(which, id=0)
 	{
 		case 4:
 		case 'deckel':
+		case 'deckels':
 			PARSEGMLFILE("database.gml", deckelsLoaded);
 			break;
 		case 3:
