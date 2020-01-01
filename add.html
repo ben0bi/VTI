@@ -574,7 +574,7 @@ function luepfDeckel(deckelid)
 		return;
 	}
 	
-	if(isNan(parseFloat(deckel.summe))
+	if(isNan(parseFloat(deckel.summe)))
 		deckel.summe = 0;
 		
 	var desc = "D: "+deckel.name+" erstattet vorbezogenes "+deckel.produkt+" vom "+deckel.datum.getDate()+"."+(deckel.datum.getMonth()+1)+"."+deckel.datum.getFullYear();
