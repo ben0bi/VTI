@@ -4,7 +4,7 @@
 var showTopBar =function(which)
 {
 	// 0 = all
-	
+
 	var txt="<div id='ubermenu'>";
 	// 1 = transactions
 	if(which==1)
@@ -96,7 +96,8 @@ var Data_Deckel = function()
 	this.produkt = "Nichts";
 	this.summe = 0;
 	this.projectid = 0;
-	
+	this.datum = new Date();
+
 	this.parseGML = function(json, rootpath)
 	{
 		if(__defined(json['ID']))
@@ -111,6 +112,8 @@ var Data_Deckel = function()
 			me.summe=0;
 		if(__defined(json['PROJECTID']))
 			me.projectid = json['PROJECTID'];
+		if(__defined(json['DATUM']))
+			me.datum = new Date(json['DATUM']);
 	}
 }
 
@@ -118,11 +121,11 @@ var Data_Deckel = function()
 var DataParser = function()
 {
 	var me = this;
-	
+
 	this.projects = [];
 	this.transactions = [];
 	this.deckels = [];
-	
+
 	this.parseGML = function(json, rootpath)
 	{
 		// transaction database.
@@ -135,7 +138,7 @@ var DataParser = function()
 				me.transactions.push(tr);
 			}
 		}
-		
+
 		// project database
 		if(__defined(json['PROJECTS']))
 		{
@@ -146,7 +149,7 @@ var DataParser = function()
 				me.projects.push(pr);
 			}
 		}
-		
+
 		// deckels/futures
 		if(__defined(json['DECKELS']))
 		{
@@ -158,7 +161,7 @@ var DataParser = function()
 			}
 		}
 	}
-	
+
 	this.clear = function() 
 	{
 		me.projects = [];
@@ -203,10 +206,10 @@ function loadTable(which, id=0)
 function transactionsLoaded()
 {
 	log("Transactions loaded.");
-	
+
 	var txt="";
 	txt+=showTopBar(1);
-	
+
 	txt+='Transaktionen ohne Werte wurden gefunden, geschenkt oder waren schon im Inventar.<br />';
 	txt+=showTransactions(-1);
 	document.getElementById("pagecontent").innerHTML=txt;
@@ -272,6 +275,6 @@ function getDeckelsForID(id)
 		if(dk.name.toLowerCase()==parser.deckels[i].name.toLowerCase())
 			found.push(parser.deckels[i]);
 	}
-	
+
 	return found;
 }

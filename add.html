@@ -538,7 +538,7 @@ function showDeckelStandards(which, ommitname=false,deckel = null)
 	{
 		txt+="</td><td><a href='javascript:' class='btngreen fw' onclick='luepfDeckel("+deckel.id+")'>&nbsp;&yen;&euro;&dollar; &lt;=&nbsp;</a>";
 		txt+="</td><td>"+deckel.id+"</a>";
-		txt+="</td><td>"+deckel.datum;
+		txt+="</td><td>"+deckel.datum.getDate()+"."+(deckel.datum.getMonth()+1)+"."+deckel.datum.getFullYear();
 		if(!ommitname)
 			txt+="</td><td><a href='javascript:' onclick='g_idToShow="+deckel.id+";loadDeckelsForID();'>"+deckel.name+"</a>";
 		
