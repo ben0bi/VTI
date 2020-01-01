@@ -52,12 +52,12 @@
 		padding-left: 5px;
 		padding-right: 5px;
 		background-color: #00AA00;
-		color: #FFAA00;
+		color: #000033;
 		text-decoration: none;
 	}
 	.btngreen:hover
 	{
-		background-color: #FFAA00;
+		background-color: #000033;
 		color: #00AA00;
 		text-decoration: none;
 	}
@@ -536,7 +536,7 @@ function showDeckelStandards(which, ommitname=false,deckel = null)
 	// entry
 	if(which==1)
 	{
-		txt+="</td><td><a href='javascript:' class='btngreen fw' onclick='luepfDeckel("+deckel.id+")'>&yen;&euro;&dollar; &lt;=</a>";
+		txt+="</td><td><a href='javascript:' class='btngreen fw' onclick='luepfDeckel("+deckel.id+")'>&nbsp;&yen;&euro;&dollar; &lt;=&nbsp;</a>";
 		txt+="</td><td>"+deckel.id+"</a>";
 		txt+="</td><td>"+deckel.datum;
 		if(!ommitname)
@@ -545,7 +545,7 @@ function showDeckelStandards(which, ommitname=false,deckel = null)
 		txt+="</td><td>"+deckel.produkt;
 		txt+="</td><td>["+deckel.projectid+"] "+getProjectByID(deckel.projectid).name;
 		txt+="</td><td>"+parseFloat(deckel.summe).toFixed(2);
-		txt+="</td><td><a href='javascript:' class='btngreen fw' onclick='luepfDeckel("+deckel.id+")'>=&gt; &yen;&euro;&dollar;</a>";
+		txt+="</td><td><a href='javascript:' class='btngreen fw' onclick='luepfDeckel("+deckel.id+")'>&nbsp;=&gt; &yen;&euro;&dollar;&nbsp</a>";
 		txt+="</td><td><a href='javascript:' class='btnred' onclick='deleteEntry(\"DECKELS\",\""+deckel.id+"\")'>!DEL!</a>";
 		txt+="</tr>";
 	}
