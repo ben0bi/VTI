@@ -95,6 +95,7 @@ var Data_Deckel = function()
 	this.name = "Niemand";
 	this.produkt = "Nichts";
 	this.summe = 0;
+	this.projectid = 0;
 	
 	this.parseGML = function(json, rootpath)
 	{
@@ -105,7 +106,11 @@ var Data_Deckel = function()
 		if(__defined(json['PRODUKT']))
 			me.produkt = json['PRODUKT'];
 		if(__defined(json['SUMME']))
-			me.summe = json['SUMME'];
+			me.summe = parseFloat(json['SUMME']);
+		if(isNaN(me.summe))
+			me.summe=0;
+		if(__defined(json['PROJECTID']))
+			me.projectid = json['PROJECTID'];
 	}
 }
 

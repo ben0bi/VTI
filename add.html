@@ -176,6 +176,9 @@ function addDeckel()
 	if(g_deckelName!=-1)
 		name = g_deckelName;
 	var produkt = $('#input_deckel_product').val();
+	var projid=$('#input_deckel_project').val();
+	if(isNaN(projid))
+		projid = 0;
 	var summe = $('#input_deckel_summe').val();
 	if(isNaN(summe))
 		summe=0;
@@ -184,6 +187,7 @@ function addDeckel()
 	
 	var data = {
 		NAME: name,
+		PROJECTID: projid,
 		PRODUKT: produkt,
 		DATE: date.toString(),
 		SUMME: summe,
@@ -457,6 +461,8 @@ function showDeckelStandards(which, ommitname=false,deckel = null)
 		}
 		txt+="Produkt";
 		txt+="</td><td>";
+		txt+="Projekt";
+		txt+="</td><td>";
 		txt+="Deckelsumme";
 		txt+="</td><td>";
 		txt+="+GUT+";
@@ -475,6 +481,15 @@ function showDeckelStandards(which, ommitname=false,deckel = null)
 		}
 		txt+="<input type='text' id='input_deckel_product' class='fw' />";
 		txt+="</td><td>";
+		txt+="<select id='input_deckel_project' class='fw'>";
+		var parser = GMLParser.getParser("DataParser");
+		for(var qq=0;qq<parser.projects.length;qq++)
+		{
+			var p = parser.projects[qq];
+			txt+="<option value='"+p.id+"'>["+p.id+"] "+p.name+"</option>";
+		}
+		txt+="</select>"
+		txt+="</td><td>";
 		txt+="<input type='text' id='input_deckel_summe' class='fw' />";
 		txt+="</td><td>";
 		txt+="<a href='javascript:' class='btn' onclick='addDeckel();'><nobr>&lt;= NEU</nobr></a>";
@@ -490,6 +505,7 @@ function showDeckelStandards(which, ommitname=false,deckel = null)
 			txt+="</td><td><a href='javascript:' onclick='g_idToShow="+deckel.id+";loadDeckelsForID();'>"+deckel.name+"</a>";
 		
 		txt+="</td><td>"+deckel.produkt;
+		txt+="</td><td>["+deckel.projectid+"] "+getProjectByID(deckel.projectid).name;
 		txt+="</td><td>"+parseFloat(deckel.summe).toFixed(2);
 		txt+="</td><td>TODO:GUT";
 		txt+="</td><td><a href='javascript:' onclick='deleteEntry(\"DECKELS\",\""+deckel.id+"\")'>!DEL!</a>";

@@ -105,6 +105,7 @@ if($CUD=='create')
 		case "DECKELS":
 			$nen["NAME"]=$_POST["NAME"];
 			$nen["PRODUKT"]=$_POST["PRODUKT"];
+			$nen["PROJECTID"]=$_POST["PROJECTID"];
 			$nen["SUMME"]=$_POST["SUMME"];
 			$nen["DATE"]=$_POST["DATE"];
 			break;
