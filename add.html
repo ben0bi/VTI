@@ -175,6 +175,7 @@ function addDeckel()
 	var name = $('#input_deckel_name').val();
 	if(g_deckelName!=-1)
 		name = g_deckelName;
+	g_deckelName=-1;
 	var produkt = $('#input_deckel_product').val();
 	var projid=$('#input_deckel_project').val();
 	if(isNaN(projid))
@@ -476,7 +477,7 @@ function showDeckelStandards(which, ommitname=false,deckel = null)
 		txt+="</td><td>";
 		if(!ommitname)
 		{
-			txt+="<input type='text' id='input_deckel_product' class='fw' />";
+			txt+="<input type='text' id='input_deckel_name' class='fw' />";
 			txt+="</td><td>";
 		}
 		txt+="<input type='text' id='input_deckel_product' class='fw' />";
