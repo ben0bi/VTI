@@ -536,7 +536,7 @@ function showDeckelStandards(which, ommitname=false,deckel = null)
 	// entry
 	if(which==1)
 	{
-		txt+="</td><td><a href='javascript:' class='btngreen' onclick='luepfDeckel("+deckel.id+")'>&yen;&euro;&dollar; &lt;=</a>";
+		txt+="</td><td><a href='javascript:' class='btngreen fw' onclick='luepfDeckel("+deckel.id+")'>&yen;&euro;&dollar; &lt;=</a>";
 		txt+="</td><td>"+deckel.id+"</a>";
 		txt+="</td><td>"+deckel.datum;
 		if(!ommitname)
@@ -545,7 +545,7 @@ function showDeckelStandards(which, ommitname=false,deckel = null)
 		txt+="</td><td>"+deckel.produkt;
 		txt+="</td><td>["+deckel.projectid+"] "+getProjectByID(deckel.projectid).name;
 		txt+="</td><td>"+parseFloat(deckel.summe).toFixed(2);
-		txt+="</td><td><a href='javascript:' class='btngreen' onclick='luepfDeckel("+deckel.id+")'>=&gt; &yen;&euro;&dollar;</a>";
+		txt+="</td><td><a href='javascript:' class='btngreen fw' onclick='luepfDeckel("+deckel.id+")'>=&gt; &yen;&euro;&dollar;</a>";
 		txt+="</td><td><a href='javascript:' class='btnred' onclick='deleteEntry(\"DECKELS\",\""+deckel.id+"\")'>!DEL!</a>";
 		txt+="</tr>";
 	}
