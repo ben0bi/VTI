@@ -47,6 +47,35 @@
 		color: #FFFF33;
 		text-decoration: none;
 	}
+	.btngreen, .btngreen:visited
+	{
+		padding-left: 5px;
+		padding-right: 5px;
+		background-color: #00AA00;
+		color: #FFAA00;
+		text-decoration: none;
+	}
+	.btngreen:hover
+	{
+		background-color: #FFAA00;
+		color: #00AA00;
+		text-decoration: none;
+	}
+	.btnred, .btnred:visited
+	{
+		padding-left: 5px;
+		padding-right: 5px;
+		background-color: #AA0000;
+		color: #FFFFFA;
+		text-decoration: none;
+	}
+	.btnred:hover
+	{
+		background-color: #FFFFFA;
+		color: #AA0000;
+		text-decoration: none;
+	}
+
 	.fw
 	{
 		min-width: 99%;
@@ -453,7 +482,11 @@ function showDeckelStandards(which, ommitname=false,deckel = null)
 	{
 		txt+='<table border="1">';
 		txt+="<tr><td>";
+		txt+="&yen;&euro;&dollar; &lt;=";
+		txt+="</td><td>";
 		txt+="ID";
+		txt+="</td><td>";
+		txt+="Datum";
 		txt+="</td><td>";
 		if(!ommitname)
 		{
@@ -466,15 +499,17 @@ function showDeckelStandards(which, ommitname=false,deckel = null)
 		txt+="</td><td>";
 		txt+="Deckelsumme";
 		txt+="</td><td>";
-		txt+="+GUT+";
+		txt+="=&gt; &yen;&euro;&dollar;";
 		txt+="</td><td>";
 		txt+="!DEL!";
 		txt+="</td></tr>";
 
 		// add the inputs
-		txt+="<tr><td>";
+		txt+="<tr><td>"
 		txt+="<a href='javascript:' class='btn' onclick='addDeckel();'><nobr>NEU =&gt;</nobr></a>";
 		txt+="</td><td>";
+		txt+="<a href='javascript:' class='btn' onclick='addDeckel();'><nobr>NEU =&gt;</nobr></a>";
+		txt+="</td><td>(auto)</td><td>";
 		if(!ommitname)
 		{
 			txt+="<input type='text' id='input_deckel_name' class='fw' />";
@@ -501,20 +536,29 @@ function showDeckelStandards(which, ommitname=false,deckel = null)
 	// entry
 	if(which==1)
 	{
+		txt+="</td><td><a href='javascript:' class='btngreen' onclick='luepfDeckel("+deckel.id+")'>&yen;&euro;&dollar; &lt;=</a>";
 		txt+="<tr><td>"+deckel.id+"</a>";
+		txt+="</td><td>"+deckel.datum;
 		if(!ommitname)
 			txt+="</td><td><a href='javascript:' onclick='g_idToShow="+deckel.id+";loadDeckelsForID();'>"+deckel.name+"</a>";
 		
 		txt+="</td><td>"+deckel.produkt;
 		txt+="</td><td>["+deckel.projectid+"] "+getProjectByID(deckel.projectid).name;
 		txt+="</td><td>"+parseFloat(deckel.summe).toFixed(2);
-		txt+="</td><td>TODO:GUT";
-		txt+="</td><td><a href='javascript:' onclick='deleteEntry(\"DECKELS\",\""+deckel.id+"\")'>!DEL!</a>";
+		txt+="</td><td><a href='javascript:' class='btngreen' onclick='luepfDeckel("+deckel.id+")'>=&gt; &yen;&euro;&dollar;</a>";
+		txt+="</td><td><a href='javascript:' class='btnred' onclick='deleteEntry(\"DECKELS\",\""+deckel.id+"\")'>!DEL!</a>";
 		txt+="</tr>";
 	}
 	return txt;
 }
 
+// complete a deckel, make a transaction out of it.
+function luepfDeckel(deckelid)
+{
+	log("Deckel wird gelüpft..");
+}
+
+// load all deckels for a given id, by name.
 function loadDeckelsForID()
 {
 	var dar = getDeckelsForID(g_idToShow);
