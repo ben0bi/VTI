@@ -169,12 +169,9 @@ function projectsLoaded()
 	var parser = GMLParser.getParser("DataParser");
 
 	var txt="";
-	txt+='<div id="ubermenu">';
-	txt+='<a href="javascript:" onclick="loadTable(1)">Transaktionen</a> | ';
-	txt+='Projekte | '
-	txt+='<a href="javascript" onclick="loadTable(4)">Deckel/Futures</a>';
-	txt+='</div>';
-
+	
+	txt+=showTopBar(2);
+	
 	txt+='<table border="1">';
 	txt+="<tr><td>";
 	txt+="ID";
