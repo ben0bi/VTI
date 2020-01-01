@@ -556,6 +556,69 @@ function showDeckelStandards(which, ommitname=false,deckel = null)
 function luepfDeckel(deckelid)
 {
 	log("Deckel wird gelüpft..");
+	var parser = GMLParser.getParser("DataParser");
+	var deckel = null;
+	for(var i = 0;i<parser.deckels.length;i++)
+	{
+		var d = parser.deckels[i];
+		if(d.id==deckelid)
+		{
+			deckel = d;
+			break;
+		}
+	}
+
+	if(deckel==null)
+	{
+		log("Deckel mit ID "+deckelid+" nicht gefunden.", LOG_WARN);
+		return;
+	}
+	
+	if(isNan(parseFloat(deckel.summe))
+		deckel.summe = 0;
+		
+	var desc = "D: "+deckel.name+" erstattet vorbezogenes "+deckel.produkt+" vom "+deckel.datum.getDate()+"."+(deckel.datum.getMonth()+1)+"."+deckel.datum.getFullYear();
+	desc+=" für "+parseFloat(deckel.summe).toFixed(2)+"CHF";
+	var link = "";
+	var rein = parseFloat(deckel.summe);
+	var raus = 0;
+	if(isNaN(rein))
+		rein=0;
+	var projectid = deckel.projectid;
+	// actual date.
+	var dt = new Date();
+	log("Transaktionsdeckel: "+rein+": "+desc+" @for: "+projectid);
+	log("Add : "+rein+"-"+raus+": "+desc+" / "+link+" @for: "+projectid);
+		
+	var data = {
+		PROJECTID: projectid,
+		DESC: desc,
+		LINK: link,
+		REIN: rein,
+		RAUS: raus,
+		DATE: dt.toString(),
+		whichtable: 'TRANSACTIONS',
+		CUD: 'create'
+				};			// the CUD event to do.
+					// ^if CUD == 'create', it will create OR update an object.
+					// if CUD == 'delete', it will delete the object.
+		
+	// success function.
+	var success = function(data)
+	{
+		console.log("CUD event result:" +data);
+		deleteEntry("DECKELS",deckelid);
+		//loadTable('deckels');
+		// hideBlocker(); render will load all events and show blocker in the meanwhile.
+	}
+
+	$.ajax({
+		type: 'POST',
+		url: 'ajax_CUD_event.php',
+		data: data,
+		success: success,
+		dataType: 'text'
+	});
 }
 
 // load all deckels for a given id, by name.
