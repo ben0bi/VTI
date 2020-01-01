@@ -374,7 +374,7 @@ function showTransactions(proid)
 		txt+="</font></td><td class='tdr'><font color='"+col+"'>";
 		txt+=parseFloat(q).toFixed(2);
 		txt+="</font></td>";
-		txt+="<td><a href='javascript:' onclick='deleteEntry(\"TRANSACTIONS\",\""+t.id+"\")'>!DEL!</a>";
+		txt+="<td><a href='javascript:' class='btnred' onclick='deleteEntry(\"TRANSACTIONS\",\""+t.id+"\")'>!DEL!</a>";
 		txt+="</tr>";
 		gesamtrein+=t.in;
 		gesamtraus+=t.out;
@@ -461,7 +461,7 @@ function projectsLoaded()
 		txt+="</td><td>"+p.desc;
 		txt+="</td><td><a href='"+p.link+"'>"+p.link+"</a>";
 		txt+="</td><td class='tdr'><font color='"+col+"'>"+parseFloat(balanz).toFixed(2)+"</font>";
-		txt+="</td><td><a href='javascript:' onclick='deleteEntry(\"PROJECTS\",\""+p.id+"\")'>!DEL!</a>";
+		txt+="</td><td><a href='javascript:' class='btnred' onclick='deleteEntry(\"PROJECTS\",\""+p.id+"\")'>!DEL!</a>";
 		txt+="</tr>";
 		fullbalanz+=balanz;
 	}
@@ -537,7 +537,7 @@ function showDeckelStandards(which, ommitname=false,deckel = null)
 	if(which==1)
 	{
 		txt+="</td><td><a href='javascript:' class='btngreen' onclick='luepfDeckel("+deckel.id+")'>&yen;&euro;&dollar; &lt;=</a>";
-		txt+="<tr><td>"+deckel.id+"</a>";
+		txt+="</td><td>"+deckel.id+"</a>";
 		txt+="</td><td>"+deckel.datum;
 		if(!ommitname)
 			txt+="</td><td><a href='javascript:' onclick='g_idToShow="+deckel.id+";loadDeckelsForID();'>"+deckel.name+"</a>";
