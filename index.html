@@ -239,6 +239,8 @@ function showDeckelStandards(which, ommitname=false,deckel = null)
 		}
 		txt+="Produkt";
 		txt+="</td><td>";
+		txt+="Projekt";
+		txt+="</td><td>";
 		txt+="Deckelsumme";
 		txt+="</td></tr>";
 
@@ -251,6 +253,7 @@ function showDeckelStandards(which, ommitname=false,deckel = null)
 			txt+="</td><td><a href='javascript:' onclick='g_idToShow="+deckel.id+";loadDeckelsForID();'>"+deckel.name+"</a>";
 		
 		txt+="</td><td>"+deckel.produkt;
+		txt+="</td><td>["+deckel.projectid+"] "+getProjectByID(deckel.projectid).name;
 		txt+="</td><td>"+parseFloat(deckel.summe).toFixed(2);
 		txt+="</tr>";
 	}
