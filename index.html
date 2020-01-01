@@ -229,6 +229,8 @@ function showDeckelStandards(which, ommitname=false,deckel = null)
 		txt+="<tr><td>";
 		txt+="ID";
 		txt+="</td><td>";
+		txt+="Datum";
+		txt+="</td><td>";
 		if(!ommitname)
 		{
 			txt+="Name";
@@ -246,6 +248,7 @@ function showDeckelStandards(which, ommitname=false,deckel = null)
 	if(which==1)
 	{
 		txt+="<tr><td>"+deckel.id+"</a>";
+		txt+="</td><td>"+deckel.datum.getDate()+"."+(deckel.datum.getMonth()+1)+"."+deckel.datum.getFullYear();
 		if(!ommitname)
 			txt+="</td><td><a href='javascript:' onclick='g_idToShow="+deckel.id+";loadDeckelsForID();'>"+deckel.name+"</a>";
 		
