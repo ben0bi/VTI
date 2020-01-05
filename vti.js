@@ -20,9 +20,15 @@ var showTopBar =function(which)
 
 	// 3 = deckel
 	if(which==3)
-		txt+="Deckel/Futures";
+		txt+="Deckel/Futures | ";
 	else
-		txt+='<a href="javascript:" onclick="loadTable(4)">Deckel/Futures</a>';
+		txt+='<a href="javascript:" onclick="loadTable(4)">Deckel/Futures</a> | ';
+
+	// 4 = inventar
+	if(which==4)
+		txt+="Inventar"
+	else
+		txt+='<a href="javascript:" onclick="loadTable(5)">Inventar</a>';
 
 	txt+="</div>";
 	return txt;
@@ -112,6 +118,39 @@ var Data_Deckel = function()
 			me.summe=0;
 		if(__defined(json['PROJECTID']))
 			me.projectid = json['PROJECTID'];
+		if(__defined(json['DATE']))
+			me.datum = new Date(json['DATE']);
+	}
+}
+
+// inventory item
+var Data_Inventory = function()
+{
+	var me = this;
+	this.id = 0;
+	this.name = "Unbekanntes Produkt";
+	// buy price muss beim inventar eingegeben werden (24x Bier für 14.40 zB.)
+	// sell price muss beim inventar eingegeben werden (bevor man auf den knopf drückt.)
+	this.sellPrice = 0;	// standard sell price.
+	this.amount = 0;
+	this.projectid = 0;
+	
+	this.parseGML = function(json, rootpath)
+	{
+		if(__defined(json['ID']))
+			me.id = parseInt(json['ID']);
+		if(__defined(json['NAME']))
+			me.name = json['NAME'];
+		if(__defined(json['BUY']))
+			me.buyPrice = parseFloat(json['BUY']);
+		if(isNaN(me.buyPrice))
+			me.buyPrice = 0.0;
+		if(__defined(json['SELL']))
+			me.sellPrice = parseFloat(json['SELL']);
+		if(isNaN(me.sellPrice))
+			me.sellPrice=0;
+		if(__defined(json['PROJECTID']))
+			me.projectid = json['PROJECTID'];
 		if(__defined(json['DATUM']))
 			me.datum = new Date(json['DATUM']);
 	}
@@ -160,6 +199,17 @@ var DataParser = function()
 				me.deckels.push(de);
 			}
 		}
+		
+		// inventory
+		if(__defined(json['INVENTORY']))
+		{
+			for(var i=0;i<json['INVENTORY'].length; i++)
+			{
+				var inv = new Data_Inventory();
+				inv.parseGML(json['INVENTORY'][i]);
+				me.inventory.push(inv);
+			}
+		}
 	}
 
 	this.clear = function() 
@@ -167,6 +217,7 @@ var DataParser = function()
 		me.projects = [];
 		me.transactions = [];
 		me.deckels = [];
+		me.inventory = [];
 	}
 }
 
@@ -180,6 +231,11 @@ function loadTable(which, id=0)
 	log("Loading data...");
 	switch(which)
 	{
+		case 5:
+		case 'inventar':
+		case 'inventory':
+			PARSEGMLFILE("database.gml", inventoryLoaded);
+			break;
 		case 4:
 		case 'deckel':
 		case 'deckels':
@@ -242,10 +298,12 @@ function singleProjectLoaded()
 	if(proj.link!="")
 		txt+="<a href='"+proj.link+"'><h2>Projekt Seite</h2></a>";
 	txt+="Beschreibung: "+proj.desc;
+	txt+="<br /><br />Deckel für dieses Projekt:<br />"
+	txt+=showDeckels(proj.id);
+
 	txt+="<br /><br />Transaktionen für dieses Projekt:<br />";
-
-
 	txt+=showTransactions(proj.id);
+	
 	document.getElementById("pagecontent").innerHTML=txt;
 }
 

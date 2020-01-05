@@ -474,7 +474,7 @@ function projectsLoaded()
 	document.getElementById("pagecontent").innerHTML=txt;
 }
 
-function showDeckelStandards(which, ommitname=false,deckel = null)
+function showDeckelStandards(which, ommitname=false,deckel = null, projectid=0)
 {
 	var txt="";
 	// table header
@@ -522,7 +522,10 @@ function showDeckelStandards(which, ommitname=false,deckel = null)
 		for(var qq=0;qq<parser.projects.length;qq++)
 		{
 			var p = parser.projects[qq];
-			txt+="<option value='"+p.id+"'>["+p.id+"] "+p.name+"</option>";
+			var sel="";
+			if(p.id==projectid)
+				sel="selected='selected'";
+			txt+="<option value='"+p.id+"' "+sel+" >["+p.id+"] "+p.name+"</option>";
 		}
 		txt+="</select>"
 		txt+="</td><td>";
@@ -621,7 +624,7 @@ function luepfDeckel(deckelid)
 	});
 }
 
-// load all deckels for a given id, by name.
+// load all deckels for a given deckel id, by name.
 function loadDeckelsForID()
 {
 	var dar = getDeckelsForID(g_idToShow);
@@ -656,6 +659,30 @@ function loadDeckelsForID()
 	
 	document.getElementById("obergesamtfeld").innerHTML=deckel;
 	document.getElementById("pagecontent").innerHTML=txt;
+}
+
+// show the deckels for a given project.
+function showDeckels(projectid=-1)
+{
+	var parser = GMLParser.getParser("DataParser");
+	var fullbalanz = 0;
+	
+	var txt="";
+	txt+=showDeckelStandards(0,false,null,projectid);
+	
+	for(var i = 0; i < parser.deckels.length; i++)
+	{
+		var d = parser.deckels[i];
+		if(projectid==-1 || d.projectid==projectid)
+		{
+			txt+=showDeckelStandards(1,false,d);
+			fullbalanz+=parseFloat(d.summe);
+		}
+	}
+	
+	txt+='</table>';	
+	txt="Deckelsumme: "+parseFloat(fullbalanz).toFixed(2)+"<br />"+txt;
+	return txt;
 }
 
 // show all deckels
