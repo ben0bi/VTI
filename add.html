@@ -291,6 +291,7 @@ function hideDeleteWindow()
 	$('#deleteWindow').hide();
 }
 
+// delete the entry with given id from given table.
 function deleteEntry(whichtable, id)
 {
 	var data = {ID: id,
@@ -315,6 +316,30 @@ function deleteEntry(whichtable, id)
 		success: success,
 		dataType: 'text'
 	});
+}
+
+function inventoryLoaded()
+{
+	var txt=showTopBar(4);
+	txt+=showInventoryTable(-1);
+	document.getElementById("pagecontent").innerHTML=txt;
+}
+
+// show all inventory or only the one for a specific project.
+function showInventoryTable(proid)
+{
+	var parser = GMLParser.getParser("DataParser");
+	var txt="";
+	txt+="<table border='1'>";
+	txt+="<tr><td>";
+	txt+="ID";
+	txt+="</td><td>";
+	txt+="Name";
+	txt+="</td><td>";
+	txt+="Anzahl";
+	txt+="</td></tr>";
+	txt+="</table>";
+	return txt;
 }
 
 // show all transactions or only the ones for a specific project.
@@ -443,8 +468,10 @@ function showTransactions(proid)
 
 	txt+=gesamttxt;
 	
+	// set obergesamtfeld.
 	var g = "<table border='1'><tr><td>REIN</td><td>RAUS</td><td>DIFF</td></tr><tr>"+gesamttxt;
 	document.getElementById('obergesamtfeld').innerHTML=g;
+	
 	return txt;
 }
 
