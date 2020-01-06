@@ -25,6 +25,15 @@
 		font-size: 30pt;
 		padding-top: 80px;
 	}
+	.fullbalanz_w
+	{
+		background-image: url('fabrik.gif');
+		background-repeat: no-repeat;
+		width: 200px;
+		height: 400px;
+		text-align: center;
+		padding-top: 150px;
+	}
 	a, a:visited
 	{
 		color: #FFAA00;
@@ -90,6 +99,23 @@
 		font-weight: bold;
 	}
 	
+	/* ui window for deletion of entries. */
+	#deleteWindow
+	{
+		position: absolute;
+		top: 10px;
+		right: 30px;
+		display: block;
+		width: 200px;
+		height: 120px;
+		z-index: 100;
+		border: 2px solid #FFFFFA;
+		background-color: #000033;
+		border-radius: 3px;
+		padding: 10px;
+		display: none;
+	}
+	
 	/* show the gesamt value also in the upper right.*/
 	#obergesamtfeld
 	{
@@ -100,6 +126,7 @@
 </style>
 </head>
 <body>
+	<div id="deleteWindow"></div>
 	<div id="pagetitle">
 		<div id="title">
 		<h1>Volle Transparenz Initiative</h1>
@@ -244,6 +271,26 @@ function addDeckel()
 	});
 }
 
+// show the intermediary delete UI.
+function showDeleteWindow(whichtable, id, caller)
+{
+	var txt = "";
+	txt+="Eintrag-ID #"+id+" wirklich von "+whichtable+" löschen?<br />";
+	txt+="(Damit verknüpfte Einträge werden nicht gelöscht!)<br /><br />";
+	txt+="<a href='javascript:' class='btnred' onclick='hideDeleteWindow();deleteEntry(\'"+whichtable+"\',"+id+")'>Löschen</a> | <a href='javascript:' class='btngreen' onclick='hideDeleteWindow();'>Abbrechen</a>";
+	txt+="";
+	
+	$('#deleteWindow').html(txt);
+	log("CT:"+caller.offset().top);
+	$('#deleteWindow').css('top',(caller.offset().top-($('#deleteWindow').height()*0.5))+'px');
+	$('#deleteWindow').show(txt);
+}
+
+function hideDeleteWindow()
+{
+	$('#deleteWindow').hide();
+}
+
 function deleteEntry(whichtable, id)
 {
 	var data = {ID: id,
@@ -374,7 +421,7 @@ function showTransactions(proid)
 		txt+="</font></td><td class='tdr'><font color='"+col+"'>";
 		txt+=parseFloat(q).toFixed(2);
 		txt+="</font></td>";
-		txt+="<td><a href='javascript:' class='btnred' onclick='deleteEntry(\"TRANSACTIONS\",\""+t.id+"\")'>!DEL!</a>";
+		txt+="<td><a href='javascript:' class='btnred' onclick='showDeleteWindow(\"TRANSACTIONS\","+t.id+", $(this))'>!DEL!</a>";
 		txt+="</tr>";
 		gesamtrein+=t.in;
 		gesamtraus+=t.out;
@@ -461,7 +508,7 @@ function projectsLoaded()
 		txt+="</td><td>"+p.desc;
 		txt+="</td><td><a href='"+p.link+"'>"+p.link+"</a>";
 		txt+="</td><td class='tdr'><font color='"+col+"'>"+parseFloat(balanz).toFixed(2)+"</font>";
-		txt+="</td><td><a href='javascript:' class='btnred' onclick='deleteEntry(\"PROJECTS\",\""+p.id+"\")'>!DEL!</a>";
+		txt+="</td><td><a href='javascript:' class='btnred' onclick='showDeleteWindow(\"PROJECTS\","+p.id+", $(this))'>!DEL!</a>";
 		txt+="</tr>";
 		fullbalanz+=balanz;
 	}
@@ -470,7 +517,7 @@ function projectsLoaded()
 		col="#FF3333";
 	txt+='<tr><td colspan="4"></td><td class="tdr"><font color="'+col+'">'+parseFloat(fullbalanz).toFixed(2)+'</font></td><td></td></tr>';
 	txt+='</table>';
-	document.getElementById("obergesamtfeld").innerHTML="VOLLE BALANZ: <font color='"+col+"'>"+parseFloat(fullbalanz).toFixed(2)+"</font>";
+	document.getElementById("obergesamtfeld").innerHTML="<div class='fullbalanz_w'><font color='"+col+"'>"+parseFloat(fullbalanz).toFixed(2)+"</font></div>";
 	document.getElementById("pagecontent").innerHTML=txt;
 }
 
@@ -549,7 +596,7 @@ function showDeckelStandards(which, ommitname=false,deckel = null, projectid=0)
 		txt+="</td><td>["+deckel.projectid+"] "+getProjectByID(deckel.projectid).name;
 		txt+="</td><td>"+parseFloat(deckel.summe).toFixed(2);
 		txt+="</td><td><a href='javascript:' class='btngreen fw' onclick='luepfDeckel("+deckel.id+")'>&nbsp;=&gt; &yen;&euro;&dollar;&nbsp</a>";
-		txt+="</td><td><a href='javascript:' class='btnred' onclick='deleteEntry(\"DECKELS\",\""+deckel.id+"\")'>!DEL!</a>";
+		txt+="</td><td><a href='javascript:' class='btnred' onclick='showDeleteWindow(\"DECKELS\","+deckel.id+", $(this))'>!DEL!</a>";
 		txt+="</tr>";
 	}
 	return txt;
