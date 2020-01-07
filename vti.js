@@ -154,7 +154,7 @@ var Data_Inventory = function()
 		if(__defined(json['PROJECTID']))
 			me.projectid = json['PROJECTID'];
 		if(__defined(json['DESC']))
-			me.desc = new Date(json['DESC']);
+			me.desc = json['DESC'];
 	}
 }
 

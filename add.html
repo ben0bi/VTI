@@ -398,7 +398,9 @@ function showInventoryTable(proid)
 	txt+="</td><td>";
 	txt+='<a href="javascript:" class="btn fw" onclick="createInventoryItem();">&lt;== NEU</a>';
 	txt+='</td></tr>';
-		
+
+	var o = "";
+	
 	for(var i=0;i<parser.inventory.length;i++)
 	{
 		var itm = parser.inventory[i];
@@ -411,14 +413,25 @@ function showInventoryTable(proid)
 //		if(proid>=0)
 //		{
 			txt+='</td><td>';
-			txt+=itm.projectid;
+			txt+="["+itm.projectid+"] "+getProjectByID(itm.projectid).name;
 //		}
 		txt+='</td><td>';
 		txt+=itm.amount;
 		txt+='</td></tr>';
+		o+="<option value='"+itm.id+"'>["+itm.id+"] "+itm.name+"</option>";
 	}
 	
 	txt+="</table>";
+
+	// set obergesamtfeld.
+	var g = "<select id='inventory_add_id'>";
+	g+=o;
+	g+="</select>";
+	
+	g+='<a href="javascript:" onclick="BuySellInventory(1);" class="btn">&#8383;U&yen;</a> | ';
+	g+='<a href="javascript:" onclick="BuySellInventory(0);" class="btngreen">&dollar;&euro;&pound;&pound;</a>';
+	document.getElementById('obergesamtfeld').innerHTML=g;
+
 	return txt;
 }
 
