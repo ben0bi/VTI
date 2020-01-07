@@ -336,8 +336,56 @@ function showInventoryTable(proid)
 	txt+="</td><td>";
 	txt+="Name";
 	txt+="</td><td>";
+	txt+="Beschreibung";
+	txt+="</td><td>";
+	
+	txt+="Projekt";
+	txt+="</td><td>";
+	
 	txt+="Anzahl";
 	txt+="</td></tr>";
+
+// add the inputs for a new item.
+	txt+='<tr><td>';
+	txt+='<a href="javascript:" class="btn fw" onclick="createInventoryItem();">NEU ==&gt;</a>';
+	txt+='</td><td>';
+	txt+="<input type='text' class='fw' id='input_inventory_name' />";
+	txt+='</td><td>';
+	txt+="<input type='text' class='fw' id='input_inventory_desc' />";
+	txt+='</td><td>';
+	txt+="<select name='projectselector' class='fw' id='input_inventory_projectid'>";
+	for(var i=0;i<parser.projects.length;i++)
+	{
+		var p = parser.projects[i];
+		var sel="";
+		if(i==proid)
+			sel='selected="selected"';
+		txt+='<option value="'+p.id+'" '+sel+'>'+p.id+": "+p.name+'</option>';
+	}
+	txt+="</select>";
+	txt+="</td><td>";
+	txt+='<a href="javascript:" class="btn fw" onclick="createInventoryItem();">&lt;== NEU</a>';
+	txt+='</td></tr>';
+		
+	for(var i=0;i<parser.inventory.length;i++)
+	{
+		var itm = parser.inventory[i];
+		txt+='<tr><td>';
+		txt+=itm.id;
+		txt+='</td><td>';
+		txt+=itm.name;
+		txt+='</td><td>';
+		txt+=itm.desc;
+//		if(proid>=0)
+//		{
+			txt+='</td><td>';
+			txt+=itm.projectid;
+//		}
+		txt+='</td><td>';
+		txt+=itm.amount;
+		txt+='</td></tr>';
+	}
+	
 	txt+="</table>";
 	return txt;
 }

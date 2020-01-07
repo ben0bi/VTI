@@ -129,9 +129,10 @@ var Data_Inventory = function()
 	var me = this;
 	this.id = 0;
 	this.name = "Unbekanntes Produkt";
+	this.desc = "Keine Beschreibung";
 	// buy price muss beim inventar eingegeben werden (24x Bier für 14.40 zB.)
 	// sell price muss beim inventar eingegeben werden (bevor man auf den knopf drückt.)
-	this.sellPrice = 0;	// standard sell price.
+//	this.sellPrice = 0;	// standard sell price.
 	this.amount = 0;
 	this.projectid = 0;
 	
@@ -141,7 +142,7 @@ var Data_Inventory = function()
 			me.id = parseInt(json['ID']);
 		if(__defined(json['NAME']))
 			me.name = json['NAME'];
-		if(__defined(json['BUY']))
+/*		if(__defined(json['BUY']))
 			me.buyPrice = parseFloat(json['BUY']);
 		if(isNaN(me.buyPrice))
 			me.buyPrice = 0.0;
@@ -149,10 +150,11 @@ var Data_Inventory = function()
 			me.sellPrice = parseFloat(json['SELL']);
 		if(isNaN(me.sellPrice))
 			me.sellPrice=0;
+*/
 		if(__defined(json['PROJECTID']))
 			me.projectid = json['PROJECTID'];
-		if(__defined(json['DATUM']))
-			me.datum = new Date(json['DATUM']);
+		if(__defined(json['DESC']))
+			me.desc = new Date(json['DESC']);
 	}
 }
 
