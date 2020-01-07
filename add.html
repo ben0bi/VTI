@@ -317,11 +317,10 @@ function showDeleteWindow(whichtable, id, caller)
 	var txt = "";
 	txt+="Eintrag-ID #"+id+" wirklich von "+whichtable+" löschen?<br />";
 	txt+="(Damit verknüpfte Einträge werden nicht gelöscht!)<br /><br />";
-	txt+="<a href='javascript:' class='btnred' onclick='hideDeleteWindow();deleteEntry(\'"+whichtable+"\',"+id+")'>Löschen</a> | <a href='javascript:' class='btngreen' onclick='hideDeleteWindow();'>Abbrechen</a>";
+	txt+="<a href='javascript:' class='btnred' onclick='hideDeleteWindow();deleteEntry(\""+whichtable+"\","+id+")'>Löschen</a> | <a href='javascript:' class='btngreen' onclick='hideDeleteWindow();'>Abbrechen</a>";
 	txt+="";
 	
 	$('#deleteWindow').html(txt);
-	log("CT:"+caller.offset().top);
 	$('#deleteWindow').css('top',(caller.offset().top-($('#deleteWindow').height()*0.5))+'px');
 	$('#deleteWindow').show(txt);
 }
