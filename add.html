@@ -141,6 +141,9 @@
 
 <script>
 
+// set loglevel.
+log.loglevel = LOG_WARN;
+
 // save a new transaction.
 var g_projectID = -1;
 function addTransaction()
@@ -212,6 +215,43 @@ function addProject()
 	{
 		console.log("CUD event result:" +data);
 		loadTable('projects');
+		// hideBlocker(); render will load all events and show blocker in the meanwhile.
+	}
+
+	$.ajax({
+		type: 'POST',
+		url: 'ajax_CUD_event.php',
+		data: data,
+		success: success,
+		dataType: 'text'
+	});
+}
+
+// create an all new inventory item.
+function createInventoryItem()
+{
+	var name = $('#input_inventory_name').val();
+	var desc = $('#input_inventory_desc').val();
+	var projectid = $('#input_inventory_projectid').val();
+	var amount = 0;
+	log("Creating item "+name+" => "+desc+" @ "+projectid);
+
+	var data = {
+		NAME: name,
+		DESC: desc,
+		PROJECTID: projectid,
+		AMOUNT: 0,
+		whichtable: 'INVENTORY',
+		CUD: 'create'
+	};	// the CUD event to do.
+		// ^if CUD == 'create', it will create OR update an object.
+		// if CUD == 'delete', it will delete the object.
+		
+	// success function.
+	var success = function(data)
+	{
+		console.log("CUD event result:" +data);
+		loadTable('inventory');
 		// hideBlocker(); render will load all events and show blocker in the meanwhile.
 	}
 
@@ -316,13 +356,6 @@ function deleteEntry(whichtable, id)
 		success: success,
 		dataType: 'text'
 	});
-}
-
-function inventoryLoaded()
-{
-	var txt=showTopBar(4);
-	txt+=showInventoryTable(-1);
-	document.getElementById("pagecontent").innerHTML=txt;
 }
 
 // show all inventory or only the one for a specific project.

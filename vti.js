@@ -260,6 +260,14 @@ function loadTable(which, id=0)
 	}
 }
 
+function inventoryLoaded()
+{
+	log("Inventory loaded.");
+	var txt=showTopBar(4);
+	txt+=showInventoryTable(-1);
+	document.getElementById("pagecontent").innerHTML=txt;
+}
+
 // show all transactions.
 function transactionsLoaded()
 {

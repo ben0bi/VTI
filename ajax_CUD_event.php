@@ -37,6 +37,11 @@ if(sizeof($json_data["DECKELS"])<=0)
 	$json_data["DECKELS"]=[];
 }
 
+if(sizeof($json_data["INVENTORY"])<=0)
+{
+	$json_data["INVENTORY"]=[];
+}
+
 // get the next unique id.
 function get_Next_DBID()
 {
@@ -108,6 +113,11 @@ if($CUD=='create')
 			$nen["PROJECTID"]=$_POST["PROJECTID"];
 			$nen["SUMME"]=$_POST["SUMME"];
 			$nen["DATE"]=$_POST["DATE"];
+			break;
+		case "INVENTORY":
+			$nen["NAME"]=$_POST["NAME"];
+			$nen["DESC"]=$_POST["DESC"];
+			$nen["PROJECTID"]=$_POST["PROJECTID"];
 			break;
 /* NOT USED		case "COMBINATORS":
 			$nen["PROJECTID"]=$_POST["PROJECTID"];
