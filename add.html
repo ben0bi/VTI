@@ -321,7 +321,11 @@ function showDeleteWindow(whichtable, id, caller)
 	txt+="";
 	
 	$('#deleteWindow').html(txt);
+	var left=caller.offset().left-$('#deleteWindow').width();
+	if(left<0)
+		left = 0;
 	$('#deleteWindow').css('top',(caller.offset().top-($('#deleteWindow').height()*0.5))+'px');
+	$('#deleteWindow').css('left',left+'px');
 	$('#deleteWindow').show(txt);
 }
 
