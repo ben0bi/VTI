@@ -511,17 +511,26 @@ function showInventoryTable(proid)
 	txt+="</table>";
 
 	// set obergesamtfeld.
+	var invval = 0.0;
+	
 	var g = '<div id="buysellwindow">';
-	g+="<table border='0'><tr><td colspan='6'>";
-	g+= "<select id='input_buysell_itemid' class='fw' oninput='inventorychange(1);'>";
-	g+=o;
-	g+="</select></td></tr>";
-	g+='<tr><td><input class="fifty" id="input_buysell_amount" type="text" placeholder="Anzahl" value="1" oninput="inventorychange(2);" /></td><td> * </td>';
-	g+='<td><input class="fifty" id="input_buysell_itemprice" type="text" placeholder="Stückpreis" value="0" oninput="inventorychange(3);" /></td><td>CHF = </td>';
-	g+='<td><input class="fifty" id="input_buysell_gesamtprice" type="text" placeholder="Gesamtpreis" value="0" oninput="inventorychange(4);" /></td><td>CHF</td></tr>';
-	g+='<tr><td colspan="3"></td><td colspan="3"><a href="javascript:" onclick="BuySellInventory(1);" class="btn">&lt;= &#8383;U&yen;</a> | ';
-	g+='<a href="javascript:" onclick="BuySellInventory(0);" class="btngreen">&dollar;&euro;&pound;&pound; =&gt;</a></td></tr>';
-	g+='</div>';
+	if(o=="")
+	{
+		g+="Bitte erst ein Produkt erstellen.";
+	}else{
+		invval = parser.inventory[0].price;
+		log(invval);
+		g+="<table border='0'><tr><td colspan='6'>";
+		g+= "<select id='input_buysell_itemid' class='fw' oninput='inventorychange(1);'>";
+		g+=o;
+		g+="</select></td></tr>";
+		g+='<tr><td><input class="fifty" id="input_buysell_amount" type="text" placeholder="Anzahl" value="1" oninput="inventorychange(2);" /></td><td> * </td>';
+		g+='<td><input class="fifty" id="input_buysell_itemprice" type="text" placeholder="Stückpreis" value="'+invval+'" oninput="inventorychange(3);" /></td><td>CHF = </td>';
+		g+='<td><input class="fifty" id="input_buysell_gesamtprice" type="text" placeholder="Gesamtpreis" value="'+invval+'" oninput="inventorychange(4);" /></td><td>CHF</td></tr>';
+		g+='<tr><td colspan="3"></td><td colspan="3"><a href="javascript:" onclick="BuySellInventory(1);" class="btn">&lt;= &#8383;U&yen;</a> | ';
+		g+='<a href="javascript:" onclick="BuySellInventory(0);" class="btngreen">&dollar;&euro;&pound;&pound; =&gt;</a></td></tr>';
+		g+='</div>';
+	}
 	g+='</div>';
 	document.getElementById('obergesamtfeld').innerHTML=g;
 
