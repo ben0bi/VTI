@@ -118,6 +118,7 @@ if($CUD=='create')
 			$nen["NAME"]=$_POST["NAME"];
 			$nen["DESC"]=$_POST["DESC"];
 			$nen["PROJECTID"]=$_POST["PROJECTID"];
+			$nen["PRICE"]=$_POST["PRICE"];
 			break;
 /* NOT USED		case "COMBINATORS":
 			$nen["PROJECTID"]=$_POST["PROJECTID"];

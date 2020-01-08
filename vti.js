@@ -132,7 +132,7 @@ var Data_Inventory = function()
 	this.desc = "Keine Beschreibung";
 	// buy price muss beim inventar eingegeben werden (24x Bier für 14.40 zB.)
 	// sell price muss beim inventar eingegeben werden (bevor man auf den knopf drückt.)
-//	this.sellPrice = 0;	// standard sell price.
+	this.price = 0;	// standard sell price.
 	this.amount = 0;
 	this.projectid = 0;
 	
@@ -151,6 +151,10 @@ var Data_Inventory = function()
 		if(isNaN(me.sellPrice))
 			me.sellPrice=0;
 */
+		if(__defined(json['PRICE']))
+			me.price = parseFloat(json['PRICE']);
+		if(isNaN(me.price))
+			me.price=0.0;
 		if(__defined(json['PROJECTID']))
 			me.projectid = json['PROJECTID'];
 		if(__defined(json['DESC']))

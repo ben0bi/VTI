@@ -248,6 +248,7 @@ function createInventoryItem()
 	var name = $('#input_inventory_name').val();
 	var desc = $('#input_inventory_desc').val();
 	var projectid = $('#input_inventory_projectid').val();
+	var price = $('#input_inventory_price').val();
 	var amount = 0;
 	log("Creating item "+name+" => "+desc+" @ "+projectid);
 
@@ -256,6 +257,7 @@ function createInventoryItem()
 		DESC: desc,
 		PROJECTID: projectid,
 		AMOUNT: 0,
+		PRICE: price,
 		whichtable: 'INVENTORY',
 		CUD: 'create'
 	};	// the CUD event to do.
@@ -393,6 +395,9 @@ function showInventoryTable(proid)
 	txt+="Projekt";
 	txt+="</td><td>";
 	
+	txt+="Standardpreis";
+	txt+="</td><td>";	
+	
 	txt+="Anzahl";
 	txt+="</td><td>";
 	txt+="!DEL!";
@@ -417,6 +422,8 @@ function showInventoryTable(proid)
 	}
 	txt+="</select>";
 	txt+="</td><td>";
+	txt+="<input type='text' class='fw' id='input_inventory_price' value='0.00' />";
+	txt+="</td><td>";	
 	txt+='<a href="javascript:" class="btn fw" onclick="createInventoryItem();">&lt;= NEU</a>';
 	txt+="</td><td>";
 	txt+="! v !";
@@ -438,6 +445,8 @@ function showInventoryTable(proid)
 			txt+='</td><td>';
 			txt+="["+itm.projectid+"] "+getProjectByID(itm.projectid).name;
 //		}
+		txt+='</td><td>';
+		txt+=parseFloat(itm.price).toFixed(2);
 		txt+='</td><td>';
 		txt+=itm.amount;
 		txt+='</td><td>';
