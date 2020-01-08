@@ -12,7 +12,10 @@
 	{
 		background-color: #000033;
 		color: #FFFFFA;
+		margin: 0;
+		padding: 0;
 	}
+	
 	.deckel
 	{
 		background-image: url('deckel.png');
@@ -138,9 +141,59 @@
 		top: 10px;
 		right: 10px;
 	}
+	
+	/*blocker stuff*/
+	#blocker
+	{
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		padding: 0;
+		margin: 0;
+		width: 100%;
+		height: 100%;
+		background-color: #000069;
+		z-index: 1000;
+		display: none;
+	}
+	
+	/* content of the blocker, centered. */
+	#blockercontent
+	{
+		position: absolute;
+		margin: 0 auto;
+		width: 400px;
+		text-align: center;
+		font-size: 30pt;
+		font-family: monospace;
+		top: 50%;
+		left: 50%;
+		-ms-transform: translate(-50%, -50%); /* IE 9 */
+		-webkit-transform: translate(-50%, -50%); /* Safari prior 9.0 */
+		transform: translate(-50%, -50%); /* Standard syntax */
+		min-height: 70px;
+	}
+	
+	/* status text for the blocker. */
+	#blocker_text
+	{
+		width: 100%;
+		text-align: center;
+		font-size: 12pt;
+		font-family: monospace;
+	}
 </style>
 </head>
 <body>
+	<div id="blocker">
+		<div id="blockercontent">
+			Bitte warten..
+			<div id="blocker_text">
+				Etwas passiert.
+			</div>
+		</div>
+	</div>
+	
 	<div id="deleteWindow"></div>
 	<div id="pagetitle">
 		<div id="title">
@@ -475,21 +528,6 @@ function showInventoryTable(proid)
 	return txt;
 }
 
-// get an inventory item by its id.
-function getInventoryItemByID(id)
-{
-	id=parseInt(id);
-	if(isNaN(id))
-		return new Data_Inventory();
-	for(var i=0;i<parser.inventory.length;i++)
-	{
-		var itm=parser.inventory[i];
-		if(itm.id==id)
-			return itm;
-	}
-	return new Data_Inventory();
-}
-
 // some field in the upper window in the inventory field has changed.
 //var g_invchangelocked = false;
 function inventorychange(whichfield)
@@ -738,6 +776,8 @@ function projectsLoaded()
 	txt+='</table>';
 	document.getElementById("obergesamtfeld").innerHTML="<div class='fullbalanz_w'><font color='"+col+"'>"+parseFloat(fullbalanz).toFixed(2)+"</font></div>";
 	document.getElementById("pagecontent").innerHTML=txt;
+
+	showBlocker("", false);
 }
 
 function showDeckelStandards(which, ommitname=false,deckel = null, projectid=0)
@@ -978,6 +1018,7 @@ function deckelsLoaded()
 	
 	document.getElementById("obergesamtfeld").innerHTML=deckel;
 	document.getElementById("pagecontent").innerHTML=txt;
+	showBlocker("", false);
 }
 
 loadTable('transactions');

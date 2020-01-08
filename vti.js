@@ -1,6 +1,16 @@
 // VTI Volle Transparenz Initiative
 // Shared functions.
 
+function showBlocker(txt="", show = true)
+{
+	$('#blocker_text').html(txt);
+	$('#blocker').height($(document).height());
+	if(show==true)
+		$('#blocker').show();
+	else
+		$('#blocker').hide();
+}
+
 var showTopBar =function(which)
 {
 	// 0 = all
@@ -236,6 +246,7 @@ function loadTable(which, id=0)
 {
 	log("Loading data...");
 	hideDeleteWindow();
+	showBlocker("Lade "+which);
 	switch(which)
 	{
 		case 5:
@@ -271,6 +282,7 @@ function inventoryLoaded()
 	var txt=showTopBar(4);
 	txt+=showInventoryTable(-1);
 	document.getElementById("pagecontent").innerHTML=txt;
+	showBlocker("", false);
 }
 
 // show all transactions.
@@ -284,6 +296,7 @@ function transactionsLoaded()
 	txt+='Transaktionen ohne Werte wurden gefunden, geschenkt oder waren schon im Inventar.<br />';
 	txt+=showTransactions(-1);
 	document.getElementById("pagecontent").innerHTML=txt;
+	showBlocker("", false);
 }
 
 // get a project by project id.
@@ -297,6 +310,21 @@ function getProjectByID(id)
 			return p;
 	}
 	return new Data_Project();
+}
+
+// get an inventory item by its id.
+function getInventoryItemByID(id)
+{
+	id=parseInt(id);
+	if(isNaN(id))
+		return new Data_Inventory();
+	for(var i=0;i<parser.inventory.length;i++)
+	{
+		var itm=parser.inventory[i];
+		if(itm.id==id)
+			return itm;
+	}
+	return new Data_Inventory();
 }
 
 // show the data for a single project.
@@ -320,6 +348,7 @@ function singleProjectLoaded()
 	txt+=showTransactions(proj.id);
 	
 	document.getElementById("pagecontent").innerHTML=txt;
+	showBlocker("", false);
 }
 
 // get all deckels with the same name like the deckel with this id.
