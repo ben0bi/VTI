@@ -25,6 +25,7 @@
 		font-size: 30pt;
 		padding-top: 80px;
 	}
+	/* fullbalanz -> working */
 	.fullbalanz_w
 	{
 		background-image: url('fabrik.gif');
@@ -34,6 +35,7 @@
 		text-align: center;
 		padding-top: 150px;
 	}
+	
 	a, a:visited
 	{
 		color: #FFAA00;
@@ -114,6 +116,19 @@
 		border-radius: 3px;
 		padding: 10px;
 		display: none;
+	}
+	
+	.fifty
+	{
+		width: 50px;
+	}
+	
+	#buysellwindow
+	{
+		border: 2px solid #FFFFFA;
+		border-radius: 3px;
+		width: 280px;
+		height: 80px;
 	}
 	
 	/* show the gesamt value also in the upper right.*/
@@ -434,12 +449,18 @@ function showInventoryTable(proid)
 	txt+="</table>";
 
 	// set obergesamtfeld.
-	var g = "<select id='inventory_add_id'>";
+	var g = '<div id="buysellwindow">';
+	g+="<table border='0'><tr><td colspan='6'>";
+	g+= "<select id='inventory_add_id' class='fw'>";
 	g+=o;
-	g+="</select>";
-	
-	g+='<a href="javascript:" onclick="BuySellInventory(1);" class="btn">&#8383;U&yen;</a> | ';
-	g+='<a href="javascript:" onclick="BuySellInventory(0);" class="btngreen">&dollar;&euro;&pound;&pound;</a>';
+	g+="</select></td></tr>";
+	g+='<tr><td><input class="fifty" id="input_buysell_amount" type="text" placeholder="Anzahl" value="1" /></td><td> * </td>';
+	g+='<td><input class="fifty" id="input_buysell_itemprice" type="text" placeholder="Stückpreis" value="0" /></td><td>CHF = </td>';
+	g+='<td><input class="fifty" id="input_buysell_gesamtprice" type="text" placeholder="Gesamtpreis" value="0" /></td><td>CHF</td></tr>';
+	g+='<tr><td colspan="3"></td><td colspan="3"><a href="javascript:" onclick="BuySellInventory(1);" class="btn">&lt;= &#8383;U&yen;</a> | ';
+	g+='<a href="javascript:" onclick="BuySellInventory(0);" class="btngreen">&dollar;&euro;&pound;&pound; =&gt;</a></td></tr>';
+	g+='</div>';
+	g+='</div>';
 	document.getElementById('obergesamtfeld').innerHTML=g;
 
 	return txt;

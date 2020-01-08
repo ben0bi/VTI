@@ -231,6 +231,7 @@ var g_idToShow = 0; // used for showing the transactions for a specific project.
 function loadTable(which, id=0)
 {
 	log("Loading data...");
+	hideDeleteWindow();
 	switch(which)
 	{
 		case 5:
