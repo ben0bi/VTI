@@ -315,6 +315,8 @@ function getProjectByID(id)
 // get an inventory item by its id.
 function getInventoryItemByID(id)
 {
+	var parser = GMLParser.getParser("DataParser");
+	
 	id=parseInt(id);
 	if(isNaN(id))
 		return new Data_Inventory();
