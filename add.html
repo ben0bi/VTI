@@ -566,13 +566,13 @@ function BuySellInventory(which)
 	// add or remove the amount.
 	if(which==1)
 	{
-		rein = fullprice;
+		raus = fullprice;
 		itm.amount+=amount;
 		showBlocker("Packe "+amount+" "+itm.name+" ins Inventar");
 		log("Added "+amount+" items to "+itm.name);
 	}else{
 		showBlocker("Entferne "+amount+" "+itm.name+" aus dem Inventar");
-		raus = fullprice;
+		rein = fullprice;
 		if(itm.amount-amount<0)
 		{
 			log("Not enough items in inventory, transaction not done!", LOG_ERROR);
