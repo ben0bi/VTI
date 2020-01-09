@@ -70,7 +70,7 @@ function saveJsonData()
 	{
 		echo("File saved.");
 	}else{
-	    echo "Error while saving the database.";
+	    echo("Error while saving the database.");
 	}
 }
 
@@ -92,7 +92,6 @@ if($CUD=='create' || $CUD=='update')
 			break;
 		}
 	}
-	echo("IDX: $idx");
 	
 	// create an entry..
 	switch($whichtable)
