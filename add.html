@@ -601,7 +601,7 @@ function BuySellInventory(which)
 	var success = function(data)
 	{
 		console.log("item updated:" +data);
-		loadTable('inventory');
+		//loadTable('inventory');
 		//showBlocker("",false);
 		
 		var desc ="";
@@ -632,7 +632,6 @@ function BuySellInventory(which)
 		error: error,
 		dataType: 'text'
 	});
-
 }
 
 // some field in the upper window in the inventory field has changed.
