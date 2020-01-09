@@ -1,5 +1,5 @@
 <?php
-
+ 
  // CUD - create, update or delete an item.
 
 // new > 2.5.4: json saveing.
@@ -92,7 +92,7 @@ if($CUD=='create' || $CUD=='update')
 			break;
 		}
 	}
-	
+
 	// create an entry..
 	switch($whichtable)
 	{
@@ -146,6 +146,7 @@ if($CUD=='create' || $CUD=='update')
 		{
 			$nen["ID"] = $dbid;
 			$json_data[$whichtable][$idx] = $nen;
+			echo("DONE");
 		}else{
 			echo("Entry with ID $dbid not found.");
 		}
