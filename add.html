@@ -560,9 +560,10 @@ function BuySellInventory(which)
 	log("BUYSELL:");
 	if(which==1)
 	{
-		log("Add "+amount);
+		log("Add "+amount+" old: "+itm.amount);
 		rein = fullprice;
 		itm.amount+=amount;
+		log("New: "+itm.amount);
 	}else{
 		raus = fullprice;
 		if(itm.amount-amount<0)
@@ -597,7 +598,7 @@ function BuySellInventory(which)
 		// TODO: XHEREX CREATE TRANSACTION
 		// hideBlocker(); render will load all events and show blocker in the meanwhile.
 	}
-	// success function.
+	// error function.
 	var error = function(data)
 	{
 		console.log("ERROR item NOT updated:" +data);
