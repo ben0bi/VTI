@@ -74,21 +74,25 @@ function saveJsonData()
 	}
 }
 
-$idx = -1;	// the real index.
-// search for the given id
-for($i=0;$i<sizeof($json_data[$whichtable]);$i++)
-{
-	if(intval($json_data[$whichtable][$i]["ID"])==$dbid)
-	{
-		$idx=$i;
-		break;
-	}
-}
-
 // create or update an entry.
-if($CUD=='create')
+if($CUD=='create' || $cud=='update')
 {
 	$nen = [];
+
+	if($cud=='update')
+		$dbid=$_POST['ID'];
+
+	// search for the given id
+	$idx = -1;	// the real index.
+	for($i=0;$i<sizeof($json_data[$whichtable]);$i++)
+	{
+		if(intval($json_data[$whichtable][$i]["ID"])==$dbid)
+		{
+			$idx=$i;
+			break;
+		}
+	}
+	
 	// create an entry..
 	switch($whichtable)
 	{
@@ -119,6 +123,7 @@ if($CUD=='create')
 			$nen["DESC"]=$_POST["DESC"];
 			$nen["PROJECTID"]=$_POST["PROJECTID"];
 			$nen["PRICE"]=$_POST["PRICE"];
+			$nen["AMOUNT"]=$_POST["AMOUNT"];
 			break;
 /* NOT USED		case "COMBINATORS":
 			$nen["PROJECTID"]=$_POST["PROJECTID"];

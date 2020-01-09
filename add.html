@@ -537,6 +537,76 @@ function showInventoryTable(proid)
 	return txt;
 }
 
+// start a buy or sell transaction.
+function BuySellInventory(which)
+{
+	var rein = 0;
+	var raus = 0;
+	var itemid = parseInt($('#input_buysell_itemid').val());
+	var fullprice = parseFloat($('#input_buysell_gesamtprice').val());
+	var price = parseFloat($('#input_buysell_itemprice').val());
+	var amount = parseFloat($('#input_buysell_amount').val());
+	
+	var itm = getInventoryItemByID(itemid);
+		
+	if(isNaN(fullprice) || isNaN(itemprice) || isNaN(amount) || itemid<0)
+	{
+		log("NaN ERROR: Transaction Not Done.", LOG_ERROR);
+		return;
+	}
+	
+	showBlocker("Speichere inventar...");
+	
+	// add or remove the amount.
+	if(which==1)
+	{
+		rein = fullprice;
+		itm.amount+=amount;
+	}else{
+		raus = fullprice;
+		if(itm.amount-amount<0)
+		{
+			log("Not enough items in inventory, transaction not done!", LOG_ERROR);
+			showBlocker("", false);
+			return;
+		}
+		itm.amount = itm.amount - amount;
+	}
+	
+	// update the item
+	var data = {
+	ID: itemid,
+	NAME: itm.name,
+	DESC: itm.desc,
+	PROJECTID: itm.projectid,
+	AMOUNT: itm.amount,
+	PRICE: itm.price,
+	whichtable: 'INVENTORY',
+	CUD: 'update'
+	};			// the CUD event to do.
+					// ^if CUD == 'create', it will create OR update an object.
+					// if CUD == 'delete', it will delete the object.
+		
+	// success function.
+	var success = function(data)
+	{
+		console.log("item updated:" +data);
+		loadTable('inventory');
+		showBlocker("",false);
+		// TODO: XHEREX CREATE TRANSACTION
+		// hideBlocker(); render will load all events and show blocker in the meanwhile.
+	}
+
+	$.ajax({
+		type: 'POST',
+		url: 'ajax_CUD_event.php',
+		data: data,
+		success: success,
+		dataType: 'text'
+	});
+
+}
+
 // some field in the upper window in the inventory field has changed.
 var g_invchangelocked = false;
 function inventorychange(whichfield)
