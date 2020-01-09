@@ -234,7 +234,7 @@ function addTransaction()
 }
 
 // generic function for creating a new transaction.
-function createTransaction(projectid, desc, link, rein, raus, date, loadttable = 'transactions')
+function createTransaction(projectid, desc, link, rein, raus, date, loadtable = 'transactions')
 {
 	showBlocker("Erstelle Transaktion: "+desc, true);
 	var data = {PROJECTID: projectid,
@@ -613,7 +613,7 @@ function BuySellInventory(which)
 		}
 		
 		var dt = new Date();
-		createTransaction(itm.projectid, desc, "", rein, raus, dt);
+		createTransaction(itm.projectid, desc, "", rein, raus, dt,"inventory");
 	}
 	
 	// error function.
