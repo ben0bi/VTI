@@ -519,7 +519,6 @@ function showInventoryTable(proid)
 		g+="Bitte erst ein Produkt erstellen.";
 	}else{
 		invval = parser.inventory[0].price;
-		log(invval);
 		g+="<table border='0'><tr><td colspan='6'>";
 		g+= "<select id='input_buysell_itemid' class='fw' oninput='inventorychange(1);'>";
 		g+=o;
@@ -548,7 +547,7 @@ function BuySellInventory(which)
 	var amount = parseFloat($('#input_buysell_amount').val());
 	
 	var itm = getInventoryItemByID(itemid);
-		
+	
 	if(isNaN(fullprice) || isNaN(itemprice) || isNaN(amount) || itemid<0)
 	{
 		log("NaN ERROR: Transaction Not Done.", LOG_ERROR);
@@ -558,8 +557,10 @@ function BuySellInventory(which)
 	showBlocker("Speichere inventar...");
 	
 	// add or remove the amount.
+	log("BUYSELL:");
 	if(which==1)
 	{
+		log("Add "+amount);
 		rein = fullprice;
 		itm.amount+=amount;
 	}else{
@@ -586,7 +587,7 @@ function BuySellInventory(which)
 	};			// the CUD event to do.
 					// ^if CUD == 'create', it will create OR update an object.
 					// if CUD == 'delete', it will delete the object.
-		
+					
 	// success function.
 	var success = function(data)
 	{
@@ -602,6 +603,7 @@ function BuySellInventory(which)
 		url: 'ajax_CUD_event.php',
 		data: data,
 		success: success,
+		error: success,
 		dataType: 'text'
 	});
 
