@@ -538,9 +538,14 @@ function showInventoryTable(proid)
 }
 
 // some field in the upper window in the inventory field has changed.
-//var g_invchangelocked = false;
+var g_invchangelocked = false;
 function inventorychange(whichfield)
 {
+	if(!g_invchangelocked)
+		g_invchangelocked=true;
+	else
+		return;
+		
 	var amount = parseFloat($('#input_buysell_amount').val());
 	if(isNaN(amount))
 		amount = 0;
@@ -560,25 +565,26 @@ function inventorychange(whichfield)
 			var itm = getInventoryItemByID($('#input_buysell_itemid').val());
 			itemprice = itm.price;
 			gesamtprice = amount*itemprice;
+			$('#input_buysell_gesamtprice').val(gesamtprice);
+			$('#input_buysell_itemprice').val(itemprice);
 			break;
 		case 2:
 		case 3:
 			gesamtprice = amount*itemprice;
+			$('#input_buysell_gesamtprice').val(gesamtprice);
 			break;
 		case 4:
 			if(amount==0 || gesamtprice==0)
-				itemprice = 0;
+				itemprice = 0.0;
 			else
 				itemprice = gesamtprice/amount;
+			$('#input_buysell_itemprice').val(itemprice);
 			break;
 		default:
 			break;
 	}
 
-	// set new values.
-	$('#input_buysell_itemprice').val(itemprice);
-	$('#input_buysell_gesamtprice').val(gesamtprice);
-	
+	g_invchangelocked=false;
 }
 
 // show all transactions or only the ones for a specific project.
