@@ -212,7 +212,7 @@
 // set loglevel.
 log.loglevel = LOG_WARN;
 
-// save a new transaction.
+// save a new transaction from the input fields.
 var g_projectID = -1;
 function addTransaction()
 {
@@ -229,13 +229,20 @@ function addTransaction()
 		projectid = g_projectID;
 	var dt = new Date();
 	log("Add: "+rein+"-"+raus+": "+desc+" / "+link+" @for: "+projectid);
-		
+
+	createTransaction(projectid, desc,link, rein, raus, dt, 'transactions');
+}
+
+// generic function for creating a new transaction.
+function createTransaction(projectid, desc, link, rein, raus, date, loadttable = 'transactions')
+{
+	showBlocker("Erstelle Transaktion: "+desc, true);
 	var data = {PROJECTID: projectid,
 		DESC: desc,
 		LINK: link,
 		REIN: rein,
 		RAUS: raus,
-		DATE: dt.toString(),
+		DATE: date.toString(),
 		whichtable: 'TRANSACTIONS',
 		CUD: 'create'
 				};			// the CUD event to do.
@@ -246,7 +253,8 @@ function addTransaction()
 	var success = function(data)
 	{
 		console.log("CUD event result:" +data);
-		loadTable('transactions');
+		loadTable(loadtable);
+		showBlocker("", false);
 		// hideBlocker(); render will load all events and show blocker in the meanwhile.
 	}
 
@@ -255,6 +263,7 @@ function addTransaction()
 		url: 'ajax_CUD_event.php',
 		data: data,
 		success: success,
+		error: success,
 		dataType: 'text'
 	});
 }
@@ -553,16 +562,16 @@ function BuySellInventory(which)
 		log("NaN ERROR: Transaction Not Done.", LOG_ERROR);
 		return;
 	}
-	
-	showBlocker("Speichere inventar...");
-	
+		
 	// add or remove the amount.
 	if(which==1)
 	{
 		rein = fullprice;
 		itm.amount+=amount;
+		showBlocker("Packe "+amount+" "+itm.name+" ins Inventar");
 		log("Added "+amount+" items to "+itm.name);
 	}else{
+		showBlocker("Entferne "+amount+" "+itm.name+" aus dem Inventar");
 		raus = fullprice;
 		if(itm.amount-amount<0)
 		{
@@ -593,18 +602,26 @@ function BuySellInventory(which)
 	{
 		console.log("item updated:" +data);
 		loadTable('inventory');
-		showBlocker("",false);
-		// TODO: XHEREX CREATE TRANSACTION
-		// hideBlocker(); render will load all events and show blocker in the meanwhile.
+		//showBlocker("",false);
+		
+		var desc ="";
+		if(which==1)
+		{
+			desc=amount+" neue "+itm.name+" ins Inventar gepackt zum Preis von "+itemprice+"/Einheit.";
+		}else{
+			desc=amount+" "+itm.name+ " aus dem Inventar entfernt zum Preis von "+itemprice+"/Einheit.";
+		}
+		
+		var dt = new Date();
+		createTransaction(itm.projectid, desc, "", rein, raus, dt);
 	}
+	
 	// error function.
 	var error = function(data)
 	{
 		console.log("ERROR item NOT updated:" +data);
 		loadTable('inventory');
 		showBlocker("",false);
-		// TODO: XHEREX CREATE TRANSACTION
-		// hideBlocker(); render will load all events and show blocker in the meanwhile.
 	}
 
 	$.ajax({
