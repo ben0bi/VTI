@@ -75,11 +75,11 @@ function saveJsonData()
 }
 
 // create or update an entry.
-if($CUD=='create' || $cud=='update')
+if($CUD=='create' || $CUD=='update')
 {
 	$nen = [];
 
-	if($cud=='update')
+	if($CUD=='update')
 		$dbid=$_POST['ID'];
 
 	// search for the given id
@@ -92,7 +92,6 @@ if($CUD=='create' || $cud=='update')
 			break;
 		}
 	}
-	echo("IDX: $idx");
 	
 	// create an entry..
 	switch($whichtable)
