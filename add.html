@@ -597,13 +597,22 @@ function BuySellInventory(which)
 		// TODO: XHEREX CREATE TRANSACTION
 		// hideBlocker(); render will load all events and show blocker in the meanwhile.
 	}
+	// success function.
+	var error = function(data)
+	{
+		console.log("ERROR item NOT updated:" +data);
+		loadTable('inventory');
+		showBlocker("",false);
+		// TODO: XHEREX CREATE TRANSACTION
+		// hideBlocker(); render will load all events and show blocker in the meanwhile.
+	}
 
 	$.ajax({
 		type: 'POST',
 		url: 'ajax_CUD_event.php',
 		data: data,
 		success: success,
-		error: success,
+		error: error,
 		dataType: 'text'
 	});
 
