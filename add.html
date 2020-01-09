@@ -557,13 +557,11 @@ function BuySellInventory(which)
 	showBlocker("Speichere inventar...");
 	
 	// add or remove the amount.
-	log("BUYSELL:");
 	if(which==1)
 	{
-		log("Add "+amount+" old: "+itm.amount);
 		rein = fullprice;
 		itm.amount+=amount;
-		log("New: "+itm.amount);
+		log("Added "+amount+" items to "+itm.name);
 	}else{
 		raus = fullprice;
 		if(itm.amount-amount<0)
@@ -573,18 +571,19 @@ function BuySellInventory(which)
 			return;
 		}
 		itm.amount = itm.amount - amount;
+		log("Removed "+amount+" items from "+itm.name);
 	}
 	
 	// update the item
 	var data = {
-	ID: itemid,
-	NAME: itm.name,
-	DESC: itm.desc,
-	PROJECTID: itm.projectid,
-	AMOUNT: itm.amount,
-	PRICE: itm.price,
-	whichtable: 'INVENTORY',
-	CUD: 'update'
+		ID: itemid,
+		NAME: itm.name,
+		DESC: itm.desc,
+		PROJECTID: itm.projectid,
+		AMOUNT: itm.amount,
+		PRICE: itm.price,
+		whichtable: 'INVENTORY',
+		CUD: 'update'
 	};			// the CUD event to do.
 					// ^if CUD == 'create', it will create OR update an object.
 					// if CUD == 'delete', it will delete the object.

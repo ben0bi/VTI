@@ -169,6 +169,10 @@ var Data_Inventory = function()
 			me.projectid = json['PROJECTID'];
 		if(__defined(json['DESC']))
 			me.desc = json['DESC'];
+		if(__defined(json['AMOUNT']))
+			me.amount = parseFloat(json['AMOUNT']);
+		if(isNaN(me.amount))
+			me.amount=0;
 	}
 }
 
@@ -180,6 +184,7 @@ var DataParser = function()
 	this.projects = [];
 	this.transactions = [];
 	this.deckels = [];
+	this.inventory = [];
 
 	this.parseGML = function(json, rootpath)
 	{
