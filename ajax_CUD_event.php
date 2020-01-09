@@ -92,6 +92,7 @@ if($CUD=='create' || $cud=='update')
 			break;
 		}
 	}
+	echo("IDX: $idx");
 	
 	// create an entry..
 	switch($whichtable)
