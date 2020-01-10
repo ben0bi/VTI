@@ -11,6 +11,10 @@ function showBlocker(txt="", show = true)
 		$('#blocker').hide();
 }
 
+// hide the window for deletion of generic items.
+function hideDeleteWindow() {$('#deleteWindow').hide();}
+
+// show the vti top bar.
 var showTopBar =function(which)
 {
 	// 0 = all
