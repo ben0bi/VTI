@@ -11,21 +11,51 @@
 	html, body
 	{
 		background-color: #000069;
+		background-image: url('background.jpg');
+		background-size: cover;
+		background-repeat: no-repeat;
 		color: #FFFFFA;
+		padding: 0;
+		margin: 0;
 	}
-
+		
+	#footer
+	{
+		position: absolute;
+		width: 100%;
+		bottom: 0px;
+		border-top: 1px solid #FFFFFA;
+		padding: 10px;
+		padding-left:0px;
+		padding-right: 0px;
+		text-align: center;
+	}
+	
+	#pagecontent, #pagetitle
+	{
+		padding-left: 10px;
+	}
+	
+	a, a:visited
+	{
+		padding: 5px;
+		text-decoration: none;
+		color: #FFAA00;
+	}
+	a:hover {color: #000069; background-color: #FFAA00;}
 </style>
 </head>
 <body>
 	<div id="pagetitle">
 		<div id="title">
-		<h1>Nachtshop Grenchen</h1>
+		<h1>NachtLaden Grenchen</h1>
 		<h2>Einkauf nur mit Mitgliedernummer & erst ab 18 Jahren.</h2>
 		</div>
 	</div>
 	<div id="pagecontent">
 		Bitte warten...Daten werden geladen.
 	</div>
+	<div id="footer"><a href="http://masterbit.net">Impressum = Fickööön</a></div>
 </body>
 
 <script>
@@ -73,7 +103,11 @@ function showInventoryTable(proid)
 		txt+='</td><td>';
 		txt+=parseFloat(itm.price).toFixed(2);
 		txt+='</td><td>';
-		txt+=itm.amount;
+		
+		var amount = itm.amount;
+		if(amount<=0)
+			amount='<font color="#FF0000">ausverkauft</font>';
+		txt+=amount;
 		txt+='</td></tr>';
 	}
 	
