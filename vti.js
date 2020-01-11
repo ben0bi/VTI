@@ -355,6 +355,9 @@ function singleProjectLoaded()
 	txt+="<br /><br />Deckel für dieses Projekt:<br />"
 	txt+=showDeckels(proj.id);
 
+	txt+="<br /><br />Inventar:<br />";
+	txt+=showInventoryTable(proj.id);
+
 	txt+="<br /><br />Transaktionen für dieses Projekt:<br />";
 	txt+=showTransactions(proj.id);
 	

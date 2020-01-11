@@ -492,6 +492,10 @@ function showInventoryTable(proid)
 	for(var i=0;i<parser.inventory.length;i++)
 	{
 		var itm = parser.inventory[i];
+		// maybe ommit this one.
+		if(proid>=0 && proid!=itm.projectid)
+			continue;
+			
 		txt+='<tr><td>';
 		txt+=itm.id;
 		txt+='</td><td>';
