@@ -254,7 +254,7 @@ function createTransaction(projectid, desc, link, rein, raus, date, loadtable = 
 	var success = function(data)
 	{
 		console.log("CUD event result:" +data);
-		loadTable(loadtable);
+		VTI.loadTable(loadtable);
 		showBlocker("", false);
 		// hideBlocker(); render will load all events and show blocker in the meanwhile.
 	}
@@ -292,7 +292,7 @@ function addProject()
 	var success = function(data)
 	{
 		console.log("CUD event result:" +data);
-		loadTable('projects');
+		VTI.loadTable('projects');
 		// hideBlocker(); render will load all events and show blocker in the meanwhile.
 	}
 
@@ -331,7 +331,7 @@ function createInventoryItem()
 	var success = function(data)
 	{
 		console.log("CUD event result:" +data);
-		loadTable('inventory');
+		VTI.loadTable('inventory');
 		// hideBlocker(); render will load all events and show blocker in the meanwhile.
 	}
 
@@ -378,7 +378,7 @@ function addDeckel()
 	var success = function(data)
 	{
 		console.log("CUD event result:" +data);
-		loadTable('deckels');
+		VTI.loadTable('deckels');
 		// hideBlocker(); render will load all events and show blocker in the meanwhile.
 	}
 
@@ -423,7 +423,7 @@ function deleteEntry(whichtable, id)
 	var success = function(data)
 	{
 		console.log("CUD event result:" +data);
-		loadTable(whichtable.toLowerCase());
+		VTI.loadTable(whichtable.toLowerCase());
 		// hideBlocker(); render will load all events and show blocker in the meanwhile.
 	}
 
@@ -492,7 +492,7 @@ function BuySellInventory(which)
 	var success = function(data)
 	{
 		console.log("item updated:" +data);
-		//loadTable('inventory');
+		//VTI.loadTable('inventory');
 		//showBlocker("",false);
 		
 		var desc ="";
@@ -511,7 +511,7 @@ function BuySellInventory(which)
 	var error = function(data)
 	{
 		console.log("ERROR item NOT updated:" +data);
-		loadTable('inventory');
+		VTI.loadTable('inventory');
 		showBlocker("",false);
 	}
 
@@ -631,7 +631,7 @@ function luepfDeckel(deckelid)
 	{
 		console.log("CUD event result:" +data);
 		deleteEntry("DECKELS",deckelid);
-		//loadTable('deckels');
+		//VTI.loadTable('deckels');
 		// hideBlocker(); render will load all events and show blocker in the meanwhile.
 	}
 
