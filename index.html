@@ -1,1 +1,152 @@
-**** UNDER CONSTRUCTION ****
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Nachtshop Grenchen</title>
+<script src="jquery-3.3.1.min.js"></script>
+<script src="gimli-parser.js"></script>
+<script src="vti.js"></script>
+<link href="https://fonts.googleapis.com/css?family=Permanent+Marker&display=swap" rel="stylesheet"> 
+<style type="text/css">
+	html, body
+	{
+		background-color: #000069;
+		background-image: url('background.jpg');
+		background-size: cover;
+		background-repeat: no-repeat;
+		color: #FFFFFA;
+		padding: 0;
+		margin: 0;
+	}
+		
+	#footer
+	{
+		position: absolute;
+		width: 100%;
+		bottom: 0px;
+		border-top: 1px solid #FFFFFA;
+		padding: 10px;
+		padding-left:0px;
+		padding-right: 0px;
+		text-align: center;
+	}
+	
+	#pagecontent, #pagetitle
+	{
+		padding-left: 10px;
+	}
+	
+	a, a:visited
+	{
+		padding: 5px;
+		text-decoration: none;
+		color: #FFAA00;
+	}
+	a:hover {color: #000069; background-color: #FFAA00;}
+</style>
+</head>
+<body>
+	<div id="pagetitle">
+		<div id="title">
+		<h1>NachtLaden Grenchen</h1>
+		<h2>Einkauf nur mit Mitgliedernummer & erst ab 18 Jahren.</h2>
+		</div>
+	</div>
+	<div id="pagecontent">
+		Bitte warten...Daten werden geladen.
+	</div>
+	<div id="footer"><a href="http://masterbit.net">Impressum = Fickööön</a></div>
+</body>
+
+<script>
+var g_shopProjectID = 12; // the id of the project with the shop items.
+
+// show all inventory or only the one for a specific project.
+function showInventoryTable(proid)
+{
+	var parser = GMLParser.getParser("DataParser");
+	var txt="";
+	txt+="<table border='1'>";
+	txt+="<tr><td>";
+	txt+="ID";
+	txt+="</td><td>";
+	txt+="Name";
+	txt+="</td><td>";
+	txt+="Beschreibung";
+	txt+="</td><td>";
+	
+//	txt+="Projekt";
+//	txt+="</td><td>";
+	
+	txt+="Verkaufspreis";
+	txt+="</td><td>";	
+	
+	txt+="Vorhanden";
+	txt+="</td></tr>";
+
+	var o = "";
+	
+	for(var i=0;i<parser.inventory.length;i++)
+	{
+		var itm = parser.inventory[i];
+		txt+='<tr><td>';
+		txt+=itm.id;
+		txt+='</td><td>';
+		txt+=itm.name;
+		txt+='</td><td>';
+		txt+=itm.desc;
+//		if(proid>=0)
+//		{
+//			txt+='</td><td>';
+//			txt+="["+itm.projectid+"] "+getProjectByID(itm.projectid).name;
+//		}
+		txt+='</td><td>';
+		txt+=parseFloat(itm.price).toFixed(2);
+		txt+='</td><td>';
+		
+		var amount = itm.amount;
+		if(amount<=0)
+			amount='<font color="#FF0000">ausverkauft</font>';
+		txt+=amount;
+		txt+='</td></tr>';
+	}
+	
+	txt+="</table>";
+
+	// set obergesamtfeld.
+	var invval = 0.0;
+	
+/*	var g = '<div id="buysellwindow">';
+	if(o=="")
+	{
+		g+="Bitte erst ein Produkt erstellen.";
+	}else{
+		invval = parser.inventory[0].price;
+		g+="<table border='0'><tr><td colspan='6'>";
+		g+= "<select id='input_buysell_itemid' class='fw' oninput='inventorychange(1);'>";
+		g+=o;
+		g+="</select></td></tr>";
+		g+='<tr><td><input class="fifty" id="input_buysell_amount" type="text" placeholder="Anzahl" value="1" oninput="inventorychange(2);" /></td><td> * </td>';
+		g+='<td><input class="fifty" id="input_buysell_itemprice" type="text" placeholder="Stückpreis" value="'+invval+'" oninput="inventorychange(3);" /></td><td>CHF = </td>';
+		g+='<td><input class="fifty" id="input_buysell_gesamtprice" type="text" placeholder="Gesamtpreis" value="'+invval+'" oninput="inventorychange(4);" /></td><td>CHF</td></tr>';
+		g+='<tr><td colspan="3"></td><td colspan="3"><a href="javascript:" onclick="BuySellInventory(1);" class="btn">&lt;= &#8383;U&yen;</a> | ';
+		g+='<a href="javascript:" onclick="BuySellInventory(0);" class="btngreen">&dollar;&euro;&pound;&pound; =&gt;</a></td></tr>';
+		g+='</div>';
+	}
+	g+='</div>';
+	document.getElementById('obergesamtfeld').innerHTML=g;
+*/
+	return txt;
+}
+
+function inventoryLoadedIndex()
+{
+log("TEST");
+	var txt=showInventoryTable(g_shopProjectID);
+	$('#pagecontent').html(txt);
+}
+
+VTI.showTopBarFlag = false;
+VTI.loadTable('inventory', inventoryLoadedIndex);
+</script>
+</html>

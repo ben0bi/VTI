@@ -257,7 +257,7 @@ var VTI = function()
 	};
 	
 	// load the tables and fire a specific function after it.
-	this.loadTable=function(which)
+	this.loadTable=function(which, customFunc=null)
 	{
 		log("Loading data...");
 		hideDeleteWindow();
@@ -267,13 +267,17 @@ var VTI = function()
 			case 'inventar':
 			case 'inventory':
 				showBlocker("Lade Inventar..");
-				PARSEGMLFILE("database.gml", inventoryLoaded);
+				if(customFunc==null)
+					customFunc = inventoryLoaded;
+				PARSEGMLFILE("database.gml", customFunc);
 			break;
 			case 4:
 			case 'deckel':
 			case 'deckels':
 				showBlocker("Lade Deckel..");
-				PARSEGMLFILE("database.gml", deckelsLoaded);
+				if(customFunc==null)
+					customFunc = deckelsLoaded;
+				PARSEGMLFILE("database.gml", customFunc);
 				break;
 // NOT USED			case 3:
 /*			case 'project':
@@ -285,13 +289,17 @@ var VTI = function()
 			case 2:
 			case 'projects':
 				showBlocker("Lade Projekte..");
-				PARSEGMLFILE("database.gml", projectsLoaded);
+				if(customFunc==null)
+					customFunc = projectsLoaded;
+				PARSEGMLFILE("database.gml", customFunc);
 				break;
 			case 1:
 			case 'transactions':
 			default:
 				showBlocker("Lade Transaktionen..");
-				PARSEGMLFILE("database.gml", transactionsLoaded);
+				if(customFunc==null)
+					customFunc = transactionsLoaded;
+				PARSEGMLFILE("database.gml", customFunc);
 				break;
 		}
 	}
@@ -923,7 +931,7 @@ VTI.showTopBarFlag = true;
 
 VTI.instance = new VTI();
 VTI.init = function(tabletoshow) {VTI.instance.init(tabletoshow);}
-VTI.loadTable = function(whichtable) {VTI.instance.loadTable(whichtable);}
+VTI.loadTable = function(whichtable, customFunc = null) {VTI.instance.loadTable(whichtable, customFunc);}
 VTI.loadDeckelsForIDByName = function(deckelid) {VTI.instance.loadDeckelsForIDByName(deckelid);}
 VTI.showProject = function(projectid) {VTI.instance.singleProjectLoaded(projectid);}
 
