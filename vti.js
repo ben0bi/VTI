@@ -733,7 +733,7 @@ var VTI = function()
 	}
 
 	// get an inventory item by its id.
-	var getInventoryItemByID=function(id)
+	this.getInventoryItemByID=function(id)
 	{
 		var parser = GMLParser.getParser("DataParser");
 	
@@ -926,5 +926,7 @@ VTI.init = function(tabletoshow) {VTI.instance.init(tabletoshow);}
 VTI.loadTable = function(whichtable) {VTI.instance.loadTable(whichtable);}
 VTI.loadDeckelsForIDByName = function(deckelid) {VTI.instance.loadDeckelsForIDByName(deckelid);}
 VTI.showProject = function(projectid) {VTI.instance.singleProjectLoaded(projectid);}
+
+VTI.getInventoryItemByID = function(itemid) {return VTI.instance.getInventoryItemByID(itemid);}
 // add our parser to the parsers.
 GMLParser.addParser("DataParser", new DataParser());

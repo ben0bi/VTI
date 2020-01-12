@@ -446,7 +446,7 @@ function BuySellInventory(which)
 	var itemprice = parseFloat($('#input_buysell_itemprice').val());
 	var amount = parseFloat($('#input_buysell_amount').val());
 	
-	var itm = getInventoryItemByID(itemid);
+	var itm = VTI.getInventoryItemByID(itemid);
 	
 	if(isNaN(fullprice) || isNaN(itemprice) || isNaN(amount) || itemid<0)
 	{
