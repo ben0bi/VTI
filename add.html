@@ -550,7 +550,7 @@ function inventorychange(whichfield)
 	{
 		case 1:
 			// get the item price from the inventory item.
-			var itm = getInventoryItemByID($('#input_buysell_itemid').val());
+			var itm = VTI.getInventoryItemByID($('#input_buysell_itemid').val());
 			itemprice = itm.price;
 			gesamtprice = amount*itemprice;
 			$('#input_buysell_gesamtprice').val(gesamtprice);
