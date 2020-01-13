@@ -216,8 +216,10 @@ var DataParser = function()
 var VTI = function()
 {
 	var me = this;
-	var m_idToShow = -1; // used for showing the transactions for a specific project.
-	var m_projectID = -1;
+	// var m_idToShow = -1; // used for showing the transactions for a specific project.	
+	var m_parser = new DataParser();
+	// add our parser to the parsers.
+	GMLParser.addParser("DataParser", m_parser);
 	
 	// show the vti top bar.
 	var showTopBar =function(which)
@@ -331,12 +333,12 @@ var VTI = function()
 	// show the data for a single project.
 	this.singleProjectLoaded=function(projectid=-1)
 	{
-		if(projectid==-1)
-			projectid=m_idToShow;
-		m_idToShow = -1;
+	//	if(projectid==-1)
+	//		projectid=m_idToShow;
+	//	m_idToShow = -1;
 		
 		log("Project loaded.");
-		var parser = GMLParser.getParser("DataParser");
+		//var parser = GMLParser.getParser("DataParser");
 		var proj = getProjectByID(projectid);
 		var txt="";
 
@@ -363,7 +365,7 @@ var VTI = function()
 	function projectsLoaded()
 	{
 		log("Projects loaded.");
-		var parser = GMLParser.getParser("DataParser");
+		//var parser = GMLParser.getParser("DataParser");
 
 		var txt="";
 		txt+=showTopBar(2);
@@ -400,16 +402,16 @@ var VTI = function()
 
 		var fullbalanz = 0;
 		var col = "";
-		for(var i = 0; i < parser.projects.length; i++)
+		for(var i = 0; i < m_parser.projects.length; i++)
 		{
-			var p = parser.projects[i];
+			var p = m_parser.projects[i];
 			txt+="<tr><td><a href='javascript:' onclick='VTI.showProject("+p.id+");'>["+p.id+"]</a>";
 			txt+="</td><td><a href='javascript:' onclick='VTI.showProject("+p.id+");'>"+p.name+"</a>";
 			var balanz = 0;
 			col="#33FF33";
-			for(var pq = 0; pq<parser.transactions.length;pq++)
+			for(var pq = 0; pq<m_parser.transactions.length;pq++)
 			{
-				var t = parser.transactions[pq];
+				var t = m_parser.transactions[pq];
 				if(t.projectid==p.id)
 				{
 					balanz=balanz+t.in-t.out;
@@ -440,7 +442,7 @@ var VTI = function()
 	{
 		log("Deckels loaded.");
 		g_deckelName = -1;
-		var parser = GMLParser.getParser("DataParser");
+		//var parser = GMLParser.getParser("DataParser");
 		var fullbalanz = 0;
 
 		var txt="";
@@ -449,9 +451,9 @@ var VTI = function()
 		txt+=showDeckelStandards(0,false);
 
 		var fullbalanz = 0;
-		for(var i = 0; i < parser.deckels.length; i++)
+		for(var i = 0; i < m_parser.deckels.length; i++)
 		{
-			var d = parser.deckels[i];
+			var d = m_parser.deckels[i];
 			txt+=showDeckelStandards(1,false,d);
 			fullbalanz+=parseFloat(d.summe);
 		}
@@ -468,15 +470,15 @@ var VTI = function()
 	// show the deckels for a given project.
 	var showDeckels=function(projectid=-1)
 	{
-		var parser = GMLParser.getParser("DataParser");
+	//	var parser = GMLParser.getParser("DataParser");
 		var fullbalanz = 0;
 	
 		var txt="";
 		txt+=showDeckelStandards(0,false,null,projectid);
 	
-		for(var i = 0; i < parser.deckels.length; i++)
+		for(var i = 0; i < m_parser.deckels.length; i++)
 		{
-			var d = parser.deckels[i];
+			var d = m_parser.deckels[i];
 			if(projectid==-1 || d.projectid==projectid)
 			{
 				txt+=showDeckelStandards(1,false,d);
@@ -535,10 +537,10 @@ var VTI = function()
 			txt+="<input type='text' id='input_deckel_product' class='fw' />";
 			txt+="</td><td>";
 			txt+="<select id='input_deckel_project' class='fw'>";
-			var parser = GMLParser.getParser("DataParser");
-			for(var qq=0;qq<parser.projects.length;qq++)
+			//var parser = GMLParser.getParser("DataParser");
+			for(var qq=0;qq<m_parser.projects.length;qq++)
 			{
-				var p = parser.projects[qq];
+				var p = m_parser.projects[qq];
 				var sel="";
 				if(p.id==projectid)
 					sel="selected='selected'";
@@ -575,7 +577,7 @@ var VTI = function()
 	// show all inventory or only the one for a specific project.
 	var showInventoryTable=function(proid, isadmin =false)
 	{
-		var parser = GMLParser.getParser("DataParser");
+	//	var parser = GMLParser.getParser("DataParser");
 		var txt="";
 		txt+="<table border='1'>";
 		txt+="<tr><td>";
@@ -609,9 +611,9 @@ var VTI = function()
 			txt+="<input type='text' class='fw' id='input_inventory_desc' />";
 			txt+='</td><td>';
 			txt+="<select name='projectselector' class='fw' id='input_inventory_projectid'>";
-			for(var i=0;i<parser.projects.length;i++)
+			for(var i=0;i<m_parser.projects.length;i++)
 			{
-				var p = parser.projects[i];
+				var p = m_parser.projects[i];
 				var sel="";
 				if(i==proid)
 					sel='selected="selected"';
@@ -630,9 +632,9 @@ var VTI = function()
 		}
 		var o = "";
 	
-		for(var i=0;i<parser.inventory.length;i++)
+		for(var i=0;i<m_parser.inventory.length;i++)
 		{
-			var itm = parser.inventory[i];
+			var itm = m_parser.inventory[i];
 			// maybe ommit this one.
 			if(proid>=0 && proid!=itm.projectid)
 				continue;
@@ -672,7 +674,7 @@ var VTI = function()
 			{
 				g+="Bitte erst ein Produkt erstellen.";
 			}else{
-				invval = parser.inventory[0].price;
+				invval = m_parser.inventory[0].price;
 				g+="<table border='0'><tr><td colspan='6'>";
 				g+= "<select id='input_buysell_itemid' class='fw' oninput='inventorychange(1);'>";
 				g+=o;
@@ -730,10 +732,10 @@ var VTI = function()
 	// get a project by project id.
 	var getProjectByID=function(id)
 	{
-		var parser = GMLParser.getParser("DataParser");
-		for(var i = 0; i < parser.projects.length; i++)
+		//var parser = GMLParser.getParser("DataParser");
+		for(var i = 0; i < m_parser.projects.length; i++)
 		{
-			var p = parser.projects[i];
+			var p = m_parser.projects[i];
 			if(p.id==id)
 				return p;
 		}
@@ -743,14 +745,14 @@ var VTI = function()
 	// get an inventory item by its id.
 	this.getInventoryItemByID=function(id)
 	{
-		var parser = GMLParser.getParser("DataParser");
+		//var parser = GMLParser.getParser("DataParser");
 	
 		id=parseInt(id);
 		if(isNaN(id))
 			return new Data_Inventory();
-		for(var i=0;i<parser.inventory.length;i++)
+		for(var i=0;i<m_parser.inventory.length;i++)
 		{
-			var itm=parser.inventory[i];
+			var itm=m_parser.inventory[i];
 			if(itm.id==id)
 				return itm;
 		}
@@ -760,15 +762,15 @@ var VTI = function()
 	// get all deckels with the same name like the deckel with this id.
 	var getDeckelsForID=function(id)
 	{
-		var parser = GMLParser.getParser("DataParser");
+		//var parser = GMLParser.getParser("DataParser");
 		var found = [];
 		var dk = null;
 		// get the deckel with the given ID.
-		for(var i=0;i<parser.deckels.length;i++)
+		for(var i=0;i<m_parser.deckels.length;i++)
 		{
-			if(parser.deckels[i].id==id)
+			if(m_parser.deckels[i].id==id)
 			{
-				dk=parser.deckels[i];
+				dk=m_parser.deckels[i];
 				break;
 			}
 		}
@@ -778,10 +780,10 @@ var VTI = function()
 			return;
 		}
 		// get all deckels with the same name.
-		for(var i=0;i<parser.deckels.length;i++)
+		for(var i=0;i<m_parser.deckels.length;i++)
 		{
-			if(dk.name.toLowerCase()==parser.deckels[i].name.toLowerCase())
-				found.push(parser.deckels[i]);
+			if(dk.name.toLowerCase()==m_parser.deckels[i].name.toLowerCase())
+				found.push(m_parser.deckels[i]);
 		}
 
 		return found;
@@ -791,7 +793,7 @@ var VTI = function()
 	// show all transactions or only the ones for a specific project.
 	var showTransactions=function(proid)
 	{
-		var parser = GMLParser.getParser("DataParser");
+	//	var parser = GMLParser.getParser("DataParser");
 
 		var colsp = 4;
 	
@@ -832,16 +834,13 @@ var VTI = function()
 		if(proid<0)
 		{
 			txt+="<select name='projectselector' class='fw' id='input_transaction_projectid'>";
-			for(var i=0;i<parser.projects.length;i++)
+			for(var i=0;i<m_parser.projects.length;i++)
 			{
-				var p = parser.projects[i];
+				var p = m_parser.projects[i];
 				txt+='<option value="'+p.id+'">'+p.id+": "+p.name+'</option>';
 			}
 			txt+="</select>";
 			txt+="</td><td>";
-			m_projectID = -1;
-		}else{
-			m_projectID = proid;
 		}
 		txt+="<input type='text' class='fw' id='input_transaction_productlink' />";
 		txt+="</td><td>";	
@@ -856,9 +855,9 @@ var VTI = function()
 		var gesamtvalue = 0;
 		var gesamtrein = 0;
 		var gesamtraus = 0;
-		for(var i = parser.transactions.length-1; i>=0; i--)
+		for(var i = m_parser.transactions.length-1; i>=0; i--)
 		{
-			var t = parser.transactions[i];
+			var t = m_parser.transactions[i];
 			if(proid>=0 && t.projectid!=proid)
 				continue;
 			txt+="<tr><td>";
@@ -936,5 +935,3 @@ VTI.loadDeckelsForIDByName = function(deckelid) {VTI.instance.loadDeckelsForIDBy
 VTI.showProject = function(projectid) {VTI.instance.singleProjectLoaded(projectid);}
 
 VTI.getInventoryItemByID = function(itemid) {return VTI.instance.getInventoryItemByID(itemid);}
-// add our parser to the parsers.
-GMLParser.addParser("DataParser", new DataParser());
