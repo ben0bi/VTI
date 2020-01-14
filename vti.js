@@ -271,7 +271,7 @@ var VTI = function()
 				showBlocker("Lade Inventar..");
 				if(customFunc==null)
 					customFunc = inventoryLoaded;
-				PARSEGMLFILE("database.gml", customFunc);
+				PARSEGMLFILE("DB/db_inventory.gml", customFunc);
 			break;
 			case 4:
 			case 'deckel':
@@ -279,7 +279,7 @@ var VTI = function()
 				showBlocker("Lade Deckel..");
 				if(customFunc==null)
 					customFunc = deckelsLoaded;
-				PARSEGMLFILE("database.gml", customFunc);
+				PARSEGMLFILE("DB/db_deckels.gml", customFunc);
 				break;
 // NOT USED			case 3:
 /*			case 'project':
@@ -293,7 +293,7 @@ var VTI = function()
 				showBlocker("Lade Projekte..");
 				if(customFunc==null)
 					customFunc = projectsLoaded;
-				PARSEGMLFILE("database.gml", customFunc);
+				PARSEGMLFILE("DB/db_projects.gml", customFunc);
 				break;
 			case 1:
 			case 'transactions':
@@ -301,7 +301,7 @@ var VTI = function()
 				showBlocker("Lade Transaktionen..");
 				if(customFunc==null)
 					customFunc = transactionsLoaded;
-				PARSEGMLFILE("database.gml", customFunc);
+				PARSEGMLFILE("DB/db_transactions.gml", customFunc);
 				break;
 		}
 	}
