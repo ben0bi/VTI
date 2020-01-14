@@ -41,7 +41,7 @@ function splitData($datatable)
 		$jdata["GMLS"] = [];
 		$jdata["GMLS"][] = "db_projects.gml";
 	}
-	$newdatafile= "db_".strtolower($datatable).".gml";
+	$newdatafile= "../DB/db_".strtolower($datatable).".gml";
 	$djdata=json_encode($jdata);
 	if(file_put_contents($newdatafile, $djdata))
 	{
