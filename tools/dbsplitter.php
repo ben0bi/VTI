@@ -31,11 +31,17 @@ if(sizeof($json_data["INVENTORY"])<=0)
 	$json_data["INVENTORY"]=[];
 }
 
-function splitData($datatable, $newdatafile)
+function splitData($datatable)
 {
 	global $json_data;
 	$jdata = [];
 	$jdata[$datatable] =$json_data[$datatable];
+	if($datatable!="PROJECTS")
+	{
+		$jdata["GMLS"] = [];
+		$jdata["GMLS"][] = "db_projects.gml";
+	}
+	$newdatafile= "db_".strtolower($datatable).".gml";
 	$djdata=json_encode($jdata);
 	if(file_put_contents($newdatafile, $djdata))
 	{
@@ -45,9 +51,9 @@ function splitData($datatable, $newdatafile)
 	}
 }
 
-splitData('TRANSACTIONS', '../DB/db_transactions.gml');
-splitData('PROJECTS', '../DB/db_projects.gml');
-splitData('DECKELS', '../DB/db_deckels.gml');
-splitData('INVENTORY','../DB/db_inventory.gml');
+splitData('TRANSACTIONS');
+splitData('PROJECTS');
+splitData('DECKELS');
+splitData('INVENTORY');
 
 ?>
