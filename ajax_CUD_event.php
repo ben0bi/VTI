@@ -1,6 +1,6 @@
 <?php
  
- // CUD - create, update or delete an item.
+// CUD - create, update or delete an item.
 
 // new > 2.5.4: json saveing.
 
@@ -10,7 +10,8 @@ $dbid=-1; // set this for delete or update.
 
 echo("CUD: $CUD $whichtable");
 
-$datafile = 'database.gml';
+// new: splitted all dbs into several files.
+$datafile = 'DB/db_'.strtolower($whichtable).'.gml';//'database.gml';
 
 // Read JSON file
 $json = file_get_contents($datafile);
@@ -63,9 +64,18 @@ function get_Next_DBID()
 // save the json data.
 function saveJsonData()
 {
+	// new: save the table in its own file.
 	global $json_data;
 	global $datafile;
-	$jdata = json_encode($json_data);
+	global $whichtable;
+	
+	// create an empty db and then the table.
+	$j = [];
+	$j[$whichtable] = $json_data[$whichtable];
+	// copy the gmls lines.
+	$j["GMLS"]=$json_data["GMLS"];
+	
+	$jdata = json_encode($j);
 	if(file_put_contents($datafile, $jdata))
 	{
 		echo("File saved.");
