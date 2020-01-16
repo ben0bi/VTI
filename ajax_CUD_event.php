@@ -29,7 +29,7 @@ if(isset($_POST["DATA"]))
 	// SET dbid in the entry AFTER getting the data chunk for ommiting this id here.
 }
 
-echo("CUD: $CUD $whichtable");
+echo("CUD: $CUD $dbid $whichtable");
 
 // new: splitted all dbs into several files.
 $datafile = 'DB/db_'.strtolower($whichtable).'.gml';//'database.gml';
@@ -121,17 +121,6 @@ if($CUD=='create' || $CUD=='update')
 {
 	$nen = [];
 
-	// search for the given id
-	$idx = -1;	// the real index.
-	for($i=0;$i<sizeof($json_data[$whichtable]);$i++)
-	{
-		if(intval($json_data[$whichtable][$i]["ID"])==$dbid)
-		{
-			$idx=$i;
-			break;
-		}
-	}
-
 	// create or update an entry.
 	// 3.0.0 code: generic data
 	$nen = $_POST["DATA"];
@@ -176,13 +165,20 @@ if($CUD=='create' || $CUD=='update')
 			break;
 	}
 endof old code */
-	if($dbid==-1)
+
+	// search for the given id
+	$idx = -1;	// the real index.
+	for($i=0;$i<sizeof($json_data[$whichtable]);$i++)
 	{
-		// set a new id.
-		$nen["ID"] = get_Next_DBID();
-		// add the entry
-		$json_data[$whichtable][] = $nen;
-	}else{
+		if(intval($json_data[$whichtable][$i]["ID"])==$dbid)
+		{
+			$idx=$i;
+			break;
+		}
+	}
+
+	if($dbid>=0)
+	{
 		// we found the entry, change it.
 		if($idx>=0)
 		{
@@ -192,6 +188,11 @@ endof old code */
 		}else{
 			echo("Entry with ID $dbid not found.");
 		}
+	}else{
+		// set a new id.
+		$nen["ID"] = get_Next_DBID();
+		// add the entry
+		$json_data[$whichtable][] = $nen;
 	}
 	// save the data.
 	saveJsonData();
