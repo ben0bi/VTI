@@ -18,13 +18,13 @@ $CUD=$_POST["CUD"];
 // which table to update? also determines the filename.
 $whichtable=$_POST["whichtable"];
 
-$dbid = -1 // create a new entry if no id is given.
+$dbid = -1; // create a new entry if no id is given.
 // direct id
 if(isset($_POST["ID"]))	{$dbid = $_POST["ID"];}
 // id is in data chunk.
 if(isset($_POST["DATA"]))
 {
-	if(isset($_POST["DATA"]["ID"])
+	if(isset($_POST["DATA"]["ID"]))
 		$dbid = $_POST["ID"];
 	// SET dbid in the entry AFTER getting the data chunk for ommiting this id here.
 }
