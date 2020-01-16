@@ -25,7 +25,7 @@ if(isset($_POST["ID"]))	{$dbid = $_POST["ID"];}
 if(isset($_POST["DATA"]))
 {
 	if(isset($_POST["DATA"]["ID"]))
-		$dbid = $_POST["ID"];
+		$dbid = $_POST["DATA"]["ID"];
 	// SET dbid in the entry AFTER getting the data chunk for ommiting this id here.
 }
 
