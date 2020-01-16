@@ -238,14 +238,18 @@ function addTransaction()
 function createTransaction(projectid, desc, link, rein, raus, date, loadtable = 'transactions')
 {
 	showBlocker("Erstelle Transaktion: "+desc, true);
-	var data = {PROJECTID: projectid,
-		DESC: desc,
-		LINK: link,
-		REIN: rein,
-		RAUS: raus,
-		DATE: date.toString(),
-		whichtable: 'TRANSACTIONS',
-		CUD: 'create'
+	var data = {
+				DATA: {
+						ID: -1,
+						PROJECTID: projectid,
+						DESC: desc,
+						LINK: link,
+						REIN: rein,
+						RAUS: raus,
+						DATE: date.toString()
+					},
+				whichtable: 'TRANSACTIONS',
+				CUD: 'create'
 				};			// the CUD event to do.
 					// ^if CUD == 'create', it will create OR update an object.
 					// if CUD == 'delete', it will delete the object.
@@ -278,10 +282,15 @@ function addProject()
 	var date = new Date();
 	log("Add: "+name+"/ "+desc+" / "+link);
 	
-	var data = {DESC: desc,
-		LINK: link,
-		NAME: name,
-		DATE: date.toString(),
+	var data = {
+		DATA:
+		{
+			ID: -1,
+			DESC: desc,
+			LINK: link,
+			NAME: name,
+			DATE: date.toString()
+		},
 		whichtable: 'PROJECTS',
 		CUD: 'create'
 	};	// the CUD event to do.
@@ -316,11 +325,14 @@ function createInventoryItem()
 	log("Creating item "+name+" => "+desc+" @ "+projectid);
 
 	var data = {
-		NAME: name,
-		DESC: desc,
-		PROJECTID: projectid,
-		AMOUNT: 0,
-		PRICE: price,
+		DATA: {
+			ID: -1,
+			NAME: name,
+			DESC: desc,
+			PROJECTID: projectid,
+			AMOUNT: 0,
+			PRICE: price
+		},
 		whichtable: 'INVENTORY',
 		CUD: 'create'
 	};	// the CUD event to do.
@@ -363,11 +375,14 @@ function addDeckel()
 	log("Add: "+name+"/ "+produkt+" / "+summe);
 	
 	var data = {
-		NAME: name,
-		PROJECTID: projid,
-		PRODUKT: produkt,
-		DATE: date.toString(),
-		SUMME: summe,
+		DATA: {
+			ID: -1,
+			NAME: name,
+			PROJECTID: projid,
+			PRODUKT: produkt,
+			DATE: date.toString(),
+			SUMME: summe
+		},
 		whichtable: 'DECKELS',
 		CUD: 'create'
 	};	// the CUD event to do.
@@ -412,10 +427,11 @@ function showDeleteWindow(whichtable, id, caller)
 // delete the entry with given id from given table.
 function deleteEntry(whichtable, id)
 {
-	var data = {ID: id,
-		whichtable: whichtable,
-		CUD: 'delete'
-		};			// the CUD event to do.
+	var data = {
+				ID: id,
+				whichtable: whichtable,
+				CUD: 'delete'
+				};			// the CUD event to do.
 					// ^if CUD == 'create', it will create OR update an object.
 					// if CUD == 'delete', it will delete the object.
 		
@@ -476,12 +492,14 @@ function BuySellInventory(which)
 	
 	// update the item
 	var data = {
-		ID: itemid,
-		NAME: itm.name,
-		DESC: itm.desc,
-		PROJECTID: itm.projectid,
-		AMOUNT: itm.amount,
-		PRICE: itm.price,
+		DATA: {
+				ID: itemid,
+				NAME: itm.name,
+				DESC: itm.desc,
+				PROJECTID: itm.projectid,
+				AMOUNT: itm.amount,
+				PRICE: itm.price
+			},
 		whichtable: 'INVENTORY',
 		CUD: 'update'
 	};			// the CUD event to do.
@@ -614,12 +632,15 @@ function luepfDeckel(deckelid)
 	log("Add : "+rein+"-"+raus+": "+desc+" / "+link+" @for: "+projectid);
 		
 	var data = {
-		PROJECTID: projectid,
-		DESC: desc,
-		LINK: link,
-		REIN: rein,
-		RAUS: raus,
-		DATE: dt.toString(),
+		DATA: {
+				ID: -1,
+				PROJECTID: projectid,
+				DESC: desc,
+				LINK: link,
+				REIN: rein,
+				RAUS: raus,
+				DATE: dt.toString()
+			},
 		whichtable: 'TRANSACTIONS',
 		CUD: 'create'
 				};			// the CUD event to do.

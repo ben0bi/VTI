@@ -2,11 +2,32 @@
  
 // CUD - create, update or delete an item.
 
+// new > 3.0.0: generic saving of the post "DATA" field instead of custom save for each table.
+/*
+	E.g.
+	Old: (post)whichtable = transactions, id = x, name = bla, desc = blu
+			and this would be extracted here line by line
+	New: (post)whichtable = transactions, data = (id=1, name=bla, desc=blu)
+			and all the data stuff will be saved "directly" without extraction.
+*/
 // new > 2.5.4: json saveing.
 
+// CUD can be "create" ("update" is exactly the same) or "delete"
+// if CUD is "create" and dbid > 0, the entry with id dbid will be updated.
 $CUD=$_POST["CUD"];
+// which table to update? also determines the filename.
 $whichtable=$_POST["whichtable"];
-$dbid=-1; // set this for delete or update.
+
+$dbid = -1 // create a new entry if no id is given.
+// direct id
+if(isset($_POST["ID"]))	{$dbid = $_POST["ID"];}
+// id is in data chunk.
+if(isset($_POST["DATA"]))
+{
+	if(isset($_POST["DATA"]["ID"])
+		$dbid = $_POST["ID"];
+	// SET dbid in the entry AFTER getting the data chunk for ommiting this id here.
+}
 
 echo("CUD: $CUD $whichtable");
 
@@ -23,6 +44,14 @@ $json_data = json_decode($json,true);
 //echo("OS: $json ".sizeof($json_data['EVENTS']));
 
 // maybe create a new data chunk.
+// 3.0.0 code
+if(sizeof($json_data[$whichtable])<=0)
+{
+	$json_data[$whichtable]=[];
+}
+
+// old code
+/*
 if(sizeof($json_data["TRANSACTIONS"])<=0)
 {
 	$json_data["TRANSACTIONS"]=[];
@@ -42,8 +71,10 @@ if(sizeof($json_data["INVENTORY"])<=0)
 {
 	$json_data["INVENTORY"]=[];
 }
+endof old code */
 
 // get the next unique id.
+// (highest id + 1: BE AWARE OF DEPENDENCIES IF YOU DELETE THE LAST ENTRY AND CREATE A NEW ONE.)
 function get_Next_DBID()
 {
 	global $json_data;
@@ -72,7 +103,8 @@ function saveJsonData()
 	// create an empty db and then the table.
 	$j = [];
 	$j[$whichtable] = $json_data[$whichtable];
-	// copy the gmls lines.
+	// copy the gmls lines. This one is the ONLY one which GML uses internally,
+	// ALL the other ones can be custom defined. GMLs are dependencies.
 	$j["GMLS"]=$json_data["GMLS"];
 	
 	$jdata = json_encode($j);
@@ -89,9 +121,6 @@ if($CUD=='create' || $CUD=='update')
 {
 	$nen = [];
 
-	if($CUD=='update')
-		$dbid=$_POST['ID'];
-
 	// search for the given id
 	$idx = -1;	// the real index.
 	for($i=0;$i<sizeof($json_data[$whichtable]);$i++)
@@ -103,7 +132,11 @@ if($CUD=='create' || $CUD=='update')
 		}
 	}
 
-	// create an entry..
+	// create or update an entry.
+	// 3.0.0 code: generic data
+	$nen = $_POST["DATA"];
+	// old code
+	/*
 	switch($whichtable)
 	{
 		case "TRANSACTIONS":
@@ -135,15 +168,14 @@ if($CUD=='create' || $CUD=='update')
 			$nen["PRICE"]=$_POST["PRICE"];
 			$nen["AMOUNT"]=$_POST["AMOUNT"];
 			break;
-/* NOT USED		case "COMBINATORS":
-			$nen["PROJECTID"]=$_POST["PROJECTID"];
-			$nen["NAME"]=$_POST["NAME"];
-			break;
-			*/
+// NOT USED		case "COMBINATORS":
+//			$nen["PROJECTID"]=$_POST["PROJECTID"];
+//			$nen["NAME"]=$_POST["NAME"];
+//			break;
 		default:
 			break;
 	}
-
+endof old code */
 	if($dbid==-1)
 	{
 		// set a new id.
@@ -168,7 +200,7 @@ if($CUD=='create' || $CUD=='update')
 // delete an entry.
 if($CUD=='delete')
 {
-	$dbid=$_POST["ID"];
+//	$dbid=$_POST["ID"];
 	if($dbid>=0)
 	{
 		$n=[];
