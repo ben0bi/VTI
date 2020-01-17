@@ -234,22 +234,37 @@ function addTransaction()
 	createTransaction(projectid, desc,link, rein, raus, dt, 'transactions');
 }
 
+// use this function for your ajax create and update calls.
+function CU_ajax(whichtable, id, data, successFunction=null, errorFunction=null)
+{
+	var data = {
+				CUD: 'create',
+				whichtable: whichtable,
+				ID: id,
+				DATA: data
+			};
+
+	$.ajax({
+		type: 'POST',
+		url: 'ajax_CUD_event.php',
+		data: data,
+		success: successFunction,
+		error: errorFunction,
+		dataType: 'text'
+	});
+}
+
 // generic function for creating a new transaction.
 function createTransaction(projectid, desc, link, rein, raus, date, loadtable = 'transactions')
 {
 	showBlocker("Erstelle Transaktion: "+desc, true);
 	var data = {
-				DATA: {
-						ID: -1,
-						PROJECTID: projectid,
-						DESC: desc,
-						LINK: link,
-						REIN: rein,
-						RAUS: raus,
-						DATE: date.toString()
-					},
-				whichtable: 'TRANSACTIONS',
-				CUD: 'create'
+				PROJECTID: projectid,
+				DESC: desc,
+				LINK: link,
+				REIN: rein,
+				RAUS: raus,
+				DATE: date.toString()
 				};			// the CUD event to do.
 					// ^if CUD == 'create', it will create OR update an object.
 					// if CUD == 'delete', it will delete the object.
@@ -257,20 +272,12 @@ function createTransaction(projectid, desc, link, rein, raus, date, loadtable = 
 	// success function.
 	var success = function(data)
 	{
-		console.log("CUD event result:" +data);
+		console.log("CUD transaction event result:" +data);
 		VTI.loadTable(loadtable);
 		showBlocker("", false);
-		// hideBlocker(); render will load all events and show blocker in the meanwhile.
 	}
 
-	$.ajax({
-		type: 'POST',
-		url: 'ajax_CUD_event.php',
-		data: data,
-		success: success,
-		error: success,
-		dataType: 'text'
-	});
+	CU_ajax('TRANSACTIONS',-1,data,success);
 }
 
 // save a new project.
@@ -283,35 +290,19 @@ function addProject()
 	log("Add: "+name+"/ "+desc+" / "+link);
 	
 	var data = {
-		DATA:
-		{
-			ID: -1,
-			DESC: desc,
-			LINK: link,
-			NAME: name,
-			DATE: date.toString()
-		},
-		whichtable: 'PROJECTS',
-		CUD: 'create'
-	};	// the CUD event to do.
-		// ^if CUD == 'create', it will create OR update an object.
-		// if CUD == 'delete', it will delete the object.
-		
+					DESC: desc,
+					LINK: link,
+					NAME: name,
+					DATE: date.toString()
+				};
 	// success function.
 	var success = function(data)
 	{
-		console.log("CUD event result:" +data);
+		console.log("CUD project event result:" +data);
 		VTI.loadTable('projects');
-		// hideBlocker(); render will load all events and show blocker in the meanwhile.
 	}
 
-	$.ajax({
-		type: 'POST',
-		url: 'ajax_CUD_event.php',
-		data: data,
-		success: success,
-		dataType: 'text'
-	});
+	CU_ajax('PROJECTS', -1, data, success);
 }
 
 // create an all new inventory item.
@@ -325,35 +316,21 @@ function createInventoryItem()
 	log("Creating item "+name+" => "+desc+" @ "+projectid);
 
 	var data = {
-		DATA: {
-			ID: -1,
-			NAME: name,
-			DESC: desc,
-			PROJECTID: projectid,
-			AMOUNT: 0,
-			PRICE: price
-		},
-		whichtable: 'INVENTORY',
-		CUD: 'create'
-	};	// the CUD event to do.
-		// ^if CUD == 'create', it will create OR update an object.
-		// if CUD == 'delete', it will delete the object.
-		
+				NAME: name,
+				DESC: desc,
+				PROJECTID: projectid,
+				AMOUNT: 0,
+				PRICE: price
+				};
+
 	// success function.
 	var success = function(data)
 	{
-		console.log("CUD event result:" +data);
+		console.log("CUD inventory event result:" +data);
 		VTI.loadTable('inventory');
-		// hideBlocker(); render will load all events and show blocker in the meanwhile.
 	}
 
-	$.ajax({
-		type: 'POST',
-		url: 'ajax_CUD_event.php',
-		data: data,
-		success: success,
-		dataType: 'text'
-	});
+	CU_ajax('INVENTORY', -1, data, success);
 }
 
 // save a new deckel.
@@ -375,35 +352,21 @@ function addDeckel()
 	log("Add: "+name+"/ "+produkt+" / "+summe);
 	
 	var data = {
-		DATA: {
-			ID: -1,
-			NAME: name,
-			PROJECTID: projid,
-			PRODUKT: produkt,
-			DATE: date.toString(),
-			SUMME: summe
-		},
-		whichtable: 'DECKELS',
-		CUD: 'create'
-	};	// the CUD event to do.
-		// ^if CUD == 'create', it will create OR update an object.
-		// if CUD == 'delete', it will delete the object.
-		
+				NAME: name,
+				PROJECTID: projid,
+				PRODUKT: produkt,
+				DATE: date.toString(),
+				SUMME: summe
+				};
+	
 	// success function.
 	var success = function(data)
 	{
-		console.log("CUD event result:" +data);
+		console.log("CUD deckels event result:" +data);
 		VTI.loadTable('deckels');
-		// hideBlocker(); render will load all events and show blocker in the meanwhile.
 	}
 
-	$.ajax({
-		type: 'POST',
-		url: 'ajax_CUD_event.php',
-		data: data,
-		success: success,
-		dataType: 'text'
-	});
+	CU_ajax("DECKELS", -1, data, success);
 }
 
 // show the intermediary delete UI.
@@ -492,26 +455,16 @@ function BuySellInventory(which)
 	
 	// update the item
 	var data = {
-		DATA: {
-				ID: itemid,
 				NAME: itm.name,
 				DESC: itm.desc,
 				PROJECTID: itm.projectid,
 				AMOUNT: itm.amount,
 				PRICE: itm.price
-			},
-		whichtable: 'INVENTORY',
-		CUD: 'update'
-	};			// the CUD event to do.
-					// ^if CUD == 'create', it will create OR update an object.
-					// if CUD == 'delete', it will delete the object.
-					
+				};			
 	// success function.
 	var success = function(data)
 	{
 		console.log("item updated:" +data);
-		//VTI.loadTable('inventory');
-		//showBlocker("",false);
 		
 		var desc ="";
 		if(which==1)
@@ -533,14 +486,7 @@ function BuySellInventory(which)
 		showBlocker("",false);
 	}
 
-	$.ajax({
-		type: 'POST',
-		url: 'ajax_CUD_event.php',
-		data: data,
-		success: success,
-		error: error,
-		dataType: 'text'
-	});
+	CU_ajax("INVENTORY", itemid, data, success, error);
 }
 
 // some field in the upper window in the inventory field has changed.
@@ -596,7 +542,7 @@ function inventorychange(whichfield)
 // complete a deckel, make a transaction out of it.
 function luepfDeckel(deckelid)
 {
-	log("Deckel wird gelüpft..");
+	showBlocker("Deckel wird gelüpft..");
 	var parser = GMLParser.getParser("DataParser");
 	var deckel = null;
 	for(var i = 0;i<parser.deckels.length;i++)
@@ -632,37 +578,23 @@ function luepfDeckel(deckelid)
 	log("Add : "+rein+"-"+raus+": "+desc+" / "+link+" @for: "+projectid);
 		
 	var data = {
-		DATA: {
-				ID: -1,
 				PROJECTID: projectid,
 				DESC: desc,
 				LINK: link,
 				REIN: rein,
 				RAUS: raus,
 				DATE: dt.toString()
-			},
-		whichtable: 'TRANSACTIONS',
-		CUD: 'create'
-				};			// the CUD event to do.
-					// ^if CUD == 'create', it will create OR update an object.
-					// if CUD == 'delete', it will delete the object.
-		
+				};
+				
 	// success function.
 	var success = function(data)
 	{
 		console.log("CUD event result:" +data);
 		deleteEntry("DECKELS",deckelid);
-		//VTI.loadTable('deckels');
-		// hideBlocker(); render will load all events and show blocker in the meanwhile.
+		showBlocker("", false);
 	}
 
-	$.ajax({
-		type: 'POST',
-		url: 'ajax_CUD_event.php',
-		data: data,
-		success: success,
-		dataType: 'text'
-	});
+	CU_ajax("TRANSACTIONS", -1, data, success);
 }
 
 VTI.loadTable('transactions');
