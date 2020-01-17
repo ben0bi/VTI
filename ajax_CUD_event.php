@@ -99,14 +99,15 @@ function saveJsonData()
 	global $json_data;
 	global $datafile;
 	global $whichtable;
-	
+
 	// create an empty db and then the table.
 	$j = [];
 	$j[$whichtable] = $json_data[$whichtable];
 	// copy the gmls lines. This one is the ONLY one which GML uses internally,
 	// ALL the other ones can be custom defined. GMLs are dependencies.
-	$j["GMLS"]=$json_data["GMLS"];
-	
+	if(isset($json_data["GMLS"]))
+		$j["GMLS"]=$json_data["GMLS"];
+
 	$jdata = json_encode($j);
 	if(file_put_contents($datafile, $jdata))
 	{
