@@ -271,7 +271,7 @@ var VTI = function()
 				showBlocker("Lade Inventar..");
 				if(customFunc==null)
 					customFunc = inventoryLoaded;
-				PARSEGMLFILE("DB/db_inventory.gml", customFunc);
+				PARSEGMLFILE("DB/combo_inventory.gml", customFunc);
 			break;
 			case 4:
 			case 'deckel':
@@ -279,7 +279,7 @@ var VTI = function()
 				showBlocker("Lade Deckel..");
 				if(customFunc==null)
 					customFunc = deckelsLoaded;
-				PARSEGMLFILE("DB/db_deckels.gml", customFunc);
+				PARSEGMLFILE("DB/combo_deckels.gml", customFunc);
 				break;
 // NOT USED			case 3:
 /*			case 'project':
@@ -293,7 +293,7 @@ var VTI = function()
 				showBlocker("Lade Projekte..");
 				if(customFunc==null)
 					customFunc = projectsLoaded;
-				PARSEGMLFILE("DB/db_projects.gml", customFunc);
+				PARSEGMLFILE("DB/combo_projects.gml", customFunc);
 				break;
 			case 1:
 			case 'transactions':
@@ -301,7 +301,7 @@ var VTI = function()
 				showBlocker("Lade Transaktionen..");
 				if(customFunc==null)
 					customFunc = transactionsLoaded;
-				PARSEGMLFILE("DB/db_transactions.gml", customFunc);
+				PARSEGMLFILE("DB/combo_transactions.gml", customFunc);
 				break;
 		}
 	}
@@ -331,14 +331,12 @@ var VTI = function()
 	}
 
 	// show the data for a single project.
-	this.singleProjectLoaded=function(projectid=-1)
+	this.singleProjectLoaded=function()
 	{
-	//	if(projectid==-1)
-	//		projectid=m_idToShow;
-	//	m_idToShow = -1;
+		var projectid = m_showProjectId;
+		m_showProjectId = -1;
 		
 		log("Project loaded.");
-		//var parser = GMLParser.getParser("DataParser");
 		var proj = getProjectByID(projectid);
 		var txt="";
 
@@ -925,6 +923,14 @@ var VTI = function()
 	{
 		me.loadTable(tabletoshow);
 	}
+	
+	// this show project
+	var m_showProjectId = -1;
+	this.showProject = function(projectid)
+	{
+		m_showProjectId = projectid;
+		PARSEGMLFILE("DB/combo_singleproject.gml", VTI.instance.singleProjectLoaded);
+	}
 };
 VTI.showTopBarFlag = true;
 
@@ -932,6 +938,9 @@ VTI.instance = new VTI();
 VTI.init = function(tabletoshow) {VTI.instance.init(tabletoshow);}
 VTI.loadTable = function(whichtable, customFunc = null) {VTI.instance.loadTable(whichtable, customFunc);}
 VTI.loadDeckelsForIDByName = function(deckelid) {VTI.instance.loadDeckelsForIDByName(deckelid);}
-VTI.showProject = function(projectid) {VTI.instance.singleProjectLoaded(projectid);}
+VTI.showProject = function(projectid) 
+{
+	VTI.instance.showProject(projectid);
+}
 
 VTI.getInventoryItemByID = function(itemid) {return VTI.instance.getInventoryItemByID(itemid);}
