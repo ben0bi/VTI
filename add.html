@@ -226,6 +226,7 @@ function addTransaction()
 	if(isNaN(raus))
 		raus=0;
 	var projectid = $('#input_transaction_projectid').val();
+	// check if projectid was set from outside.
 	if(g_projectID!=-1)
 		projectid = g_projectID;
 	var dt = new Date();

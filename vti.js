@@ -823,6 +823,10 @@ var VTI = function()
 
 		// add the inputs
 		txt+="<tr><td>";
+		if(proid>=0)
+			g_projectID = proid;
+		else
+			g_projectID = -1;
 		txt+="<a href='javascript:' class='btn' onclick='addTransaction();'><nobr>NEU =&gt;</nobr></a>";
 		txt+="</td><td>";
 		txt+="(auto)";

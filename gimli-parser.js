@@ -10,8 +10,8 @@
 	this.parseGML(json, rootPath)
 	this.clear()
 	
-	And then add your function with:
-	GMLParser.addParser("parsername", parser_function);
+	And then add your class with:
+	GMLParser.addParser("parsername", new parser_class());
 */
 
 // 0.7.01: forgot to incorporate the gmurl stuff into gimli-parser.js
