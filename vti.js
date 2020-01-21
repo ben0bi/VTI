@@ -531,6 +531,9 @@ var VTI = function()
 			{
 				txt+="<input type='text' id='input_deckel_name' class='fw' />";
 				txt+="</td><td>";
+				g_deckelName=-1;
+			}else{
+				// g_deckelName;
 			}
 			txt+="<input type='text' id='input_deckel_product' class='fw' />";
 			txt+="</td><td>";
@@ -700,7 +703,7 @@ var VTI = function()
 			log("NO DECKELS FOUND!");
 			return;
 		}
-//		g_deckelName = dar[0].name;
+		g_deckelName = dar[0].name;
 
 		var fullbalanz = 0;
 
