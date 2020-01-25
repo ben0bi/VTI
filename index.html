@@ -50,6 +50,7 @@
 		<div id="title">
 		<h1>NachtLaden Grenchen</h1>
 		<h2>Einkauf nur mit Mitgliedernummer & erst ab 18 Jahren.</h2>
+		<h2>Shop-O-Fon: <span class="blinker">033 511 05 42</span></h2>
 		</div>
 	</div>
 	<div id="pagecontent">
@@ -141,12 +142,44 @@ function showInventoryTable(proid)
 
 function inventoryLoadedIndex()
 {
-log("TEST");
 	var txt=showInventoryTable(g_shopProjectID);
 	$('#pagecontent').html(txt);
 }
 
 VTI.showTopBarFlag = false;
 VTI.loadTable('inventory', inventoryLoadedIndex);
+
+m_blinkColor="#00FF00";
+function blink()
+{
+	$('.blinker').css('color', m_blinkColor);
+	switch(m_blinkColor)
+	{
+		case "#00FF00": m_blinkColor="#FFAA00";break;
+		case "#FFAA00": m_blinkColor="#FFFF00";break;
+		case "#FFFF00": m_blinkColor="#FF0000";break;
+		case "#FF0000": m_blinkColor="#FF33AA";break;
+		case "#FF33AA": m_blinkColor="#AA33FF";break;
+		case "#AA33FF": m_blinkColor="#3333FF";break;
+		case "#3333FF": m_blinkColor="#33AAFF";break;
+		case "#33AAFF": m_blinkColor="#33FFAA";break;
+		case "#33FFAA": m_blinkColor="#00FF00";break;
+		default: break;
+	}
+}
+
+m_hide = false;
+function hider()
+{
+	if(m_hide)
+		$('.hider').hide();
+	else
+		$('.hider').show();
+	m_hide = !m_hide;
+}
+
+setInterval(blink, 100);
+setInterval(hider, 500);
+
 </script>
 </html>
