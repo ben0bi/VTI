@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<YealinkIPPhoneTextMenu
+	destroyOnExit="no"
+	style="numbered"
+	Beep="no"
+	Timeout="30"
+	LockIn="no">
+	<Title wrap="yes">Ben0bi Services</Title>
+	<MenuItem>
+		<Prompt>Ask Google</Prompt>
+		<URI>http://www.google.ch</URI>
+		<Dial>456</Dial>
+	</MenuItem>
+</YealinkIPPhoneTextMenu>
+

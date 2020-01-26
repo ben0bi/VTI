@@ -50,6 +50,7 @@
 		<div id="title">
 		<h1>NachtLaden Grenchen</h1>
 		<h2>Einkauf nur mit Mitgliedernummer & erst ab 18 Jahren.</h2>
+		<h2>Dienstag & Mittwoch sind Ruhetage.</h2>
 		<h2>Shop-O-Fon: <span class="blinker">033 511 05 42</span></h2>
 		</div>
 	</div>
@@ -152,6 +153,12 @@ VTI.loadTable('inventory', inventoryLoadedIndex);
 m_blinkColor="#00FF00";
 function blink()
 {
+	var date = new Date();
+	if(date.getDay()==2 || date.getDay()==3)
+		$('.number').html('Heute ist Ruhetag!');
+	else
+		$('.number').html('033 511 05 42');
+
 	$('.blinker').css('color', m_blinkColor);
 	switch(m_blinkColor)
 	{
@@ -168,18 +175,7 @@ function blink()
 	}
 }
 
-m_hide = false;
-function hider()
-{
-	if(m_hide)
-		$('.hider').hide();
-	else
-		$('.hider').show();
-	m_hide = !m_hide;
-}
-
 setInterval(blink, 100);
-setInterval(hider, 500);
 
 </script>
 </html>
