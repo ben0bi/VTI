@@ -8,6 +8,14 @@
 <script src="vti.js"></script>
 <link href="https://fonts.googleapis.com/css?family=Permanent+Marker&display=swap" rel="stylesheet"> 
 <style type="text/css">
+
+	@font-face {
+		font-family: 'calFont';
+		font-style: normal;
+		font-weight: 400;
+		src: url('PressStart2P.ttf');
+	}
+
 	html, body
 	{
 		background-color: #000069;
@@ -15,6 +23,8 @@
 		background-size: cover;
 		background-repeat: no-repeat;
 		color: #FFFFFA;
+		font-family: 'calFont', serif;
+		font-size: 10pt;
 		padding: 0;
 		margin: 0;
 	}
@@ -80,7 +90,7 @@ function showInventoryTable(proid)
 //	txt+="Projekt";
 //	txt+="</td><td>";
 	
-	txt+="Verkaufspreis";
+	txt+="Preis";
 	txt+="</td><td>";	
 	
 	txt+="Vorhanden";
@@ -102,9 +112,9 @@ function showInventoryTable(proid)
 //			txt+='</td><td>';
 //			txt+="["+itm.projectid+"] "+getProjectByID(itm.projectid).name;
 //		}
-		txt+='</td><td>';
+		txt+='</td><td><font color="#FFAA00">';
 		txt+=parseFloat(itm.price).toFixed(2);
-		txt+='</td><td>';
+		txt+='</font></td><td>';
 		
 		var amount = itm.amount;
 		if(amount<=0)
