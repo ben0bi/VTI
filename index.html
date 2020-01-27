@@ -67,11 +67,35 @@
 	<div id="pagecontent">
 		Bitte warten...Daten werden geladen.
 	</div>
+<!--	<div id="message">
+		<input type="text" id="input_msg" />
+		<a href="javascript:" onclick="sendMsg()">SENDEN</a>
+	</div>
+-->
 	<div id="footer"><a href="http://masterbit.net">Impressum = Fickööön</a></div>
 </body>
 
 <script>
 var g_shopProjectID = 12; // the id of the project with the shop items.
+
+function sendMsg()
+{
+	function successFunction(data) {alert("MSG SENT! "+data);}
+	function errorFunction(data) {alert("ERROR FOR MSG "+data);}
+
+	var msg=$('#input_msg').val();
+	if(msg!="" && msg!=null)
+	{
+		$.ajax({
+			type: 'POST',
+			url: 'ajax_phone_msg.php',
+			data: {"MSG": msg},
+			success: successFunction,
+			error: errorFunction,
+			dataType: 'text'
+		});
+	}
+}
 
 // show all inventory or only the one for a specific project.
 function showInventoryTable(proid)
@@ -86,9 +110,6 @@ function showInventoryTable(proid)
 	txt+="</td><td>";
 	txt+="Beschreibung";
 	txt+="</td><td>";
-	
-//	txt+="Projekt";
-//	txt+="</td><td>";
 	
 	txt+="Preis";
 	txt+="</td><td>";	
@@ -107,11 +128,6 @@ function showInventoryTable(proid)
 		txt+=itm.name;
 		txt+='</td><td>';
 		txt+=itm.desc;
-//		if(proid>=0)
-//		{
-//			txt+='</td><td>';
-//			txt+="["+itm.projectid+"] "+getProjectByID(itm.projectid).name;
-//		}
 		txt+='</td><td><font color="#FFAA00">';
 		txt+=parseFloat(itm.price).toFixed(2);
 		txt+='</font></td><td>';
@@ -125,29 +141,6 @@ function showInventoryTable(proid)
 	
 	txt+="</table>";
 
-	// set obergesamtfeld.
-	var invval = 0.0;
-	
-/*	var g = '<div id="buysellwindow">';
-	if(o=="")
-	{
-		g+="Bitte erst ein Produkt erstellen.";
-	}else{
-		invval = parser.inventory[0].price;
-		g+="<table border='0'><tr><td colspan='6'>";
-		g+= "<select id='input_buysell_itemid' class='fw' oninput='inventorychange(1);'>";
-		g+=o;
-		g+="</select></td></tr>";
-		g+='<tr><td><input class="fifty" id="input_buysell_amount" type="text" placeholder="Anzahl" value="1" oninput="inventorychange(2);" /></td><td> * </td>';
-		g+='<td><input class="fifty" id="input_buysell_itemprice" type="text" placeholder="Stückpreis" value="'+invval+'" oninput="inventorychange(3);" /></td><td>CHF = </td>';
-		g+='<td><input class="fifty" id="input_buysell_gesamtprice" type="text" placeholder="Gesamtpreis" value="'+invval+'" oninput="inventorychange(4);" /></td><td>CHF</td></tr>';
-		g+='<tr><td colspan="3"></td><td colspan="3"><a href="javascript:" onclick="BuySellInventory(1);" class="btn">&lt;= &#8383;U&yen;</a> | ';
-		g+='<a href="javascript:" onclick="BuySellInventory(0);" class="btngreen">&dollar;&euro;&pound;&pound; =&gt;</a></td></tr>';
-		g+='</div>';
-	}
-	g+='</div>';
-	document.getElementById('obergesamtfeld').innerHTML=g;
-*/
 	return txt;
 }
 
