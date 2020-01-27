@@ -22,7 +22,7 @@ $json = json_decode($jdata, true);
 echo('<?xml version="1.0" encoding="ISO-8859-1"?>');
 
 // just show a text screen.
-echo('<YealinkIPPhoneFormattedTextScreen destroyOnExit="yes" Beep="no" Timeout="30" LockIn="no">');
+echo('<YealinkIPPhoneFormattedTextScreen destroyOnExit="yes" Beep="no" Timeout="30" LockIn="yes">');
 
 // title line.
 $items=[];
@@ -58,13 +58,14 @@ for($i=0;$i<sizeof($items);$i++)
 			$all+=$in['AMOUNT'];
 			echo('</Line>');
 		}
-		// or show deckels
+		// or create deckels array
 		if($func=='dek')
 		{
-			if(!isset($deck[$in['NAME']]))
-				$deck[$in['NAME']]=0;
-			$deck[$in['NAME']]+=$in['SUMME'];
-			$deckn[$in['NAME']]=$in['NAME'];
+			$n = strtolower($in['NAME']);
+			if(!isset($deck[$n]))
+				$deck[$n]=0;
+			$deck[$n]+=$in['SUMME'];
+			$deckn[$n]=$in['NAME'];
 			$all+=$in['SUMME'];
 		}
 		$prod+=1;
