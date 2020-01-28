@@ -4,7 +4,7 @@ include("../generals.php");
 $server = "http://shop.masterbit.net/phone/";
 
 // get function
-$func='inv';
+$func='cdk3';
 if(isset($_GET['func']))
 	$func=$_GET['func'];
 
@@ -43,7 +43,7 @@ function showInventory()
 
 
 	// just show a text screen.
-	echo('<YealinkIPPhoneFormattedTextScreen destroyOnExit="yes" Beep="no" Timeout="30" LockIn="yes">');
+	echo('<YealinkIPPhoneFormattedTextScreen destroyOnExit="yes" Beep="no" Timeout="42" LockIn="yes">');
 	echo('<Line Size="large" Align="center">Shop Inventar</Line>');
 
 	echo('<Scroll>');
@@ -110,7 +110,7 @@ function showDeckels()
 	$json=getJSONArray("../DB/db_deckels.gml");
 	$items=$json["DECKELS"];
 
-	echo('<YealinkIPPhoneTextMenu destroyOnExit="yes" Beep="no" Timeout="30" LockIn="yes">');
+	echo('<YealinkIPPhoneTextMenu destroyOnExit="yes" Beep="no" Timeout="42" LockIn="yes">');
 
 	$all=0;
 	$prod=0;
@@ -197,7 +197,7 @@ function showSingleDeckel()
 	}
 
 	// show text display.
-	echo('<YealinkIPPhoneFormattedTextScreen cancelAction="'.$server.'phone.php?func=dek" destroyOnExit="yes" Beep="no" Timeout="30" LockIn="yes">');
+	echo('<YealinkIPPhoneFormattedTextScreen cancelAction="'.$server.'phone.php?func=dek" destroyOnExit="yes" Beep="no" Timeout="42" LockIn="yes">');
 
 	echo('<Line Size="large" Align="center">Deckel von '.$name.'</Line>');
 
@@ -352,6 +352,11 @@ function createDeckel()
 	$whichtable="DECKELS";
 	$datafile="../DB/db_deckels.gml";
 
+	// load the json data.
+	$json_data=getJSONFile($datafile);
+	if(sizeof($json_data[$whichtable])<=0)
+		$json_data[$whichtable]=[];
+
 	$name="";
 	if(isset($_GET['name']))
 		$name=$_GET['name'];
@@ -370,7 +375,6 @@ function createDeckel()
 	// create or update an entry.
 	// 3.0.0 code: generic data
 
-	// XHEREX
 	$nen=[];
 
 	// set deckel variables.
@@ -383,15 +387,8 @@ function createDeckel()
 	// set a new id.
 	$nen["ID"] = get_Next_DBID($json_data, $whichtable);
 
-	// load the json data.
-	$jd=getJSONFile($datafile);
-	if(sizeof($jd[$whichtable])<=0)
-		$jd[$whichtable]=[];
-	
-	$json_data=$jd[$whichtable];
-	
 	// add the entry
-	$json_data[] = $nen;
+	$json_data[$whichtable][] = $nen;
 	// save the data.
 	saveJsonData($datafile, $whichtable, $json_data);
 
