@@ -110,7 +110,7 @@ function showDeckels()
 	$json=getJSONArray("../DB/db_deckels.gml");
 	$items=$json["DECKELS"];
 
-	echo('<YealinkIPPhoneTextMenu destroyOnExit="no" Beep="no" Timeout="30" LockIn="yes">');
+	echo('<YealinkIPPhoneTextMenu destroyOnExit="yes" Beep="no" Timeout="30" LockIn="yes">');
 
 	$all=0;
 	$prod=0;
@@ -230,7 +230,7 @@ function showSingleDeckel()
 
 	echo('<SoftKey index="1">');
 	echo('<Label>Zurück</Label>');
-	echo('<URI>SoftKey:Exit</URI>');
+	echo('<URI>'.$server.'phone.php?func=dek</URI>');
 	echo('</SoftKey>');
 
 	echo('</YealinkIPPhoneFormattedTextScreen>');
@@ -248,7 +248,7 @@ function createDeckel_INPUT_Name()
 		$produkt=$_GET['produkt'];
 
 	global $server;
-	echo('<YealinkIPPhoneInputScreen destroyOnExit="yes" Beep="no" type="string" LockIn="no" cancelAction="'.$server.'phone.php?func=dek">');
+	echo('<YealinkIPPhoneInputScreen Timeout="0" destroyOnExit="yes" Beep="no" type="string" LockIn="no" cancelAction="'.$server.'phone.php?func=dek">');
 	echo('<Title>Deckel erstellen... (Name/Produkt)</Title>');
 	echo('<URL>'.$server.'phone.php?func=cdk2</URL>');
 
@@ -289,7 +289,7 @@ function createDeckel_INPUT_Name()
 
 	echo('<SoftKey index="4">');
 	echo('<Label>Abbrechen</Label>');
-	echo('<URI>SoftKey:Exit</URI>');
+	echo('<URI>'.$server.'phone.php?func=dek</URI>');
 	echo('</SoftKey>');
 
 	echo('</YealinkIPPhoneInputScreen>');
@@ -306,14 +306,14 @@ function createDeckel_INPUT_Summe()
 		$produkt=$_GET['produkt'];
 
 	global $server;
-	echo('<YealinkIPPhoneInputScreen destroyOnExit="yes" Beep="no" type="number" LockIn="no" cancelAction="'.$server.'phone.php?func=dek">');
+	echo('<YealinkIPPhoneInputScreen Timeout="0" destroyOnExit="yes" Beep="no" type="number" LockIn="no" cancelAction="'.$server.'phone.php?func=dek">');
 	echo('<Title>Deckel für '.$name.' ('.$produkt.')</Title>');
 	echo('<URL>'.$server.'phone.php?func=cdk3&name='.$name.'&produkt='.$produkt.'</URL>');
 
 	echo('<InputField>');
 	echo('<Prompt>Summe:</Prompt>');
 	echo('<Parameter>summe</Parameter>');
-	echo('<Default>1.00</Default>');
+	echo('<Default>1</Default>');
 	echo('<Selection>1</Selection>');
 	echo('</InputField>');
 
@@ -335,7 +335,7 @@ function createDeckel_INPUT_Summe()
 
 	echo('<SoftKey index="4">');
 	echo('<Label>Abbrechen</Label>');
-	echo('<URI>SoftKey:Exit</URI>');
+	echo('<URI>'.$server.'phone.php?func=dek</URI>');
 	echo('</SoftKey>');
 
 	echo('<SoftKey index="6">');
@@ -351,7 +351,7 @@ function createDeckel()
 {
 	$whichtable="DECKELS";
 	$datafile="../DB/db_deckels.gml";
-	
+
 	$name="";
 	if(isset($_GET['name']))
 		$name=$_GET['name'];
@@ -363,37 +363,40 @@ function createDeckel()
 	$summe=0.0;
 	if(isset($_GET['summe']))
 		$summe=$_GET['summe'];
-	
+
 	// project id = nachtshop
 	$projectID = 12;
 
 	// create or update an entry.
 	// 3.0.0 code: generic data
 
-/*	// XHEREX
+	// XHEREX
 	$nen=[];
-	
+
 	// set deckel variables.
 	$nen["NAME"]=$name;
 	$name["PRODUKT"]=$produkt;
 	$name["SUMME"]=floatval($summe);
 	$name["PROJECTID"]=$projectID;
 	$name["DATE"]=date(DATE_RSS);
-	
+
 	// set a new id.
 	$nen["ID"] = get_Next_DBID($json_data, $whichtable);
-	
+
 	// add the entry
 	$json_data[$whichtable][] = $nen;
 	// save the data.
 	saveJsonData($datafile, $whichtable, $json_data);
-*/
+
 	// now put the stuff on the phone:
-	echo('<YealinkIPPhoneStatus Beep = "yes" SessionID="deckelstatus" Timeout = "30" >');
+	echo('<YealinkIPPhoneStatus Beep = "yes" SessionID="deckelstatus" Timeout = "120" >');
 	echo('<Message Icon="Message" Size="large" Align="center">');
 	echo('Neuer Deckel für '.$name.': '.$summe.' für '.$produkt);
 	echo('</Message>');
 	echo('</YealinkIPPhoneStatus>');
+
+	// show the deckels.
+	showDeckels();
 }
 
 // Retrieve a file as JSON Array.
