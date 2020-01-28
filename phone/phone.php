@@ -1,4 +1,5 @@
 <?php
+$server = "http://shop.masterbit.net/phone/";
 
 // get function
 $func='inv';
@@ -8,7 +9,6 @@ if(isset($_GET['func']))
 // put xml header to the phone.
 echo('<?xml version="1.0" encoding="ISO-8859-1"?>');
 
-
 switch($func)
 {
 	case "inventory": // show inventory
@@ -17,10 +17,13 @@ switch($func)
 	case "dek": showDeckels(); break;
 	case "deckel": // show single deckel
 	case "sdk": showSingleDeckel(); break;
+	case "createDeckel":
+	case "cdk": createDeckel_INPUT(); break;
 	default:
 		break;
 }
 
+// show inventory items, how many and their price.
 function showInventory()
 {
 	$items=[];
@@ -51,8 +54,19 @@ function showInventory()
 		if($projectid<0 || $projectid==intval($in['PROJECTID']))
 		{
 			// show inventory
-			echo('<Line Size="normal" Align="left">');
-			echo('* '.$in['AMOUNT'].'x '.$in['PRICE'].'$ '.$in['NAME']);
+			$amt = $in['AMOUNT'];
+			$a="left";
+			$e = "";
+			if(intval($amt)<=0)
+			{
+				$amt="# !!! 0x";
+				$a="right";
+				$e = " !!! # *";
+			}else{
+				$amt="* ".$amt."x";
+			}
+			echo('<Line Size="normal" Align="'.$a.'">');
+			echo($amt.$in['PRICE'].'$ '.$in['NAME'].$e);
 			if($projectid<0)
 				echo(' [P'.$in['PROJECTID'].']');
 			$all+=$in['AMOUNT'];
@@ -73,11 +87,21 @@ function showInventory()
 	// show bottom line
 	echo('<Line Size="small" Align="right">Gesamt: '.$all.' Einheiten / '.$prod.' Produkte</Line>');
 
+	// soft keys
+	echo('<SoftKey index="1">');
+	echo('<Label>Zurück</Label>');
+	echo('<URI>SoftKey:Exit</URI>');
+	echo('</SoftKey>');
+
 	echo('</YealinkIPPhoneFormattedTextScreen>');
 }
 
+// show deckels combined for each name.
 function showDeckels()
 {
+	// WARNING: max 30 Menu Items.
+
+	global $server;
 	$items=[];
 	$json=getJSONArray("../DB/db_deckels.gml");
 	$items=$json["DECKELS"];
@@ -109,8 +133,6 @@ function showDeckels()
 	$ad= array_values($deck);
 	$aid=array_values($deckid);
 
-$server = "http://shop.masterbit.net/phone/";
-
 	for($i=0;$i<sizeof($ad);$i++)
 	{
 		echo('<MenuItem>');
@@ -125,11 +147,26 @@ $server = "http://shop.masterbit.net/phone/";
 
 	echo('<Title wrap="yes" Style="numbered">Deckel ('.$all.' CHF / '.sizeof($deck).' Einträge)</Title>');
 
+	// softkeys
+	echo('<SoftKey index="1">');
+	echo('<Label>Zurück</Label>');
+	echo('<URI>SoftKey:Exit</URI>');
+	echo('</SoftKey>');
+
+	echo('<SoftKey index="4">');
+	echo('<Label>Details</Label>');
+	echo('<URI>SoftKey:Select</URI>');
+	echo('</SoftKey>');
+
 	echo('</YealinkIPPhoneTextMenu>');
 }
 
+// show all deckels which have the same name as the given deckel.
 function showSingleDeckel()
 {
+	// WARNING: Max 30 Menu Items!
+	global $server;
+
 	// show the whole inventory
 	$deckelid = -1;
 	// get the project id to show the inventory from.
@@ -151,7 +188,7 @@ function showSingleDeckel()
 	}
 
 	// show text display.
-	echo('<YealinkIPPhoneFormattedTextScreen destroyOnExit="yes" Beep="no" Timeout="30" LockIn="yes">');
+	echo('<YealinkIPPhoneFormattedTextScreen cancelAction="'.$server.'phone.php?func=dek" destroyOnExit="yes" Beep="no" Timeout="30" LockIn="yes">');
 
 	echo('<Line Size="large" Align="center">Deckel von '.$name.'</Line>');
 
@@ -182,9 +219,21 @@ function showSingleDeckel()
 	// show bottom line
 	echo('<Line Size="small" Align="right">Gesamt: '.$all.' CHF / '.$prod.' Einträge</Line>');
 
+	echo('<SoftKey index="1">');
+	echo('<Label>Zurück</Label>');
+	echo('<URI>SoftKey:Exit</URI>');
+	echo('</SoftKey>');
+
 	echo('</YealinkIPPhoneFormattedTextScreen>');
 }
 
+// create the input xml for creating a deckel directly from the phone.
+function createDeckel_INPUT()
+{
+	echo('');
+}
+
+// Retrieve a file as JSON Array.
 function getJSONArray($datafilename)
 {
 	$jdata = file_get_contents($datafilename);
