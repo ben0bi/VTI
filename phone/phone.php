@@ -384,22 +384,24 @@ function createDeckel()
 	$nen["ID"] = get_Next_DBID($json_data, $whichtable);
 
 	// load the json data.
-	$json_data=getJSONFile($datafile);
-	if(sizeof($json_data[$whichtable])<=0)
-		$json_date[$whichtable]=[];
-
+	$jd=getJSONFile($datafile);
+	if(sizeof($jd[$whichtable])<=0)
+		$jd[$whichtable]=[];
+	
+	$json_data=$jd[$whichtable];
+	
 	// add the entry
-	$json_data[$whichtable][] = $nen;
+	$json_data[] = $nen;
 	// save the data.
 	saveJsonData($datafile, $whichtable, $json_data);
 
 	// now put the stuff to the phone:
-	echo('<YealinkIPPhoneStatus Beep = "yes" SessionID="deckelstatus" Timeout = "120" >');
+/*	echo('<YealinkIPPhoneStatus Beep = "yes" SessionID="deckelstatus" Timeout = "120" >');
 	echo('<Message Icon="Message" Size="large" Align="center">');
 	echo('Neuer Deckel für '.$name.': '.$summe.' für '.$produkt);
 	echo('</Message>');
 	echo('</YealinkIPPhoneStatus>');
-
+*/
 	// show the deckels.
 	showDeckels();
 }
