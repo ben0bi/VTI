@@ -1,4 +1,6 @@
 <?php
+include("../generals.php");
+
 $server = "http://shop.masterbit.net/phone/";
 
 // get function
@@ -9,6 +11,7 @@ if(isset($_GET['func']))
 // put xml header to the phone.
 echo('<?xml version="1.0" encoding="ISO-8859-1"?>');
 
+// get the function and do something associated to it.
 switch($func)
 {
 	case "inventory": // show inventory
@@ -346,7 +349,51 @@ function createDeckel_INPUT_Summe()
 // now really create a deckel and show it on the phone.
 function createDeckel()
 {
-// TODO: XHEREX
+	$whichtable="DECKELS";
+	$datafile="../DB/db_deckels.gml";
+	
+	$name="";
+	if(isset($_GET['name']))
+		$name=$_GET['name'];
+
+	$produkt="";
+	if(isset($_GET['produkt']))
+		$produkt=$_GET['produkt'];
+
+	$summe=0.0;
+	if(isset($_GET['summe']))
+		$summe=$_GET['summe'];
+	
+	// project id = nachtshop
+	$projectID = 12;
+
+	// create or update an entry.
+	// 3.0.0 code: generic data
+
+/*	// XHEREX
+	$nen=[];
+	
+	// set deckel variables.
+	$nen["NAME"]=$name;
+	$name["PRODUKT"]=$produkt;
+	$name["SUMME"]=floatval($summe);
+	$name["PROJECTID"]=$projectID;
+	$name["DATE"]=date(DATE_RSS);
+	
+	// set a new id.
+	$nen["ID"] = get_Next_DBID($json_data, $whichtable);
+	
+	// add the entry
+	$json_data[$whichtable][] = $nen;
+	// save the data.
+	saveJsonData($datafile, $whichtable, $json_data);
+*/
+	// now put the stuff on the phone:
+	echo('<YealinkIPPhoneStatus Beep = "yes" SessionID="deckelstatus" Timeout = "30" >');
+	echo('<Message Icon="Message" Size="large" Align="center">');
+	echo('Neuer Deckel für '.$name.': '.$summe.' für '.$produkt);
+	echo('</Message>');
+	echo('</YealinkIPPhoneStatus>');
 }
 
 // Retrieve a file as JSON Array.
