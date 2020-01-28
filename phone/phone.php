@@ -17,8 +17,10 @@ switch($func)
 	case "dek": showDeckels(); break;
 	case "deckel": // show single deckel
 	case "sdk": showSingleDeckel(); break;
-	case "createDeckel":
-	case "cdk": createDeckel_INPUT(); break;
+	case "createDeckel": // create a deckel.
+	case "cdk": createDeckel_INPUT_Name(); break;
+	case "cdk2": createDeckel_INPUT_Summe(); break;
+	case "cdk3": createDeckel(); break;
 	default:
 		break;
 }
@@ -43,7 +45,6 @@ function showInventory()
 
 	echo('<Scroll>');
 
-
 	$all=0;
 	$prod=0;
 	$deck=[];
@@ -59,11 +60,11 @@ function showInventory()
 			$e = "";
 			if(intval($amt)<=0)
 			{
-				$amt="# !!! 0x";
+				$amt="# !!! 0x ";
 				$a="right";
 				$e = " !!! # *";
 			}else{
-				$amt="* ".$amt."x";
+				$amt="* ".$amt."x ";
 			}
 			echo('<Line Size="normal" Align="'.$a.'">');
 			echo($amt.$in['PRICE'].'$ '.$in['NAME'].$e);
@@ -100,8 +101,8 @@ function showInventory()
 function showDeckels()
 {
 	// WARNING: max 30 Menu Items.
-
 	global $server;
+
 	$items=[];
 	$json=getJSONArray("../DB/db_deckels.gml");
 	$items=$json["DECKELS"];
@@ -151,6 +152,11 @@ function showDeckels()
 	echo('<SoftKey index="1">');
 	echo('<Label>Zurück</Label>');
 	echo('<URI>SoftKey:Exit</URI>');
+	echo('</SoftKey>');
+
+	echo('<SoftKey index="2">');
+	echo('<Label>+ NEU +</Label>');
+	echo('<URI>'.$server.'phone.php?func=cdk</URI>');
 	echo('</SoftKey>');
 
 	echo('<SoftKey index="4">');
@@ -228,9 +234,119 @@ function showSingleDeckel()
 }
 
 // create the input xml for creating a deckel directly from the phone.
-function createDeckel_INPUT()
+function createDeckel_INPUT_Name()
 {
-	echo('');
+	$name="";
+	if(isset($_GET['name']))
+		$name=$_GET['name'];
+
+	$produkt="";
+	if(isset($_GET['produkt']))
+		$produkt=$_GET['produkt'];
+
+	global $server;
+	echo('<YealinkIPPhoneInputScreen destroyOnExit="yes" Beep="no" type="string" LockIn="no" cancelAction="'.$server.'phone.php?func=dek">');
+	echo('<Title>Deckel erstellen... (Name/Produkt)</Title>');
+	echo('<URL>'.$server.'phone.php?func=cdk2</URL>');
+
+	echo('<InputField>');
+	echo('<Prompt>Name:</Prompt>');
+	echo('<Parameter>name</Parameter>');
+	echo('<Default>'.$name.'</Default>');
+	echo('<Selection>1</Selection>');
+	echo('</InputField>');
+
+	echo('<InputField>');
+	echo('<Prompt>Produkt:</Prompt>');
+	echo('<Parameter>produkt</Parameter>');
+	echo('<Default>'.$produkt.'</Default>');
+	echo('<Selection>2</Selection>');
+	echo('</InputField>');
+
+	// softkeys
+	echo('<SoftKey index="1">');
+	echo('<Label>DEL</Label>');
+	echo('<URI>SoftKey:BackSpace</URI>');
+	echo('</SoftKey>');
+
+	echo('<SoftKey index="2">');
+	echo('<Label>Abc</Label>');
+	echo('<URI>SoftKey:ChangeMode</URI>');
+	echo('</SoftKey>');
+
+	echo('<SoftKey index="3">');
+	echo('<Label>Weiter..</Label>');
+	echo('<URI>SoftKey:Submit</URI>');
+	echo('</SoftKey>');
+
+	echo('<SoftKey index="6">');
+	echo('<Label>.</Label>');
+	echo('<URI>SoftKey:Dot</URI>');
+	echo('</SoftKey>');
+
+	echo('<SoftKey index="4">');
+	echo('<Label>Abbrechen</Label>');
+	echo('<URI>SoftKey:Exit</URI>');
+	echo('</SoftKey>');
+
+	echo('</YealinkIPPhoneInputScreen>');
+}
+// create the input xml for creating a deckel directly from the phone.
+function createDeckel_INPUT_Summe()
+{
+	$name="";
+	if(isset($_GET['name']))
+		$name=$_GET['name'];
+
+	$produkt="";
+	if(isset($_GET['produkt']))
+		$produkt=$_GET['produkt'];
+
+	global $server;
+	echo('<YealinkIPPhoneInputScreen destroyOnExit="yes" Beep="no" type="number" LockIn="no" cancelAction="'.$server.'phone.php?func=dek">');
+	echo('<Title>Deckel für '.$name.' ('.$produkt.')</Title>');
+	echo('<URL>'.$server.'phone.php?func=cdk3&name='.$name.'&produkt='.$produkt.'</URL>');
+
+	echo('<InputField>');
+	echo('<Prompt>Summe:</Prompt>');
+	echo('<Parameter>summe</Parameter>');
+	echo('<Default>1.00</Default>');
+	echo('<Selection>1</Selection>');
+	echo('</InputField>');
+
+	// softkeys
+	echo('<SoftKey index="1">');
+	echo('<Label>DEL</Label>');
+	echo('<URI>SoftKey:BackSpace</URI>');
+	echo('</SoftKey>');
+
+	echo('<SoftKey index="2">');
+	echo('<Label>.</Label>');
+	echo('<URI>SoftKey:Dot</URI>');
+	echo('</SoftKey>');
+
+	echo('<SoftKey index="3">');
+	echo('<Label>Zurück..</Label>');
+	echo('<URI>'.$server.'phone.php?func=cdk&name='.$name.'&produkt='.$produkt.'</URI>');
+	echo('</SoftKey>');
+
+	echo('<SoftKey index="4">');
+	echo('<Label>Abbrechen</Label>');
+	echo('<URI>SoftKey:Exit</URI>');
+	echo('</SoftKey>');
+
+	echo('<SoftKey index="6">');
+	echo('<Label>!!SENDEN!!</Label>');
+	echo('<URI>SoftKey:Submit</URI>');
+	echo('</SoftKey>');
+
+	echo('</YealinkIPPhoneInputScreen>');
+}
+
+// now really create a deckel and show it on the phone.
+function createDeckel()
+{
+// TODO: XHEREX
 }
 
 // Retrieve a file as JSON Array.
