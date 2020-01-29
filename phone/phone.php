@@ -235,6 +235,11 @@ function showSingleDeckel()
 	echo('<URI>'.$server.'phone.php?func=dek</URI>');
 	echo('</SoftKey>');
 
+	echo('<SoftKey index="2">');
+	echo('<Label>+ NEU +</Label>');
+	echo('<URI>'.$server.'phone.php?func=cdk&name='.$name.'</URI>');
+	echo('</SoftKey>');
+
 	echo('</YealinkIPPhoneFormattedTextScreen>');
 }
 
