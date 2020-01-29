@@ -24,6 +24,8 @@ switch($func)
 	case "cdk": createDeckel_INPUT_Name(); break;
 	case "cdk2": createDeckel_INPUT_Summe(); break;
 	case "cdk3": createDeckel(); break;
+	case "dkstatus": dkstatus(); break; // show a deckel status.
+	case "ledwait": ledwait(5); break; // start the turn-of-leds-function.
 	default:
 		break;
 }
@@ -32,7 +34,7 @@ switch($func)
 function showInventory()
 {
 	$items=[];
-	$json=getJSONArray("../DB/db_inventory.gml");
+	$json=getJSONFile("../DB/db_inventory.gml");
 	$items=$json["INVENTORY"];
 
 	// show the whole inventory
@@ -107,7 +109,7 @@ function showDeckels()
 	global $server;
 
 	$items=[];
-	$json=getJSONArray("../DB/db_deckels.gml");
+	$json=getJSONFile("../DB/db_deckels.gml");
 	$items=$json["DECKELS"];
 
 	echo('<YealinkIPPhoneTextMenu destroyOnExit="yes" Beep="no" Timeout="42" LockIn="yes">');
@@ -183,7 +185,7 @@ function showSingleDeckel()
 		$deckelid=intval($_GET['deckelid']);
 
 	$items=[];
-	$json=getJSONArray("../DB/db_deckels.gml");
+	$json=getJSONFile("../DB/db_deckels.gml");
 	$items=$json["DECKELS"];
 
 	// get the deckel with that id.
@@ -349,6 +351,8 @@ function createDeckel_INPUT_Summe()
 // now really create a deckel and show it on the phone.
 function createDeckel()
 {
+	global $server;
+
 	$whichtable="DECKELS";
 	$datafile="../DB/db_deckels.gml";
 
@@ -393,22 +397,44 @@ function createDeckel()
 	saveJsonData($datafile, $whichtable, $json_data);
 
 	// now put the stuff to the phone:
-/*	echo('<YealinkIPPhoneStatus Beep = "yes" SessionID="deckelstatus" Timeout = "120" >');
+	echo('<YealinkIPPhoneExecute Beep="yes">');
+	echo('<ExecuteItem URI="Led:POWER=slowflash"/>');
+	echo('<ExecuteItem URI="Led:LINE5_GREEN=on"/>');
+	echo('<ExecuteItem URI="'.$server.'phone.php?func=dek"/>');
+	echo('<ExecuteItem URI="'.$server.'phone.php?func=dkstatus&name='.$name.'&summe='.$summe.'&produkt='.$produkt.'"/>');
+	echo('<ExecuteItem URI="'.$server.'phone.php?func=ledwait"/>');
+	echo('</YealinkIPPhoneExecute>');
+}
+
+// create a deckel status message.
+function dkstatus()
+{
+	$name="";
+	if(isset($_GET['name']))
+		$name=$_GET['name'];
+
+	$produkt="";
+	if(isset($_GET['produkt']))
+		$produkt=$_GET['produkt'];
+
+	$summe=0.0;
+	if(isset($_GET['summe']))
+		$summe=$_GET['summe'];
+
+	echo('<YealinkIPPhoneStatus Beep="no" SessionID="deckelstatus" Timeout = "120" >');
 	echo('<Message Icon="Message" Size="large" Align="center">');
 	echo('Neuer Deckel für '.$name.': '.$summe.' für '.$produkt);
 	echo('</Message>');
 	echo('</YealinkIPPhoneStatus>');
-*/
-	// show the deckels.
-	showDeckels();
 }
 
-// Retrieve a file as JSON Array.
-function getJSONArray($datafilename)
+// wait some time and then send turn of the LEDs.
+function ledwait($waittime)
 {
-	$jdata = file_get_contents($datafilename);
-	$json = json_decode($jdata, true);
-	return $json;
+	sleep($waittime);
+	echo('<YealinkIPPhoneExecute Beep="no">');
+	echo('<ExecuteItem URI="Led:POWER=off"/>');
+	echo('<ExecuteItem URI="Led:LINE5_GREEN=off"/>');
+	echo('</YealinkIPPhoneExecute>');
 }
-
 ?>
