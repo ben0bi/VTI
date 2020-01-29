@@ -52,9 +52,11 @@ function saveJsonData($datafile, $whichtable, $json_data)
 	$jdata = json_encode($j);
 	if(file_put_contents($datafile, $jdata))
 	{
-		echo("File saved.");
+		//echo("File saved.");
+		return true;
 	}else{
-	    echo("Error while saving the database.");
+	    //echo("Error while saving the database.");
+		return false;
 	}
 }
 

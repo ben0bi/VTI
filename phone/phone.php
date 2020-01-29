@@ -25,9 +25,15 @@ switch($func)
 	case "cdk2": createDeckel_INPUT_Summe(); break;
 	case "cdk3": createDeckel(); break;
 	case "dkstatus": dkstatus(); break; // show a deckel status.
-	case "ledwait": ledwait(5); break; // start the turn-of-leds-function.
-	default:
+	case "dkerr": status("!INTERNER FEHLER!: Deckel wurde nicht gespeichert.");
+	case "ledwait":
+		$t = 5;
+		if(isset($_GET['time']))
+			$t = floatval($_GET['time']);
+		// start the turn-off-leds-function.
+		ledwait($t);
 		break;
+	default:break;
 }
 
 // show inventory items, how many and their price.
@@ -398,16 +404,22 @@ function createDeckel()
 
 	// add the entry
 	$json_data[$whichtable][] = $nen;
-	// save the data.
-	saveJsonData($datafile, $whichtable, $json_data);
-
-	// now put the stuff to the phone:
+	// save the data. returns false if something went wrong.
 	echo('<YealinkIPPhoneExecute Beep="yes">');
-	echo('<ExecuteItem URI="Led:POWER=slowflash"/>');
-	echo('<ExecuteItem URI="Led:LINE5_GREEN=on"/>');
-	echo('<ExecuteItem URI="'.$server.'phone.php?func=dek"/>');
-	echo('<ExecuteItem URI="'.$server.'phone.php?func=dkstatus&name='.$name.'&summe='.$summe.'&produkt='.$produkt.'"/>');
-	echo('<ExecuteItem URI="'.$server.'phone.php?func=ledwait"/>');
+	if(saveJsonData($datafile, $whichtable, $json_data))
+	{
+		// now put the stuff to the phone:
+		echo('<ExecuteItem URI="Led:POWER=slowflash"/>');
+		echo('<ExecuteItem URI="Led:LINE5_GREEN=on"/>');
+		echo('<ExecuteItem URI="'.$server.'phone.php?func=dek"/>');
+		echo('<ExecuteItem URI="'.$server.'phone.php?func=dkstatus&name='.$name.'&summe='.$summe.'&produkt='.$produkt.'"/>');
+		echo('<ExecuteItem URI="'.$server.'phone.php?func=ledwait&time=7"/>');
+	}else{
+		echo('<ExecuteItem URI="Led:POWER=fastflash"/>');
+		echo('<ExecuteItem URI="Led:LINE5_RED=fastflash"/>');
+		echo('<ExecuteItem URI="'.$server.'phone.php?func=dkerr"/>');
+		echo('<ExecuteItem URI="'.$server.'phone.php?func=ledwait&time=20"/>');
+	}
 	echo('</YealinkIPPhoneExecute>');
 }
 
@@ -426,9 +438,15 @@ function dkstatus()
 	if(isset($_GET['summe']))
 		$summe=$_GET['summe'];
 
-	echo('<YealinkIPPhoneStatus Beep="no" SessionID="deckelstatus" Timeout = "120" >');
+	status('Neuer Deckel für '.$name.': '.$summe.' für '.$produkt);
+}
+
+// show a status text on the phone.
+function status($text)
+{
+	echo('<YealinkIPPhoneStatus Beep="no" SessionID="status" Timeout = "120" >');
 	echo('<Message Icon="Message" Size="large" Align="center">');
-	echo('Neuer Deckel für '.$name.': '.$summe.' für '.$produkt);
+	echo($text);
 	echo('</Message>');
 	echo('</YealinkIPPhoneStatus>');
 }
@@ -440,6 +458,7 @@ function ledwait($waittime)
 	echo('<YealinkIPPhoneExecute Beep="no">');
 	echo('<ExecuteItem URI="Led:POWER=off"/>');
 	echo('<ExecuteItem URI="Led:LINE5_GREEN=off"/>');
+	echo('<ExecuteItem URI="Led:LINE5_RED=off"/>');
 	echo('</YealinkIPPhoneExecute>');
 }
 ?>
