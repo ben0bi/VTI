@@ -4,7 +4,7 @@ include("../generals.php");
 $server = "http://shop.masterbit.net/phone/";
 
 // get function
-$func='cdk3';
+$func='inv';
 if(isset($_GET['func']))
 	$func=$_GET['func'];
 
@@ -39,6 +39,8 @@ switch($func)
 // show inventory items, how many and their price.
 function showInventory()
 {
+	global $server;
+
 	$items=[];
 	$json=getJSONFile("../DB/db_inventory.gml");
 	$items=$json["INVENTORY"];
@@ -49,11 +51,8 @@ function showInventory()
 	if(isset($_GET['projectid']))
 		$projectid=intval($_GET['projectid']);
 
-
 	// just show a text screen.
 	echo('<YealinkIPPhoneTextMenu destroyOnExit="yes" Beep="no" Timeout="42" LockIn="yes">');
-
-//	echo('<Scroll>');
 
 	$all=0;
 	$prod=0;
@@ -74,20 +73,16 @@ function showInventory()
 				$a="right";
 				$e = " !!! # *";
 			}else{
-				$amt="* ".$amt."x ";
+				$amt=" ".$amt."x ";
 			}
-//			echo('<Line Size="normal" Align="'.$a.'">');
-//			echo($amt.$in['PRICE'].'$ '.$in['NAME'].$e);
-//			if($projectid<0)
-//				echo(' [P'.$in['PROJECTID'].']');
+
 			$all+=$in['AMOUNT'];
-//			echo('</Line>');
-			
+
 			echo('<MenuItem>');
-			echo('<Prompt Align='.$a.'>';
+			echo('<Prompt Align="'.$a.'">');
 			echo($amt.$in["PRICE"].'$ '.$in['NAME'].$e);
 			if($projectid<0)
-				echo(' [P'.$in['PROJECTID'].']');		
+				echo(' [P'.$in['PROJECTID'].']');
 			echo('</Prompt>');
 			echo('<URI>'.$server.'phone.php?func=sellinv&inventoryid='.$in["ID"].'</URI>');
 			echo('</MenuItem>');
@@ -97,24 +92,20 @@ function showInventory()
 	}
 
 	$txt='Shop Inventar ('.$all.' Einh. / '.$prod.' Prod.)';
+
 	// show there are no products.
 	if($prod<=0)
 		$txt="Shop Inventar: Keine Produkte gefunden!";
 
-//	echo('</Scroll>');
-
-	// show bottom line
-//	echo('<Line Size="small" Align="right">Gesamt: '.$all.' Einheiten / '.$prod.' Produkte</Line>');
-
 	echo('<Title wrap="yes">'.$txt.'</Title>');
 
 	// soft keys
-	echo('<SoftKey index="1">');
-	echo('<Label>Zurück</Label>');
-	echo('<URI>SoftKey:Exit</URI>');
-	echo('</SoftKey>');
+//	echo('<SoftKey index="1">');
+//	echo('<Label>Zurück</Label>');
+//	echo('<URI>SoftKey:Exit</URI>');
+//	echo('</SoftKey>');
 
-	echo('</YealinkIPPhoneFormattedTextScreen>');
+	echo('</YealinkIPPhoneTextMenu>');
 }
 
 // show deckels combined for each name.
