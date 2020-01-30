@@ -514,11 +514,11 @@ function inventorychange(whichfield)
 		
 	var itemprice = parseFloat($('#input_buysell_itemprice').val());
 	if(isNaN(itemprice))
-		itemprice = 0;
+		itemprice = 0.0;
 	
 	var gesamtprice = parseFloat($('#input_buysell_gesamtprice').val());
 	if(isNaN(gesamtprice))
-		gesamtprice = 0;
+		gesamtprice = 0.0;
 		
 	switch(whichfield)
 	{
@@ -527,20 +527,20 @@ function inventorychange(whichfield)
 			var itm = VTI.getInventoryItemByID($('#input_buysell_itemid').val());
 			itemprice = itm.price;
 			gesamtprice = Math.round(amount*itemprice*100.0)*0.01;
-			$('#input_buysell_gesamtprice').val(gesamtprice);
-			$('#input_buysell_itemprice').val(itemprice);
+			$('#input_buysell_gesamtprice').val(gesamtprice.toFixed(2));
+			$('#input_buysell_itemprice').val(itemprice.toFixed(2));
 			break;
 		case 2:
 		case 3:
 			gesamtprice = Math.round(amount*itemprice*100.0)*0.01;
-			$('#input_buysell_gesamtprice').val(gesamtprice);
+			$('#input_buysell_gesamtprice').val(gesamtprice.toFixed(2));
 			break;
 		case 4:
 			if(amount==0 || gesamtprice==0)
 				itemprice = 0.0;
 			else
 				itemprice = Math.round(100.0*(gesamtprice/amount))*0.01;
-			$('#input_buysell_itemprice').val(itemprice);
+			$('#input_buysell_itemprice').val(itemprice.toFixed(2));
 			break;
 		default:
 			break;

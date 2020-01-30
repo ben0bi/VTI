@@ -16,7 +16,7 @@ switch($func)
 {
 	case "inventory": // show inventory
 	case "inv": showInventory(); break;
-	`// sell inventory
+	// sell inventory
 	case "sellinv": sellInventory_MENU(); break;
 	case "deckels": // show all deckels
 	case "dek": showDeckels(); break;
@@ -30,8 +30,8 @@ switch($func)
 	case "dkerr": status("!INTERNER FEHLER!: Deckel wurde nicht gespeichert.");
 	case "ledwait":
 		$t = 5;
-		if(isset($_GET['time']))
-			$t = floatval($_GET['time']);
+		if(isset($_GET["time"]))
+			$t = floatval($_GET["time"]);
 		// start the turn-off-leds-function.
 		ledwait($t);
 		break;
