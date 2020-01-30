@@ -1,4 +1,4 @@
-VTI + Volle Transparenz Initiative
+﻿VTI + Volle Transparenz Initiative
 
 (oder VATI = Volle und Absolute Transparenz Initiative) ;)
 

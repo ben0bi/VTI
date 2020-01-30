@@ -51,10 +51,9 @@ function showInventory()
 
 
 	// just show a text screen.
-	echo('<YealinkIPPhoneFormattedTextScreen destroyOnExit="yes" Beep="no" Timeout="42" LockIn="yes">');
-	echo('<Line Size="large" Align="center">Shop Inventar</Line>');
+	echo('<YealinkIPPhoneTextMenu destroyOnExit="yes" Beep="no" Timeout="42" LockIn="yes">');
 
-	echo('<Scroll>');
+//	echo('<Scroll>');
 
 	$all=0;
 	$prod=0;
@@ -77,27 +76,37 @@ function showInventory()
 			}else{
 				$amt="* ".$amt."x ";
 			}
-			echo('<Line Size="normal" Align="'.$a.'">');
-			echo($amt.$in['PRICE'].'$ '.$in['NAME'].$e);
-			if($projectid<0)
-				echo(' [P'.$in['PROJECTID'].']');
+//			echo('<Line Size="normal" Align="'.$a.'">');
+//			echo($amt.$in['PRICE'].'$ '.$in['NAME'].$e);
+//			if($projectid<0)
+//				echo(' [P'.$in['PROJECTID'].']');
 			$all+=$in['AMOUNT'];
-			echo('</Line>');
+//			echo('</Line>');
+			
+			echo('<MenuItem>');
+			echo('<Prompt Align='.$a.'>';
+			echo($amt.$in["PRICE"].'$ '.$in['NAME'].$e);
+			if($projectid<0)
+				echo(' [P'.$in['PROJECTID'].']');		
+			echo('</Prompt>');
+			echo('<URI>'.$server.'phone.php?func=sellinv&inventoryid='.$in["ID"].'</URI>');
+			echo('</MenuItem>');
+
 			$prod+=1;
 		}
 	}
 
+	$txt='Shop Inventar ('.$all.' Einh. / '.$prod.' Prod.)';
 	// show there are no products.
 	if($prod<=0)
-	{
-		echo('<Line Size="large" Align="center" Color="red">Keine Produkte gefunden!</Line>');
-		echo('<Line Size="small" Align="center">(Projekt ID '.$projectid.')</Line>');
-	}
+		$txt="Shop Inventar: Keine Produkte gefunden!";
 
-	echo('</Scroll>');
+//	echo('</Scroll>');
 
 	// show bottom line
-	echo('<Line Size="small" Align="right">Gesamt: '.$all.' Einheiten / '.$prod.' Produkte</Line>');
+//	echo('<Line Size="small" Align="right">Gesamt: '.$all.' Einheiten / '.$prod.' Produkte</Line>');
+
+	echo('<Title wrap="yes">'.$txt.'</Title>');
 
 	// soft keys
 	echo('<SoftKey index="1">');
@@ -157,7 +166,7 @@ function showDeckels()
 //		echo('<Line Size="large" Align="center">Der Deckel ist blank!</Line>');
 //	}
 
-	echo('<Title wrap="yes" Style="numbered">Deckel ('.$all.' CHF / '.sizeof($deck).' Einträge)</Title>');
+	echo('<Title wrap="yes">Deckel ('.$all.' CHF / '.sizeof($deck).' Einträge)</Title>');
 
 	// softkeys
 	echo('<SoftKey index="1">');
@@ -307,7 +316,9 @@ function createDeckel_INPUT_Name()
 
 	echo('</YealinkIPPhoneInputScreen>');
 }
+
 // create the input xml for creating a deckel directly from the phone.
+// number part
 function createDeckel_INPUT_Summe()
 {
 	$name="";
@@ -411,16 +422,16 @@ function createDeckel()
 		// now put the stuff to the phone:
 		echo('<ExecuteItem URI="Led:POWER=slowflash"/>');
 		echo('<ExecuteItem URI="Led:LINE5_GREEN=on"/>');
+		echo('<ExecuteItem URI="Wav.Play:'.$server.'audio/deckelcreated.wav"/>');
 		echo('<ExecuteItem URI="'.$server.'phone.php?func=dek"/>');
 		echo('<ExecuteItem URI="'.$server.'phone.php?func=dkstatus&name='.$name.'&summe='.$summe.'&produkt='.$produkt.'"/>');
 		echo('<ExecuteItem URI="'.$server.'phone.php?func=ledwait&time=7"/>');
-		echo('<ExecuteItem URI="Wav.Play:'.$server.'audio/deckelcreated.wav"/>');
 	}else{
 		echo('<ExecuteItem URI="Led:POWER=fastflash"/>');
 		echo('<ExecuteItem URI="Led:LINE5_RED=fastflash"/>');
+		echo('<ExecuteItem URI="Wav.Play:'.$server.'audio/error.wav"/>');
 		echo('<ExecuteItem URI="'.$server.'phone.php?func=dkerr"/>');
 		echo('<ExecuteItem URI="'.$server.'phone.php?func=ledwait&time=20"/>');
-		echo('<ExecuteItem URI="Wav.Play:'.$server.'audio/error.wav"/>');
 	}
 	echo('</YealinkIPPhoneExecute>');
 }
