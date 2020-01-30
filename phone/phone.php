@@ -420,6 +420,10 @@ function createDeckel()
 	if(saveJsonData($datafile, $whichtable, $json_data))
 	{
 		// now put the stuff to the phone:
+
+// Audio play does not seem to work. Maybe fiddle with the wavs. Turn off the beep then.
+
+//		echo('<ExecuteItem URI="Wav.Play:'.$server.'audio/deckelcreated.wav"/>');
 		echo('<ExecuteItem URI="Led:POWER=slowflash"/>');
 		echo('<ExecuteItem URI="Led:LINE5_GREEN=on"/>');
 		echo('<ExecuteItem URI="Wav.Play:'.$server.'audio/deckelcreated.wav"/>');
@@ -427,6 +431,7 @@ function createDeckel()
 		echo('<ExecuteItem URI="'.$server.'phone.php?func=dkstatus&name='.$name.'&summe='.$summe.'&produkt='.$produkt.'"/>');
 		echo('<ExecuteItem URI="'.$server.'phone.php?func=ledwait&time=7"/>');
 	}else{
+//		echo('<ExecuteItem URI="Wav.Play:'.$server.'audio/error.wav"/>');
 		echo('<ExecuteItem URI="Led:POWER=fastflash"/>');
 		echo('<ExecuteItem URI="Led:LINE5_RED=fastflash"/>');
 		echo('<ExecuteItem URI="Wav.Play:'.$server.'audio/error.wav"/>');
