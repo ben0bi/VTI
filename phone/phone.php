@@ -16,6 +16,8 @@ switch($func)
 {
 	case "inventory": // show inventory
 	case "inv": showInventory(); break;
+	`// sell inventory
+	case "sellinv": sellInventory_MENU(); break;
 	case "deckels": // show all deckels
 	case "dek": showDeckels(); break;
 	case "deckel": // show single deckel
@@ -106,6 +108,94 @@ function showInventory()
 //	echo('</SoftKey>');
 
 	echo('</YealinkIPPhoneTextMenu>');
+}
+
+// show the menu to sell an inventory item.
+function sellInventory_MENU()
+{
+	global $server;
+
+	$items=[];
+	$json=getJSONFile("../DB/db_inventory.gml");
+	$items=$json["INVENTORY"];
+
+	$itemid=-1;
+	if(isset($_GET["inventoryid"]))
+		$itemid=intval($_GET["inventoryid"]);
+	
+	if($itemid==-1)
+	{
+		status("INTERNER FEHLER: Inventar Item wurde nicht definiert.");
+		return;
+	}
+	
+	// get the item with the given id.
+	$item = -1;
+	for($i=0;$i<sizeof($items);$i++)
+	{
+		$itm=$items[$i];
+		if(intval($itm["ID"]) == $itemid)
+		{
+			$item = $itm;
+			break;
+		}
+	}
+	
+	if($item==-1)
+	{
+		status("Item #$itemid nicht gefunden.");
+		return;
+	}
+	
+	$name = $item["NAME"];
+	$price = $item["PRICE"];
+	
+	// good, we got the item, now send the menu...
+	echo('<YealinkIPPhoneInputScreen Timeout="0" destroyOnExit="yes" Beep="no" type="number" LockIn="no" cancelAction="'.$server.'phone.php?func=inv">');
+	echo('<Title>Verkaufe '.$name.'...</Title>');
+	echo('<URL>'.$server.'phone.php?func=si2&id='.$itemid.'</URL>');
+
+	echo('<InputField>');
+	echo('<Prompt>Anzahl:</Prompt>');
+	echo('<Parameter>amount</Parameter>');
+	echo('<Default>1</Default>');
+	echo('<Selection>1</Selection>');
+	echo('</InputField>');
+
+	echo('<InputField>');
+	echo('<Prompt>Stückpreis:</Prompt>');
+	echo('<Parameter>price</Parameter>');
+	echo('<Default>'.$price.'</Default>');
+	echo('<Selection>2</Selection>');
+	echo('</InputField>');
+
+	// softkeys
+/*	echo('<SoftKey index="1">');
+	echo('<Label>DEL</Label>');
+	echo('<URI>SoftKey:BackSpace</URI>');
+	echo('</SoftKey>');
+
+	echo('<SoftKey index="2">');
+	echo('<Label>.</Label>');
+	echo('<URI>SoftKey:Dot</URI>');
+	echo('</SoftKey>');
+
+	echo('<SoftKey index="3">');
+	echo('<Label>Zurück..</Label>');
+	echo('<URI>'.$server.'phone.php?func=cdk&name='.$name.'&produkt='.$produkt.'</URI>');
+	echo('</SoftKey>');
+
+	echo('<SoftKey index="4">');
+	echo('<Label>Abbrechen</Label>');
+	echo('<URI>'.$server.'phone.php?func=dek</URI>');
+	echo('</SoftKey>');
+
+	echo('<SoftKey index="6">');
+	echo('<Label>!!SENDEN!!</Label>');
+	echo('<URI>SoftKey:Submit</URI>');
+	echo('</SoftKey>');
+*/
+	echo('</YealinkIPPhoneInputScreen>');
 }
 
 // show deckels combined for each name.
@@ -312,6 +402,8 @@ function createDeckel_INPUT_Name()
 // number part
 function createDeckel_INPUT_Summe()
 {
+	global $server;
+
 	$name="";
 	if(isset($_GET['name']))
 		$name=$_GET['name'];
@@ -320,7 +412,6 @@ function createDeckel_INPUT_Summe()
 	if(isset($_GET['produkt']))
 		$produkt=$_GET['produkt'];
 
-	global $server;
 	echo('<YealinkIPPhoneInputScreen Timeout="0" destroyOnExit="yes" Beep="no" type="number" LockIn="no" cancelAction="'.$server.'phone.php?func=dek">');
 	echo('<Title>Deckel für '.$name.' ('.$produkt.')</Title>');
 	echo('<URL>'.$server.'phone.php?func=cdk3&name='.$name.'&produkt='.$produkt.'</URL>');
