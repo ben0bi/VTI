@@ -161,7 +161,7 @@ function sellInventory_MENU()
 	// good, we got the item, now send the menu...
 	echo('<YealinkIPPhoneInputScreen Timeout="0" destroyOnExit="yes" Beep="no" type="number" LockIn="no" cancelAction="'.$server.'phone.php?func=inv&projectid='.$projectid.'">');
 	echo('<Title>Verkaufe '.$name.'...</Title>');
-	echo('<URL>'.$server.'phone.php?func=si2&id='.$itemid.'</URL>');
+	echo('<URL>'.$server.'phone.php?func=si2&itemid='.$itemid.'</URL>');
 
 	echo('<InputField>');
 	echo('<Prompt>Anzahl:</Prompt>');
@@ -188,11 +188,6 @@ function sellInventory_MENU()
 	echo('<URI>SoftKey:Dot</URI>');
 	echo('</SoftKey>');
 
-//	echo('<SoftKey index="3">');
-//	echo('<Label>Zurück..</Label>');
-//	echo('<URI>'.$server.'phone.php?func=cdk&name='.$name.'&produkt='.$produkt.'</URI>');
-//	echo('</SoftKey>');
-
 	echo('<SoftKey index="4">');
 	echo('<Label>Abbrechen</Label>');
 	echo('<URI>'.$server.'phone.php?func=inv&projectid='.$projectid.'</URI>');
@@ -210,20 +205,20 @@ function sellInventory_MENU()
 function sellInventory()
 {
 	$error=-1;
-	
-	$itemid=-1;
-	if(isset($_GET["id"]))
-		$itemid=intval($_GET["id"]);
+
+	$itemid = -1;
+	if(isset($_GET["itemid"]))
+		$itemid=intval($_GET["itemid"]);
 
 	if($itemid<=-1)
-		$error=1;
+		$error = 1;
 
 	$amount=0;
 	if(isset($_GET["amount"]))
 		$amount=intval($_GET["amount"]);
-	
+
 	if($amount<=0)
-		$error=2;
+		$error = 2;
 
 	$price=0.0;
 	if(isset($_GET["price"]))
@@ -272,7 +267,7 @@ function sellInventory()
 						$nen["ID"] = get_Next_DBID($json2, $whichtable2);
 
 						$json[$whichtable2][] = $nen;
-						if(saveJsonData("../DB/db_inventory.gml", $whichtable2, $json2))
+						if(!saveJsonData("../DB/db_transactions.gml", $whichtable2, $json2))
 							$error = 3;
 					}else{
 						$error = 4;
@@ -301,7 +296,7 @@ function sellInventory()
 	}else{
 //		echo('<ExecuteItem URI="Wav.Play:'.$server.'audio/error.wav"/>');
 		echo('<ExecuteItem URI="Led:POWER=fastflash"/>');
-		echo('<ExecuteItem URI="Led:LINE5_RED=fastflash"/>');
+		echo('<ExecuteItem URI="Led:LINE4_RED=fastflash"/>');
 		echo('<ExecuteItem URI="'.$server.'phone.php?func=inverr&errid='.$error.'"/>');
 		echo('<ExecuteItem URI="'.$server.'phone.php?func=ledwait&time=20"/>');
 	}
@@ -327,7 +322,7 @@ function invErr()
 {
 	$which=-1;
 	if(isset($_GET["errid"]))
-		$which=$_GET["errid"];
+		$which=intval($_GET["errid"]);
 
 	switch($which)
 	{
@@ -337,7 +332,7 @@ function invErr()
 		case 4: status("Interner Fehler: Inventar nicht gespeichert."); break;
 		case 5: status("KEIN VERKAUF: Es sind nicht soviele Einheiten im Inventar!"); break;
 		default:
-			status("Undefinierter Fehler!"); break;
+			status("Undefinierter Fehler im Inventar!"); break;
 	}
 }
 
