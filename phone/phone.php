@@ -38,7 +38,7 @@ switch($func)
 	case "ledwait":
 		$t = 5;
 		if(isset($_GET["time"]))
-			$t = floatval($_GET["time"]);
+			$t = intval($_GET["time"]);
 		// start the turn-off-leds-function.
 		ledwait($t);
 		break;
@@ -240,8 +240,9 @@ function sellInventory()
 			{
 				// item found, do something.
 				$name=$json[$whichtable][$i]["NAME"];
-
+				$projectID = $json[$whichtable][$i]["PROJECTID"];
 				$amt=intval($json[$whichtable][$i]["AMOUNT"]);
+
 				if($amt-$amount>=0)
 				{
 					$json[$whichtable][$i]["AMOUNT"] = $amt - $amount;
@@ -255,8 +256,8 @@ function sellInventory()
 
 						$nen=[];
 
-						// set deckel variables.
-						$nen["DESC"]=$name;
+						// set transaction variables.
+						$nen["DESC"]="$amount Stück $name aus dem Inventar entfernt für $price/Stück.";
 						$nen["PROJECTID"]=$projectID;
 						$nen["REIN"]=floatval($amount*$price);
 						$nen["RAUS"]=0.0;
