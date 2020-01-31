@@ -17,9 +17,14 @@ switch($func)
 	case "inventory": // show inventory
 	case "inv": showInventory(); break;
 	// sell inventory
+	case "si":
+	case "si1":
 	case "sellinv": sellInventory_MENU(); break;
+	case "si2": sellInventory(); break;
+	// inventory error status.
 	case "inverr": invErr(); break;
-	
+	// inventory status.
+	case "invstatus": invStatus(); break;
 	case "deckels": // show all deckels
 	case "dek": showDeckels(); break;
 	case "deckel": // show single deckel
@@ -223,9 +228,9 @@ function sellInventory()
 	$price=0.0;
 	if(isset($_GET["price"]))
 		$price=intval($_GET["price"]);
-	
+
 	$name = "Unbekanntes Produkt";
-	
+
 	// no error 'till now, continue...
 	if($error==-1)
 	{
@@ -240,7 +245,7 @@ function sellInventory()
 			{
 				// item found, do something.
 				$name=$json[$whichtable][$i]["NAME"];
-				
+
 				$amt=intval($json[$whichtable][$i]["AMOUNT"]);
 				if($amt-$amount>=0)
 				{
@@ -252,7 +257,7 @@ function sellInventory()
 						// create a new transaction for that one.
 						$whichtable2="TRANSACTIONS";
 						$json2=getJSONFile("../DB/db_transactions.gml");
-						
+
 						$nen=[];
 
 						// set deckel variables.
@@ -265,9 +270,9 @@ function sellInventory()
 
 						// set a new id.
 						$nen["ID"] = get_Next_DBID($json2, $whichtable2);
-						
+
 						$json[$whichtable2][] = $nen;
-						if(saveJsonData("../DB/db_inventory.gml", $whichtable2, $json2)
+						if(saveJsonData("../DB/db_inventory.gml", $whichtable2, $json2))
 							$error = 3;
 					}else{
 						$error = 4;
@@ -276,10 +281,10 @@ function sellInventory()
 					$error = 5;
 				}
 				break;
-			}	
+			}
 		}
 	}
-	
+
 	echo('<YealinkIPPhoneExecute Beep="yes">');
 	if($error==-1)
 	{
@@ -300,11 +305,11 @@ function sellInventory()
 		echo('<ExecuteItem URI="'.$server.'phone.php?func=inverr&errid='.$error.'"/>');
 		echo('<ExecuteItem URI="'.$server.'phone.php?func=ledwait&time=20"/>');
 	}
-	echo('</YealinkIPPhoneExecute>');	
+	echo('</YealinkIPPhoneExecute>');
 }
 
 // inventory status function.
-function invstatus()
+function invStatus()
 {
 	$name="";
 	if(isset($_GET['name']))
@@ -323,7 +328,7 @@ function invErr()
 	$which=-1;
 	if(isset($_GET["errid"]))
 		$which=$_GET["errid"];
-	
+
 	switch($which)
 	{
 		case 1: status("INTERNER FEHLER: Item nicht gefunden."); break;
@@ -479,7 +484,7 @@ function showSingleDeckel()
 
 // create the input xml for creating a deckel directly from the phone.
 function createDeckel_INPUT_Name()
-{	
+{
 	$name="";
 	if(isset($_GET["name"]))
 		$name=$_GET["name"];
@@ -544,7 +549,7 @@ function createDeckel_INPUT_Summe()
 
 	// project id = nachtshop
 	$projectID = 12;
-	
+
 	$name="";
 	if(isset($_GET['name']))
 		$name=$_GET['name'];
