@@ -149,9 +149,10 @@ function sellInventory_MENU()
 	
 	$name = $item["NAME"];
 	$price = $item["PRICE"];
+	$projectID = $item["PROJECTID"];
 	
 	// good, we got the item, now send the menu...
-	echo('<YealinkIPPhoneInputScreen Timeout="0" destroyOnExit="yes" Beep="no" type="number" LockIn="no" cancelAction="'.$server.'phone.php?func=inv">');
+	echo('<YealinkIPPhoneInputScreen Timeout="0" destroyOnExit="yes" Beep="no" type="number" LockIn="no" cancelAction="'.$server.'phone.php?func=inv?projectid='.$projectID.'">');
 	echo('<Title>Verkaufe '.$name.'...</Title>');
 	echo('<URL>'.$server.'phone.php?func=si2&id='.$itemid.'</URL>');
 
