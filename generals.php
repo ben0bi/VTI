@@ -36,7 +36,7 @@ function get_Next_DBID($json_data, $whichtable)
 // save the json data.
 function saveJsonData($datafile, $whichtable, $json_data)
 {
-	// new: save the table in its own file.
+// new: save the table in its own file.
 //	global $json_data;
 //	global $datafile;
 //	global $whichtable;

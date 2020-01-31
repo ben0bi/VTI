@@ -18,6 +18,8 @@ switch($func)
 	case "inv": showInventory(); break;
 	// sell inventory
 	case "sellinv": sellInventory_MENU(); break;
+	case "inverr": invErr(); break;
+	
 	case "deckels": // show all deckels
 	case "dek": showDeckels(); break;
 	case "deckel": // show single deckel
@@ -197,6 +199,141 @@ function sellInventory_MENU()
 	echo('</SoftKey>');
 
 	echo('</YealinkIPPhoneInputScreen>');
+}
+
+// sell inventory items
+function sellInventory()
+{
+	$error=-1;
+	
+	$itemid=-1;
+	if(isset($_GET["id"]))
+		$itemid=intval($_GET["id"]);
+
+	if($itemid<=-1)
+		$error=1;
+
+	$amount=0;
+	if(isset($_GET["amount"]))
+		$amount=intval($_GET["amount"]);
+	
+	if($amount<=0)
+		$error=2;
+
+	$price=0.0;
+	if(isset($_GET["price"]))
+		$price=intval($_GET["price"]);
+	
+	$name = "Unbekanntes Produkt";
+	
+	// no error 'till now, continue...
+	if($error==-1)
+	{
+		$whichtable="INVENTORY";
+		$json=getJSONFile("../DB/db_inventory.gml");
+
+		// get the right item index and set its new values.
+		$idx=-1;
+		for($i = 0;$i < sizeof($json[$whichtable]); $i++)
+		{
+			if($json[$whichtable][$i]["ID"]==$itemid)
+			{
+				// item found, do something.
+				$name=$json[$whichtable][$i]["NAME"];
+				
+				$amt=intval($json[$whichtable][$i]["AMOUNT"]);
+				if($amt-$amount>=0)
+				{
+					$json[$whichtable][$i]["AMOUNT"] = $amt - $amount;
+
+					// save the inventory.
+					if(saveJsonData("../DB/db_inventory.gml", $whichtable, $json))
+					{
+						// create a new transaction for that one.
+						$whichtable2="TRANSACTIONS";
+						$json2=getJSONFile("../DB/db_transactions.gml");
+						
+						$nen=[];
+
+						// set deckel variables.
+						$nen["DESC"]=$name;
+						$nen["PROJECTID"]=$projectID;
+						$nen["REIN"]=floatval($amount*$price);
+						$nen["RAUS"]=0.0;
+						$nen["DATE"]=date(DATE_RSS);
+						$nen["LINK"]="";
+
+						// set a new id.
+						$nen["ID"] = get_Next_DBID($json2, $whichtable2);
+						
+						$json[$whichtable2][] = $nen;
+						if(saveJsonData("../DB/db_inventory.gml", $whichtable2, $json2)
+							$error = 3;
+					}else{
+						$error = 4;
+					}
+				}else{
+					$error = 5;
+				}
+				break;
+			}	
+		}
+	}
+	
+	echo('<YealinkIPPhoneExecute Beep="yes">');
+	if($error==-1)
+	{
+		// now put the stuff to the phone:
+
+// Audio play does not seem to work. Maybe fiddle with the wavs. Turn off the beep then.
+
+//		echo('<ExecuteItem URI="Wav.Play:'.$server.'audio/deckelcreated.wav"/>');
+		echo('<ExecuteItem URI="Led:POWER=slowflash"/>');
+		echo('<ExecuteItem URI="Led:LINE4_GREEN=on"/>');
+		echo('<ExecuteItem URI="'.$server.'phone.php?func=inv"/>');
+		echo('<ExecuteItem URI="'.$server.'phone.php?func=invstatus&amount='.$amount.'&name='.$name.'"/>');
+		echo('<ExecuteItem URI="'.$server.'phone.php?func=ledwait&time=7"/>');
+	}else{
+//		echo('<ExecuteItem URI="Wav.Play:'.$server.'audio/error.wav"/>');
+		echo('<ExecuteItem URI="Led:POWER=fastflash"/>');
+		echo('<ExecuteItem URI="Led:LINE5_RED=fastflash"/>');
+		echo('<ExecuteItem URI="'.$server.'phone.php?func=inverr&errid='.$error.'"/>');
+		echo('<ExecuteItem URI="'.$server.'phone.php?func=ledwait&time=20"/>');
+	}
+	echo('</YealinkIPPhoneExecute>');	
+}
+
+// inventory status function.
+function invstatus()
+{
+	$name="";
+	if(isset($_GET['name']))
+		$name=$_GET['name'];
+
+	$amount=0;
+	if(isset($_GET['amount']))
+		$produkt=$_GET['amount'];
+
+	status($amount.' Stück '.$name.' verkauft!');
+}
+
+// inventory error status function.
+function invErr()
+{
+	$which=-1;
+	if(isset($_GET["errid"]))
+		$which=$_GET["errid"];
+	
+	switch($which)
+	{
+		case 1: status("INTERNER FEHLER: Item nicht gefunden."); break;
+		case 2: status("Anzahl <= 0: Kein Verkauf!"); break;
+		case 3: status("Interner Fehler: Inventar gespeichert aber keine Transaktion dazu."); break;
+		case 4: status("Interner Fehler: Inventar nicht gespeichert."); break;
+		case 5: status("KEIN VERKAUF: Es sind nicht soviele Einheiten im Inventar!"); break;
+		default:
+			status("Undefinierter Fehler!"); break;
+	}
 }
 
 // show deckels combined for each name.
