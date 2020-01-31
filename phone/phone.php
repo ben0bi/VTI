@@ -170,7 +170,7 @@ function sellInventory_MENU()
 	echo('</InputField>');
 
 	// softkeys
-/*	echo('<SoftKey index="1">');
+	echo('<SoftKey index="1">');
 	echo('<Label>DEL</Label>');
 	echo('<URI>SoftKey:BackSpace</URI>');
 	echo('</SoftKey>');
@@ -180,10 +180,10 @@ function sellInventory_MENU()
 	echo('<URI>SoftKey:Dot</URI>');
 	echo('</SoftKey>');
 
-	echo('<SoftKey index="3">');
-	echo('<Label>Zurück..</Label>');
-	echo('<URI>'.$server.'phone.php?func=cdk&name='.$name.'&produkt='.$produkt.'</URI>');
-	echo('</SoftKey>');
+//	echo('<SoftKey index="3">');
+//	echo('<Label>Zurück..</Label>');
+//	echo('<URI>'.$server.'phone.php?func=cdk&name='.$name.'&produkt='.$produkt.'</URI>');
+//	echo('</SoftKey>');
 
 	echo('<SoftKey index="4">');
 	echo('<Label>Abbrechen</Label>');
@@ -194,7 +194,7 @@ function sellInventory_MENU()
 	echo('<Label>!!SENDEN!!</Label>');
 	echo('<URI>SoftKey:Submit</URI>');
 	echo('</SoftKey>');
-*/
+
 	echo('</YealinkIPPhoneInputScreen>');
 }
 
@@ -341,14 +341,14 @@ function showSingleDeckel()
 
 // create the input xml for creating a deckel directly from the phone.
 function createDeckel_INPUT_Name()
-{
+{	
 	$name="";
-	if(isset($_GET['name']))
-		$name=$_GET['name'];
+	if(isset($_GET["name"]))
+		$name=$_GET["name"];
 
 	$produkt="";
-	if(isset($_GET['produkt']))
-		$produkt=$_GET['produkt'];
+	if(isset($_GET["produkt"]))
+		$produkt=$_GET["produkt"];
 
 	global $server;
 	echo('<YealinkIPPhoneInputScreen Timeout="0" destroyOnExit="yes" Beep="no" type="string" LockIn="no" cancelAction="'.$server.'phone.php?func=dek">');
@@ -404,6 +404,9 @@ function createDeckel_INPUT_Summe()
 {
 	global $server;
 
+	// project id = nachtshop
+	$projectID = 12;
+	
 	$name="";
 	if(isset($_GET['name']))
 		$name=$_GET['name'];
@@ -420,6 +423,13 @@ function createDeckel_INPUT_Summe()
 	echo('<Prompt>Summe:</Prompt>');
 	echo('<Parameter>summe</Parameter>');
 	echo('<Default>1</Default>');
+	echo('<Selection>1</Selection>');
+	echo('</InputField>');
+
+	echo('<InputField>');
+	echo('<Prompt>Projekt-ID (siehe Website):</Prompt>');
+	echo('<Parameter>projectid</Parameter>');
+	echo('<Default>'.$projectID.'</Default>');
 	echo('<Selection>1</Selection>');
 	echo('</InputField>');
 
@@ -466,23 +476,23 @@ function createDeckel()
 		$json_data[$whichtable]=[];
 
 	$name="";
-	if(isset($_GET['name']))
-		$name=$_GET['name'];
+	if(isset($_GET["name"]))
+		$name=$_GET["name"];
 
 	$produkt="";
-	if(isset($_GET['produkt']))
-		$produkt=$_GET['produkt'];
+	if(isset($_GET["produkt"]))
+		$produkt=$_GET["produkt"];
 
 	$summe=0.0;
-	if(isset($_GET['summe']))
-		$summe=$_GET['summe'];
+	if(isset($_GET["summe"]))
+		$summe=$_GET["summe"];
 
-	// project id = nachtshop
-	$projectID = 12;
+	$projectID=0;
+	if(isset($_GET["projectid"]))
+		$projectID=$_GET["projectid"];
 
 	// create or update an entry.
 	// 3.0.0 code: generic data
-
 	$nen=[];
 
 	// set deckel variables.
