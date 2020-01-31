@@ -50,8 +50,8 @@ function showInventory()
 	// show the whole inventory
 	$projectid = -1;
 	// get the project id to show the inventory from.
-	if(isset($_GET['projectid']))
-		$projectid=intval($_GET['projectid']);
+	if(isset($_GET["projectid"]))
+		$projectid=intval($_GET["projectid"]);
 
 	// just show a text screen.
 	echo('<YealinkIPPhoneTextMenu destroyOnExit="yes" Beep="no" Timeout="42" LockIn="yes">');
@@ -122,13 +122,13 @@ function sellInventory_MENU()
 	$itemid=-1;
 	if(isset($_GET["inventoryid"]))
 		$itemid=intval($_GET["inventoryid"]);
-	
+
 	if($itemid==-1)
 	{
 		status("INTERNER FEHLER: Inventar Item wurde nicht definiert.");
 		return;
 	}
-	
+
 	// get the item with the given id.
 	$item = -1;
 	for($i=0;$i<sizeof($items);$i++)
@@ -140,19 +140,19 @@ function sellInventory_MENU()
 			break;
 		}
 	}
-	
+
 	if($item==-1)
 	{
 		status("Item #$itemid nicht gefunden.");
 		return;
 	}
-	
+
 	$name = $item["NAME"];
 	$price = $item["PRICE"];
-	$projectID = $item["PROJECTID"];
-	
+	$projectid = intval($item["PROJECTID"]);
+
 	// good, we got the item, now send the menu...
-	echo('<YealinkIPPhoneInputScreen Timeout="0" destroyOnExit="yes" Beep="no" type="number" LockIn="no" cancelAction="'.$server.'phone.php?func=inv?projectid='.$projectID.'">');
+	echo('<YealinkIPPhoneInputScreen Timeout="0" destroyOnExit="yes" Beep="no" type="number" LockIn="no" cancelAction="'.$server.'phone.php?func=inv&projectid='.$projectid.'">');
 	echo('<Title>Verkaufe '.$name.'...</Title>');
 	echo('<URL>'.$server.'phone.php?func=si2&id='.$itemid.'</URL>');
 
@@ -188,7 +188,7 @@ function sellInventory_MENU()
 
 	echo('<SoftKey index="4">');
 	echo('<Label>Abbrechen</Label>');
-	echo('<URI>'.$server.'phone.php?func=dek</URI>');
+	echo('<URI>'.$server.'phone.php?func=inv&projectid='.$projectid.'</URI>');
 	echo('</SoftKey>');
 
 	echo('<SoftKey index="6">');
