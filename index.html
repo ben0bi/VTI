@@ -45,6 +45,11 @@
 	{
 		padding-left: 10px;
 	}
+
+	#angebot
+	{
+		text-align: center;
+	}
 	
 	a, a:visited
 	{
@@ -72,6 +77,9 @@
 		<a href="javascript:" onclick="sendMsg()">SENDEN</a>
 	</div>
 -->
+	<br />
+	<div id="angebot">Heute im Angebot: <span class="blinker angebot">Nichts</span>*<br />
+	<small>(* Nur solange Vorrat)</div>
 	<div id="footer"><a href="http://masterbit.net">Impressum = Fickööön</a></div>
 </body>
 
@@ -156,12 +164,6 @@ VTI.loadTable('inventory', inventoryLoadedIndex);
 m_blinkColor="#00FF00";
 function blink()
 {
-	var date = new Date();
-	if(date.getDay()==2 || date.getDay()==3)
-		$('.number').html('Heute ist Ruhetag!');
-	else
-		$('.number').html('033 511 05 42');
-
 	$('.blinker').css('color', m_blinkColor);
 	switch(m_blinkColor)
 	{
@@ -178,6 +180,50 @@ function blink()
 	}
 }
 
+// this was in blink before.
+	var date = new Date();
+	if(date.getDay()==2 || date.getDay()==3)
+		$('.number').html('Heute ist Ruhetag!');
+	else
+		$('.number').html('033 511 05 42');
+
+var angebot = "Nichts";
+switch(date.getDate())
+{
+	case 0: angebot="Luft (frisch)";break;
+	case 1: angebot="Deine Mudder";break;
+	case 2: angebot="Katze (gedünstet)";break;
+	case 3: angebot="Lysergsäurediethylamid-Suppe";break;
+	case 4: angebot="Desoxyribonukleinsäure (zum Putzen)";break;
+	case 5: angebot="Ribonukleinsäure (fürs Bad)";break;
+	case 6: angebot="Wasserstoff (unverpackt)";break;
+	case 7: angebot="Playstation 4 <small>(nur Verpackung)</small>";break;
+	case 8: angebot="Steine (versch. Grössen, inkl. Wurflieferung)";break;
+	case 9: angebot="Politik (2 Gramm)";break;
+	case 10: angebot="Schwarze Balken von Strichcodes, einzeln";break;
+	case 11: angebot="Weisse Balken von Strichcodes, assortiert";break;
+	case 12: angebot="Blanke QR-Codes zum selber basteln";break;
+	case 13: angebot="Schwarzes Loch (muss abgeholt werden)";break;
+	case 14: angebot="Panik ('Keine' wird separat verkauft.)";break;
+	case 15: angebot="Keime (Vorzugspackung)";break;
+	case 16: angebot="Warme Luft (inkl. Spezialduft)";break;
+	case 17: angebot="USS-Enterprise 1701-B (wird sonst verschrottet)";break;
+	case 18: angebot="Nazi-Rot (nur Gebrauchsanleitung)";break;
+	case 19: angebot="Parallele Dimensionen (Max 1/Kunde)";break;
+	case 20: angebot="Dunkelheit (nur Nachts)";break;
+	case 21: angebot="Freude (im Abo, jederzeit kündbar)";break;
+	case 22: angebot="Ionen (5 Stück/Packung)";break;
+	case 23: angebot="Heilkräuter (ohne Kräuter)";break;
+	case 24: angebot="beschädigte Schweizer Flagge (Rot fehlt)";break;
+	case 25: angebot="Meter (jeweils 7)";break;
+	case 26: angebot="Wetter (gutes)";break;
+	case 27: angebot="nicht funktionierende Passwörter (beliebige Seiten)";break;
+	case 28: angebot="Schläge (sehr billig, nicht übertragbar)";break;
+	case 29: angebot="Anstand oder Abstand (wahlweise)";break;
+	case 30: angebot="Mauern & Zäune (unverpackt, muss in Israel oder Texas abgeholt werden, Warnung vor den Einheimischen!)";break;
+	case 31: angebot="Vaakum (3 Liter)";break;
+}
+$(".angebot").html(angebot);
 setInterval(blink, 100);
 
 </script>
