@@ -18,11 +18,12 @@ switch($func)
 {
 	case "inventory": // show inventory
 	case "inv": showInventory(); break;
-	// sell inventory
+	// buysell inventory
 	case "si":
 	case "si1":
-	case "sellinv": sellInventory_MENU(); break;
-	case "si2": sellInventory(); break;
+	case "sellinv": buysellInventory_MENU(); break;
+	case "si2": buysellInventory(false); break; // sell
+	case "buyinv": buysellInventory(true); break; // buy
 	// inventory error status.
 	case "inverr": invErr(); break;
 	// inventory status.
@@ -120,7 +121,7 @@ function showInventory()
 }
 
 // show the menu to sell an inventory item.
-function sellInventory_MENU()
+function buysellInventory_MENU()
 {
 	global $server;
 
@@ -195,8 +196,13 @@ function sellInventory_MENU()
 	echo('<URI>'.$server.'phone.php?func=inv&projectid='.$projectid.'</URI>');
 	echo('</SoftKey>');
 
+	echo('<SoftKey index="5">');
+	echo('<Label>&lt;- IN</Label>');
+	echo('<URL>'.$server.'phone.php?func=invbuy&itemid='.$itemid.'</URL>');
+	echo('</SoftKey>');
+
 	echo('<SoftKey index="6">');
-	echo('<Label>!!SENDEN!!</Label>');
+	echo('<Label>$$$</Label>');
 	echo('<URI>SoftKey:Submit</URI>');
 	echo('</SoftKey>');
 
@@ -204,7 +210,7 @@ function sellInventory_MENU()
 }
 
 // sell inventory items
-function sellInventory()
+function buysellInventory($dobuy = false)
 {
 	global $server;
 	$error=-1;
@@ -261,10 +267,18 @@ function sellInventory()
 						$nen=[];
 
 						// set transaction variables.
-						$nen["DESC"]="$amount Stück $name aus dem Inventar entfernt für $price/Stück.";
 						$nen["PROJECTID"]=$projectID;
-						$nen["REIN"]=floatval($amount*$price);
+						$endprice = floatval($amount * $price);
+						$nen["REIN"]=0.0;
 						$nen["RAUS"]=0.0;
+						if($dobuy)
+						{
+							$nen["DESC"]="$amount neue $name ins Inventar gepackt für $price/Stück.";
+							$nen["RAUS"] = $endprice;
+						}else{
+							$nen["DESC"]="$amount Stück $name aus dem Inventar entfernt für $price/Stück.";
+							$nen["REIN"] = $endprice;
+						}
 						$nen["DATE"]=date(DATE_RSS);
 						$nen["LINK"]="";
 
