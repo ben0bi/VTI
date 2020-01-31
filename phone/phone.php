@@ -204,7 +204,9 @@ function sellInventory_MENU()
 // sell inventory items
 function sellInventory()
 {
+	global $server;
 	$error=-1;
+	$projectID = -1;
 
 	$itemid = -1;
 	if(isset($_GET["itemid"]))
@@ -233,7 +235,7 @@ function sellInventory()
 		$json=getJSONFile("../DB/db_inventory.gml");
 
 		// get the right item index and set its new values.
-		$idx=-1;
+		//$idx=-1;
 		for($i = 0;$i < sizeof($json[$whichtable]); $i++)
 		{
 			if($json[$whichtable][$i]["ID"]==$itemid)
@@ -267,7 +269,7 @@ function sellInventory()
 						// set a new id.
 						$nen["ID"] = get_Next_DBID($json2, $whichtable2);
 
-						$json[$whichtable2][] = $nen;
+						$json2[$whichtable2][] = $nen;
 						if(!saveJsonData("../DB/db_transactions.gml", $whichtable2, $json2))
 							$error = 3;
 					}else{
@@ -291,8 +293,8 @@ function sellInventory()
 //		echo('<ExecuteItem URI="Wav.Play:'.$server.'audio/deckelcreated.wav"/>');
 		echo('<ExecuteItem URI="Led:POWER=slowflash"/>');
 		echo('<ExecuteItem URI="Led:LINE4_GREEN=on"/>');
-		echo('<ExecuteItem URI="'.$server.'phone.php?func=inv"/>');
 		echo('<ExecuteItem URI="'.$server.'phone.php?func=invstatus&amount='.$amount.'&name='.$name.'"/>');
+		echo('<ExecuteItem URI="'.$server.'phone.php?func=inv&projectid='.$projectID.'"/>');
 		echo('<ExecuteItem URI="'.$server.'phone.php?func=ledwait&time=7"/>');
 	}else{
 //		echo('<ExecuteItem URI="Wav.Play:'.$server.'audio/error.wav"/>');
@@ -308,12 +310,12 @@ function sellInventory()
 function invStatus()
 {
 	$name="";
-	if(isset($_GET['name']))
-		$name=$_GET['name'];
+	if(isset($_GET["name"]))
+		$name=$_GET["name"];
 
 	$amount=0;
-	if(isset($_GET['amount']))
-		$produkt=$_GET['amount'];
+	if(isset($_GET["amount"]))
+		$amount=$_GET["amount"];
 
 	status($amount.' Stück '.$name.' verkauft!');
 }
@@ -706,8 +708,11 @@ function ledwait($waittime)
 	sleep($waittime);
 	echo('<YealinkIPPhoneExecute Beep="no">');
 	echo('<ExecuteItem URI="Led:POWER=off"/>');
+	echo('<ExecuteItem URI="Led:LINE4_GREEN=off"/>');
+	echo('<ExecuteItem URI="Led:LINE4_RED=off"/>');
 	echo('<ExecuteItem URI="Led:LINE5_GREEN=off"/>');
 	echo('<ExecuteItem URI="Led:LINE5_RED=off"/>');
 	echo('</YealinkIPPhoneExecute>');
 }
+
 ?>
