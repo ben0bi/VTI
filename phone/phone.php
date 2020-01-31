@@ -9,9 +9,11 @@ if(isset($_GET['func']))
 	$func=$_GET['func'];
 
 // put xml header to the phone.
-echo('<?xml version="1.0" encoding="ISO-8859-1"?>');
+if($func!="ledwait")
+	echo('<?xml version="1.0" encoding="ISO-8859-1"?>');
 
 // get the function and do something associated to it.
+$header = true;
 switch($func)
 {
 	case "inventory": // show inventory
@@ -34,7 +36,7 @@ switch($func)
 	case "cdk2": createDeckel_INPUT_Summe(); break;
 	case "cdk3": createDeckel(); break;
 	case "dkstatus": dkstatus(); break; // show a deckel status.
-	case "dkerr": status("!INTERNER FEHLER!: Deckel wurde nicht gespeichert.");
+	case "dkerr": status("!INTERNER FEHLER!: Deckel wurde nicht gespeichert.", true);
 	case "ledwait":
 		$t = 5;
 		if(isset($_GET["time"]))
@@ -132,7 +134,7 @@ function sellInventory_MENU()
 
 	if($itemid==-1)
 	{
-		status("INTERNER FEHLER: Inventar Item wurde nicht definiert.");
+		status("INTERNER FEHLER: Inventar Item wurde nicht definiert.", true);
 		return;
 	}
 
@@ -150,7 +152,7 @@ function sellInventory_MENU()
 
 	if($item==-1)
 	{
-		status("Item #$itemid nicht gefunden.");
+		status("Item #$itemid nicht gefunden.", true);
 		return;
 	}
 
@@ -301,7 +303,7 @@ function sellInventory()
 		echo('<ExecuteItem URI="Led:POWER=fastflash"/>');
 		echo('<ExecuteItem URI="Led:LINE4_RED=fastflash"/>');
 		echo('<ExecuteItem URI="'.$server.'phone.php?func=inverr&errid='.$error.'"/>');
-		echo('<ExecuteItem URI="'.$server.'phone.php?func=ledwait&time=20"/>');
+		echo('<ExecuteItem URI="'.$server.'phone.php?func=ledwait&time=7"/>');
 	}
 	echo('</YealinkIPPhoneExecute>');
 }
@@ -317,7 +319,7 @@ function invStatus()
 	if(isset($_GET["amount"]))
 		$amount=$_GET["amount"];
 
-	status($amount.' Stück '.$name.' verkauft!');
+	status($amount.' Stück '.$name.' verkauft!', false);
 }
 
 // inventory error status function.
@@ -329,13 +331,13 @@ function invErr()
 
 	switch($which)
 	{
-		case 1: status("INTERNER FEHLER: Item nicht gefunden."); break;
-		case 2: status("Anzahl <= 0: Kein Verkauf!"); break;
-		case 3: status("Interner Fehler: Inventar gespeichert aber keine Transaktion dazu."); break;
-		case 4: status("Interner Fehler: Inventar nicht gespeichert."); break;
-		case 5: status("KEIN VERKAUF: Es sind nicht soviele Einheiten im Inventar!"); break;
+		case 1: status("INTERNER FEHLER: Item nicht gefunden.",true); break;
+		case 2: status("Anzahl <= 0: Kein Verkauf!",true); break;
+		case 3: status("Interner Fehler: Inventar gespeichert aber keine Transaktion dazu.",true); break;
+		case 4: status("Interner Fehler: Inventar nicht gespeichert.",true); break;
+		case 5: status("KEIN VERKAUF: Es sind nicht soviele Einheiten im Inventar!",true); break;
 		default:
-			status("Undefinierter Fehler im Inventar!"); break;
+			status("Undefinierter Fehler im Inventar!",true); break;
 	}
 }
 
@@ -689,13 +691,18 @@ function dkstatus()
 	if(isset($_GET['summe']))
 		$summe=$_GET['summe'];
 
-	status('Neuer Deckel für '.$name.': '.$summe.' für '.$produkt);
+	status('Neuer Deckel für '.$name.': '.$summe.' für '.$produkt, false);
 }
 
 // show a status text on the phone.
-function status($text)
+function status($text, $beep=false)
 {
-	echo('<YealinkIPPhoneStatus Beep="no" SessionID="status" Timeout = "120" >');
+	if(!$beep)
+		$beep="no";
+	else
+		$beep="yes";
+
+	echo('<YealinkIPPhoneStatus Beep="'.$beep.'" SessionID="status" Timeout = "120" >');
 	echo('<Message Icon="Message" Size="large" Align="center">');
 	echo($text);
 	echo('</Message>');
@@ -706,6 +713,7 @@ function status($text)
 function ledwait($waittime)
 {
 	sleep($waittime);
+	echo('<?xml version="1.0" encoding="ISO-8859-1"?>');
 	echo('<YealinkIPPhoneExecute Beep="no">');
 	echo('<ExecuteItem URI="Led:POWER=off"/>');
 	echo('<ExecuteItem URI="Led:LINE4_GREEN=off"/>');
