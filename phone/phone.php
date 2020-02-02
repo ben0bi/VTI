@@ -4,7 +4,7 @@ include("../generals.php");
 $server = "http://shop.masterbit.net/phone/";
 
 // get function
-$func='inv';
+$func='invbuy';
 if(isset($_GET['func']))
 	$func=$_GET['func'];
 
@@ -23,7 +23,8 @@ switch($func)
 	case "si1":
 	case "sellinv": buysellInventory_MENU(); break;
 	case "si2": buysellInventory(false); break; // sell
-	case "buyinv": buysellInventory(true); break; // buy
+	case "inb":
+	case "invbuy": buysellInventory(true); break; // buy
 	// inventory error status.
 	case "inverr": invErr(); break;
 	// inventory status.
@@ -163,7 +164,7 @@ function buysellInventory_MENU()
 
 	// good, we got the item, now send the menu...
 	echo('<YealinkIPPhoneInputScreen Timeout="0" destroyOnExit="yes" Beep="no" type="number" LockIn="no" cancelAction="'.$server.'phone.php?func=inv&projectid='.$projectid.'">');
-	echo('<Title>Verkaufe '.$name.'...</Title>');
+	echo('<Title>Lager: '.$name.'...</Title>');
 	echo('<URL>'.$server.'phone.php?func=si2&itemid='.$itemid.'</URL>');
 
 	echo('<InputField>');
@@ -196,10 +197,12 @@ function buysellInventory_MENU()
 	echo('<URI>'.$server.'phone.php?func=inv&projectid='.$projectid.'</URI>');
 	echo('</SoftKey>');
 
-	echo('<SoftKey index="5">');
-	echo('<Label>&lt;- IN</Label>');
-	echo('<URL>'.$server.'phone.php?func=invbuy&itemid='.$itemid.'</URL>');
-	echo('</SoftKey>');
+// THIS DOES NOT WORK LIKE THAT RIGHT NOW:
+// We need the above values incorporated into the link...
+//	echo('<SoftKey index="5">');
+//	echo('<Label>&lt;&lt; IN &lt;&lt;</Label>');
+//	echo('<URI>'.$server.'phone.php?func=inb&itemid='.$itemid.'</URI>');
+//	echo('</SoftKey>');
 
 	echo('<SoftKey index="6">');
 	echo('<Label>$$$</Label>');
@@ -232,7 +235,7 @@ function buysellInventory($dobuy = false)
 
 	$price=0.0;
 	if(isset($_GET["price"]))
-		$price=intval($_GET["price"]);
+		$price=floatval($_GET["price"]);
 
 	$name = "Unbekanntes Produkt";
 
@@ -253,9 +256,13 @@ function buysellInventory($dobuy = false)
 				$projectID = $json[$whichtable][$i]["PROJECTID"];
 				$amt=intval($json[$whichtable][$i]["AMOUNT"]);
 
-				if($amt-$amount>=0)
+				$endamount = $amt - $amount;
+				if($dobuy==true)
+					$endamount = $amt + $amount;
+
+				if($endamount>=0)
 				{
-					$json[$whichtable][$i]["AMOUNT"] = $amt - $amount;
+					$json[$whichtable][$i]["AMOUNT"] = $endamount;
 
 					// save the inventory.
 					if(saveJsonData("../DB/db_inventory.gml", $whichtable, $json))
@@ -271,7 +278,7 @@ function buysellInventory($dobuy = false)
 						$endprice = floatval($amount * $price);
 						$nen["REIN"]=0.0;
 						$nen["RAUS"]=0.0;
-						if($dobuy)
+						if($dobuy==true)
 						{
 							$nen["DESC"]="$amount neue $name ins Inventar gepackt für $price/Stück.";
 							$nen["RAUS"] = $endprice;
@@ -309,7 +316,7 @@ function buysellInventory($dobuy = false)
 //		echo('<ExecuteItem URI="Wav.Play:'.$server.'audio/deckelcreated.wav"/>');
 		echo('<ExecuteItem URI="Led:POWER=slowflash"/>');
 		echo('<ExecuteItem URI="Led:LINE4_GREEN=on"/>');
-		echo('<ExecuteItem URI="'.$server.'phone.php?func=invstatus&amount='.$amount.'&name='.$name.'"/>');
+		echo('<ExecuteItem URI="'.$server.'phone.php?func=invstatus&amount='.$amount.'&name='.$name.'&dobuy='.$dobuy.'"/>');
 		echo('<ExecuteItem URI="'.$server.'phone.php?func=inv&projectid='.$projectID.'"/>');
 		echo('<ExecuteItem URI="'.$server.'phone.php?func=ledwait&time=7"/>');
 	}else{
@@ -333,7 +340,14 @@ function invStatus()
 	if(isset($_GET["amount"]))
 		$amount=$_GET["amount"];
 
-	status($amount.' Stück '.$name.' verkauft!', false);
+	$dobuy = false;
+	if(isset($_GET["dobuy"]))
+		$dobuy = $_GET["dobuy"];
+
+	if(!$dobuy)
+		status($amount.' Stück '.$name.' verkauft!', false);
+	else
+		status($amount.' Stück '.$name.' eingekauft!', false);
 }
 
 // inventory error status function.
