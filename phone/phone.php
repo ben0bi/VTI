@@ -413,10 +413,13 @@ function showDeckels()
 		echo('<URI>'.$server.'phone.php?func=sdk&deckelid='.$aid[$i].'</URI>');
 		echo('</MenuItem>');
 	}
-//	if(sizeof($ad)<=0)
-//	{
-//		echo('<Line Size="large" Align="center">Der Deckel ist blank!</Line>');
-//	}
+	if(sizeof($ad)<=0)
+	{
+		echo('<MenuItem>');
+		echo('<Prompt>Der Deckel ist blank.</Prompt>');
+		echo('<URI>SoftKey:Exit</URI>');
+		echo('</MenuItem>');
+	}
 
 	echo('<Title wrap="yes">Deckel ('.$all.' CHF / '.sizeof($deck).' Einträge)</Title>');
 
@@ -466,11 +469,9 @@ function showSingleDeckel()
 	}
 
 	// show text display.
-	echo('<YealinkIPPhoneFormattedTextScreen cancelAction="'.$server.'phone.php?func=dek" destroyOnExit="yes" Beep="no" Timeout="42" LockIn="yes">');
+	echo('<YealinkIPPhoneTextMenu cancelAction="'.$server.'phone.php?func=dek" destroyOnExit="yes" Beep="no" Timeout="42" LockIn="yes">');
 
-	echo('<Line Size="large" Align="center">Deckel von '.$name.'</Line>');
-
-	echo('<Scroll>');
+//	echo('<Scroll>');
 
 	$all=0;
 	$prod=0;
@@ -483,7 +484,13 @@ function showSingleDeckel()
 		{
 			$all+=$in['SUMME'];
 			$prod+=1;
-			echo('<Line Size="normal" Align="left">* '.$in['PRODUKT'].' = '.$in['SUMME'].' CHF</Line>');
+			
+			echo('<MenuItem>');
+			echo('<Prompt>'.$in["PRODUKT"].' = '.$in["SUMME"].'</Prompt>');
+			echo('<URI>'.$server.'phone.php?func=ldk&deckelid='.$in['ID'].'</URI>');
+			echo('</MenuItem>');
+
+//			echo('<Line Size="normal" Align="left">* '.$in["PRODUKT"].' = '.$in["SUMME"].' CHF</Line>');
 		}
 	}
 
@@ -492,14 +499,15 @@ function showSingleDeckel()
 		echo('<Line Size="large" Align="center">Der Deckel ist blank!</Line>');
 	}
 
-	echo('</Scroll>');
+//	echo('</Scroll>');
 
 	// show bottom line
-	echo('<Line Size="small" Align="right">Gesamt: '.$all.' CHF / '.$prod.' Einträge</Line>');
+//	echo('<Line Size="small" Align="right">Gesamt: '.$all.' CHF / '.$prod.' Einträge</Line>');
+	echo('<Title wrap="yes" Align="center">Deckel von '.$name.': '.$all.'CHF / '.$prod.' Einträge</Title>');
 
 	echo('<SoftKey index="1">');
 	echo('<Label>Zurück</Label>');
-	echo('<URI>'.$server.'phone.php?func=dek</URI>');
+	echo('<URI>SoftKey:Exit</URI>');
 	echo('</SoftKey>');
 
 	echo('<SoftKey index="2">');
@@ -507,7 +515,7 @@ function showSingleDeckel()
 	echo('<URI>'.$server.'phone.php?func=cdk&name='.$name.'</URI>');
 	echo('</SoftKey>');
 
-	echo('</YealinkIPPhoneFormattedTextScreen>');
+	echo('</YealinkIPPhoneTextMenu>');
 }
 
 // create the input xml for creating a deckel directly from the phone.
