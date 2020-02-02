@@ -4,7 +4,8 @@ include("../generals.php");
 $server = "http://shop.masterbit.net/phone/";
 
 // get function
-$func='invbuy';
+$_GET["deckelid"]=30;
+$func='ldk';
 if(isset($_GET['func']))
 	$func=$_GET['func'];
 
@@ -719,15 +720,15 @@ function createDeckel()
 function luepfDeckel_MENU()
 {
 	$deckelid=-1;
-	if(isset($_GET["deckelid"])
+	if(isset($_GET["deckelid"]))
 		$deckelid = $_GET["deckelid"];
-	
+
 	if($deckelid==-1)
 	{
-		status("FEHLER: Deckel nicht gefunden!");
+		status("FEHLER: Deckel ID nicht geladen!");
 		return;
 	}
-	
+
 	global $server;
 
 	$whichtable="DECKELS";
@@ -737,32 +738,32 @@ function luepfDeckel_MENU()
 	$json_data=getJSONFile($datafile);
 	if(sizeof($json_data[$whichtable])<=0)
 		$json_data[$whichtable]=[];
-	
+
 	// get the deckel.
 	$deckel = getByID($json_data, $whichtable, $deckelid);
 	if($deckel==null)
 	{
-		status("FEHLER (2): Deckel nicht gefunden!");
+		status("FEHLER: Deckel #".$deckelid." nicht gefunden!");
 		return;
 	}
-	
+
 	ask("Deckel wirklich auflösen?",
 		$deckel["NAME"].": ".$deckel["SUMME"]." für ".$deckel["PRODUKT"],
 		$server.'phone.php?func=ld2&deckelid='.$deckelid,
-		$server.'phone.php?func=dek'
-	);	
+		$server.'phone.php?func=sdk&deckelid='.$deckelid
+	);
 }
 
 // get an entry from table whichtable by id.
 function getByID($data, $whichtable, $id)
 {
-	if(isset($data[$whichtable])
+	if(isset($data[$whichtable]))
 	{
-		for($i=0;$i<sizeof($data[$whichtable]);$i++);
+		for($i = 0; $i < sizeof($data[$whichtable]); $i++)
 		{
-			if(isset($data[$whichtable][$i]["ID"])
+			if(isset($data[$whichtable][$i]["ID"]))
 			{
-				if($data[$whichtable][$i]["ID"]==$id)
+				if(intval($data[$whichtable][$i]["ID"])==intval($id))
 					return $data[$whichtable][$i];
 			}
 		}
@@ -806,12 +807,12 @@ function status($text, $beep=false)
 // create menu for a question.
 function ask($title, $prompt, $gudaction, $cancelaction, $gudtitle="JA", $canceltitle="NEIN")
 {
-	echo('<YealinkIPPhoneFormattedScreen Beep="no" cancelAction="'.$cancelaction.'" doneAction="'.$gudaction.'" Timeout="0" LockIn="yes" destroyOnExit="yes">');
+	echo('<YealinkIPPhoneFormattedTextScreen Beep="yes" cancelAction="'.$cancelaction.'" doneAction="'.$gudaction.'" Timeout="0" LockIn="yes" destroyOnExit="yes">');
 	echo('<Line Align="center">'.$title.'</Line>');
 	echo('<Scroll>');
 	echo('<Line>'.$prompt.'</Line>');
 	echo('</Scroll>');
-	
+
 	echo('<SoftKey index="1">');
 	echo('<Label>'.$canceltitle.'</Label>');
 	echo('<URI>'.$cancelaction.'</URI>');
@@ -821,7 +822,7 @@ function ask($title, $prompt, $gudaction, $cancelaction, $gudtitle="JA", $cancel
 	echo('<Label>'.$gudtitle.'</Label>');
 	echo('<URI>'.$gudaction.'</URI>');
 	echo('</SoftKey>');
-	
+
 	echo('</YealinkIPPhoneFormattedTextScreen>');
 }
 
