@@ -37,6 +37,8 @@ switch($func)
 	case "cdk": createDeckel_INPUT_Name(); break;
 	case "cdk2": createDeckel_INPUT_Summe(); break;
 	case "cdk3": createDeckel(); break;
+	// luepf deckel
+	case "ldk": luepfDeckel_MENU(); break;
 	case "dkstatus": dkstatus(); break; // show a deckel status.
 	case "dkerr": status("!INTERNER FEHLER!: Deckel wurde nicht gespeichert.", true);
 	case "ledwait":
@@ -713,6 +715,61 @@ function createDeckel()
 	echo('</YealinkIPPhoneExecute>');
 }
 
+// ask if the deckel really should be deleted.
+function luepfDeckel_MENU()
+{
+	$deckelid=-1;
+	if(isset($_GET["deckelid"])
+		$deckelid = $_GET["deckelid"];
+	
+	if($deckelid==-1)
+	{
+		status("FEHLER: Deckel nicht gefunden!");
+		return;
+	}
+	
+	global $server;
+
+	$whichtable="DECKELS";
+	$datafile="../DB/db_deckels.gml";
+
+	// load the json data.
+	$json_data=getJSONFile($datafile);
+	if(sizeof($json_data[$whichtable])<=0)
+		$json_data[$whichtable]=[];
+	
+	// get the deckel.
+	$deckel = getByID($json_data, $whichtable, $deckelid);
+	if($deckel==null)
+	{
+		status("FEHLER (2): Deckel nicht gefunden!");
+		return;
+	}
+	
+	ask("Deckel wirklich auflösen?",
+		$deckel["NAME"].": ".$deckel["SUMME"]." für ".$deckel["PRODUKT"],
+		$server.'phone.php?func=ld2&deckelid='.$deckelid,
+		$server.'phone.php?func=dek'
+	);	
+}
+
+// get an entry from table whichtable by id.
+function getByID($data, $whichtable, $id)
+{
+	if(isset($data[$whichtable])
+	{
+		for($i=0;$i<sizeof($data[$whichtable]);$i++);
+		{
+			if(isset($data[$whichtable][$i]["ID"])
+			{
+				if($data[$whichtable][$i]["ID"]==$id)
+					return $data[$whichtable][$i];
+			}
+		}
+	}
+	return null;
+}
+
 // create a deckel status message.
 function dkstatus()
 {
@@ -744,6 +801,28 @@ function status($text, $beep=false)
 	echo($text);
 	echo('</Message>');
 	echo('</YealinkIPPhoneStatus>');
+}
+
+// create menu for a question.
+function ask($title, $prompt, $gudaction, $cancelaction, $gudtitle="JA", $canceltitle="NEIN")
+{
+	echo('<YealinkIPPhoneFormattedScreen Beep="no" cancelAction="'.$cancelaction.'" doneAction="'.$gudaction.'" Timeout="0" LockIn="yes" destroyOnExit="yes">');
+	echo('<Line Align="center">'.$title.'</Line>');
+	echo('<Scroll>');
+	echo('<Line>'.$prompt.'</Line>');
+	echo('</Scroll>');
+	
+	echo('<SoftKey index="1">');
+	echo('<Label>'.$canceltitle.'</Label>');
+	echo('<URI>'.$cancelaction.'</URI>');
+	echo('</SoftKey>');
+
+	echo('<SoftKey index="4">');
+	echo('<Label>'.$gudtitle.'</Label>');
+	echo('<URI>'.$gudaction.'</URI>');
+	echo('</SoftKey>');
+	
+	echo('</YealinkIPPhoneFormattedTextScreen>');
 }
 
 // wait some time and then send turn of the LEDs.
