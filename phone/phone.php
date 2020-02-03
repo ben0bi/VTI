@@ -40,8 +40,11 @@ switch($func)
 	case "cdk3": createDeckel(); break;
 	// luepf deckel
 	case "ldk": luepfDeckel_MENU(); break;
-	case "dkstatus": dkstatus(); break; // show a deckel status.
-	case "dkerr": status("!INTERNER FEHLER!: Deckel wurde nicht gespeichert.", true);
+	case "ld2": luepfDeckel(); break;
+	// show a deckel status
+	case "dkstatus": dkstatus(); break;
+	// general deckel saving error.
+	case "dkerr": deckelErr(); //status("!INTERNER FEHLER!: Deckel wurde nicht gespeichert.", true);
 	case "ledwait":
 		$t = 5;
 		if(isset($_GET["time"]))
@@ -710,7 +713,7 @@ function createDeckel()
 		echo('<ExecuteItem URI="Led:POWER=fastflash"/>');
 		echo('<ExecuteItem URI="Led:LINE5_RED=fastflash"/>');
 		echo('<ExecuteItem URI="Wav.Play:'.$server.'audio/error.wav"/>');
-		echo('<ExecuteItem URI="'.$server.'phone.php?func=dkerr"/>');
+		echo('<ExecuteItem URI="'.$server.'phone.php?func=dkerr&errid=4"/>');
 		echo('<ExecuteItem URI="'.$server.'phone.php?func=ledwait&time=20"/>');
 	}
 	echo('</YealinkIPPhoneExecute>');
@@ -719,6 +722,8 @@ function createDeckel()
 // ask if the deckel really should be deleted.
 function luepfDeckel_MENU()
 {
+	global $server;
+
 	$deckelid=-1;
 	if(isset($_GET["deckelid"]))
 		$deckelid = $_GET["deckelid"];
@@ -729,8 +734,6 @@ function luepfDeckel_MENU()
 		return;
 	}
 
-	global $server;
-
 	$whichtable="DECKELS";
 	$datafile="../DB/db_deckels.gml";
 
@@ -738,6 +741,7 @@ function luepfDeckel_MENU()
 	$json_data=getJSONFile($datafile);
 	if(sizeof($json_data[$whichtable])<=0)
 		$json_data[$whichtable]=[];
+
 
 	// get the deckel.
 	$deckel = getByID($json_data, $whichtable, $deckelid);
@@ -752,6 +756,139 @@ function luepfDeckel_MENU()
 		$server.'phone.php?func=ld2&deckelid='.$deckelid,
 		$server.'phone.php?func=sdk&deckelid='.$deckelid
 	);
+}
+
+// save the deckel data.
+function luepfDeckel()
+{
+	global $server;
+	$error = -1;
+	
+	$deckelid=-1;
+	if(isset($_GET["deckelid"]))
+		$deckelid = $_GET["deckelid"];
+
+	if($deckelid==-1)
+	{
+		status("FEHLER (2): Deckel ID nicht geladen!");
+		return;
+	}
+	
+	$whichtable="DECKELS";
+	$datafile="../DB/db_deckels.gml";
+
+	// load the json data.
+	$json_data=getJSONFile($datafile);
+	if(sizeof($json_data[$whichtable])<=0)
+		$json_data[$whichtable]=[];
+
+	// now copy all the data except for the searched one.
+	$whichtable="DECKELS";
+	$datafile="../DB/db_deckels.gml";
+
+	// load the json data.
+	$json_data=getJSONFile($datafile);
+	if(sizeof($json_data[$whichtable])<=0)
+		$json_data[$whichtable]=[];
+
+	// now copy all the data except for the searched deckel.
+	$newdata = [];
+	$deckl = null;
+	for($i=0;$i<sizeof($json_data[$whichtable];$i++)
+	{
+		$d = $json_data[$whichtable][$i];
+		if(intval($d["ID"]) != intval($deckelid))
+		{
+			$newdata[] = $json_data[$whichtable][$i];
+		}else{
+			$deckl=$json_data[$whichtable][$i];
+		}
+	}
+	
+	// copy the new data back to the json data.
+	$json_data[$whichtable] = $newdata;
+
+	// save the deckels.
+	$name="Unbekannt";
+	$produkt="Unbekannt";
+	$summe=0;
+	
+	if(saveJsonData($datafile, $whichtable, $json_data))
+	{
+		if($deckl!=null)
+		{
+			$name = $deckl["NAME"];
+			$produkt = $deckl["PRODUKT"];
+			$summe = $deckl["SUMME"];
+			
+			// create a new transaction for that one.
+			$whichtable2="TRANSACTIONS";
+			$json2=getJSONFile("../DB/db_transactions.gml");
+
+			$nen=[];
+
+			// set transaction variables.
+			$nen["PROJECTID"]=$deckl["PROJECTID"];
+			$nen["REIN"]=$summe;
+			$nen["RAUS"]=0.0;
+			$nen["DESC"]="$name erstattet die Deckelsumme $summe für $produkt zurück.";
+			$nen["DATE"]=date(DATE_RSS);
+			$nen["LINK"]="";
+
+			// set a new id.
+			$nen["ID"] = get_Next_DBID($json2, $whichtable2);
+
+			$json2[$whichtable2][] = $nen;
+			if(!saveJsonData("../DB/db_transactions.gml", $whichtable2, $json2))
+				$error = 1;
+		}else{
+			$error = 2;
+		}
+	}else{
+		$error = 3;
+	}
+
+	// show the results on the phone.
+	echo('<YealinkIPPhoneExecute Beep="yes">');
+	if($error==-1)
+	{
+		// now put the stuff to the phone:
+
+// Audio play does not seem to work. Maybe fiddle with the wavs. Turn off the beep then.
+
+//		echo('<ExecuteItem URI="Wav.Play:'.$server.'audio/deckelcreated.wav"/>');
+		echo('<ExecuteItem URI="Led:POWER=slowflash"/>');
+		echo('<ExecuteItem URI="Led:LINE4_GREEN=on"/>');
+		echo('<ExecuteItem URI="'.$server.'phone.php?func=dek/>');
+		echo('<ExecuteItem URI="'.$server.'phone.php?func=dkstatus&luepf=1&summe='.$summe.'&name='.$name.'&produkt='.$produkt.'"/>');
+		echo('<ExecuteItem URI="'.$server.'phone.php?func=ledwait&time=7"/>');
+	}else{
+//		echo('<ExecuteItem URI="Wav.Play:'.$server.'audio/error.wav"/>');
+		echo('<ExecuteItem URI="Led:POWER=fastflash"/>');
+		echo('<ExecuteItem URI="Led:LINE4_RED=fastflash"/>');
+		echo('<ExecuteItem URI="'.$server.'phone.php?func=dkerr&errid='.$error.'"/>');
+		echo('<ExecuteItem URI="'.$server.'phone.php?func=ledwait&time=7"/>');
+	}
+	echo('</YealinkIPPhoneExecute>');
+
+}
+
+// deckel error status function.
+function deckelErr()
+{
+	$which=-1;
+	if(isset($_GET["errid"]))
+		$which=intval($_GET["errid"]);
+
+	switch($which)
+	{
+		case 1: status("INTERNER FEHLER: Transaktion nicht gespeichert, aber Deckel gelöscht!",true); break;
+		case 2: status("WARNUNG: Deckel zum löschen nicht gefunden.",true); break;
+		case 3: status("INTERNER FEHLER: Deckel Datenbank nicht gespeichert.",true); break;
+		case 4: status("INTERNER FEHLER: Deckel nicht gespeichert!", true); break;
+		default:
+			status("Undefinierter bei den Deckeln!",true); break;
+	}	
 }
 
 // get an entry from table whichtable by id.
@@ -785,8 +922,11 @@ function dkstatus()
 	$summe=0.0;
 	if(isset($_GET['summe']))
 		$summe=$_GET['summe'];
-
-	status('Neuer Deckel für '.$name.': '.$summe.' für '.$produkt, false);
+	
+	if(isset($_GET["luepf"])
+		status($name.' hat die Deckelsumme '.$summe.' für '.$produkt.' eingezahlt.');
+	else
+		status('Neuer Deckel für '.$name.': '.$summe.' für '.$produkt, false);
 }
 
 // show a status text on the phone.
