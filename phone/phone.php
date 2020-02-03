@@ -4,8 +4,8 @@ include("../generals.php");
 $server = "http://shop.masterbit.net/phone/";
 
 // get function
-$_GET["deckelid"]=30;
-$func='ldk';
+//$_GET["deckelid"]=30;
+$func='inv';
 if(isset($_GET['func']))
 	$func=$_GET['func'];
 
