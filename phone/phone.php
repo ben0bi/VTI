@@ -92,7 +92,7 @@ function showInventory()
 				$a="right";
 				$e = " !!! # *";
 			}else{
-				$amt=" ".$amt."x ";
+				$amt=$amt."x ";
 			}
 
 			$all+=$in['AMOUNT'];
@@ -794,7 +794,7 @@ function luepfDeckel()
 	// now copy all the data except for the searched deckel.
 	$newdata = [];
 	$deckl = null;
-	for($i=0;$i<sizeof($json_data[$whichtable];$i++)
+	for($i=0;$i<sizeof($json_data[$whichtable]);$i++)
 	{
 		$d = $json_data[$whichtable][$i];
 		if(intval($d["ID"]) != intval($deckelid))
@@ -820,7 +820,7 @@ function luepfDeckel()
 			$name = $deckl["NAME"];
 			$produkt = $deckl["PRODUKT"];
 			$summe = $deckl["SUMME"];
-			
+
 			// create a new transaction for that one.
 			$whichtable2="TRANSACTIONS";
 			$json2=getJSONFile("../DB/db_transactions.gml");
@@ -831,7 +831,7 @@ function luepfDeckel()
 			$nen["PROJECTID"]=$deckl["PROJECTID"];
 			$nen["REIN"]=$summe;
 			$nen["RAUS"]=0.0;
-			$nen["DESC"]="$name erstattet die Deckelsumme $summe für $produkt zurück.";
+			$nen["DESC"]="$name erstattet die Deckelsumme ".$summe."$ für $produkt zurück.";
 			$nen["DATE"]=date(DATE_RSS);
 			$nen["LINK"]="";
 
@@ -859,7 +859,7 @@ function luepfDeckel()
 //		echo('<ExecuteItem URI="Wav.Play:'.$server.'audio/deckelcreated.wav"/>');
 		echo('<ExecuteItem URI="Led:POWER=slowflash"/>');
 		echo('<ExecuteItem URI="Led:LINE4_GREEN=on"/>');
-		echo('<ExecuteItem URI="'.$server.'phone.php?func=dek/>');
+		echo('<ExecuteItem URI="'.$server.'phone.php?func=dek"/>');
 		echo('<ExecuteItem URI="'.$server.'phone.php?func=dkstatus&luepf=1&summe='.$summe.'&name='.$name.'&produkt='.$produkt.'"/>');
 		echo('<ExecuteItem URI="'.$server.'phone.php?func=ledwait&time=7"/>');
 	}else{
@@ -922,8 +922,8 @@ function dkstatus()
 	$summe=0.0;
 	if(isset($_GET['summe']))
 		$summe=$_GET['summe'];
-	
-	if(isset($_GET["luepf"])
+
+	if(isset($_GET["luepf"]))
 		status($name.' hat die Deckelsumme '.$summe.' für '.$produkt.' eingezahlt.');
 	else
 		status('Neuer Deckel für '.$name.': '.$summe.' für '.$produkt, false);
