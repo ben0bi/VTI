@@ -5,7 +5,7 @@ $server = "http://shop.masterbit.net/phone/";
 
 // get function
 //$_GET["deckelid"]=30;
-$func='inv';
+$func='sum';
 if(isset($_GET['func']))
 	$func=$_GET['func'];
 
@@ -17,7 +17,11 @@ if($func!="ledwait")
 $header = true;
 switch($func)
 {
-	case "inventory": // show inventory
+	// show totals
+	case "sum":
+	case "summe": showSum(); break;
+	// show inventory
+	case "inventory":
 	case "inv": showInventory(); break;
 	// buysell inventory
 	case "si":
@@ -25,16 +29,19 @@ switch($func)
 	case "sellinv": buysellInventory_MENU(); break;
 	case "si2": buysellInventory(false); break; // sell
 	case "inb":
-	case "invbuy": buysellInventory(true); break; // buy
+	case "invbuy": buysellInventory(true); break; // buy (NOT WORKING RIGHT NOW)
 	// inventory error status.
 	case "inverr": invErr(); break;
 	// inventory status.
 	case "invstatus": invStatus(); break;
-	case "deckels": // show all deckels
+	// show deckels
+	case "deckels":
 	case "dek": showDeckels(); break;
-	case "deckel": // show single deckel
+	// show single deckel
+	case "deckel":
 	case "sdk": showSingleDeckel(); break;
-	case "createDeckel": // create a deckel.
+	// create a deckel
+	case "createDeckel":
 	case "cdk": createDeckel_INPUT_Name(); break;
 	case "cdk2": createDeckel_INPUT_Summe(); break;
 	case "cdk3": createDeckel(); break;
@@ -45,6 +52,7 @@ switch($func)
 	case "dkstatus": dkstatus(); break;
 	// general deckel saving error.
 	case "dkerr": deckelErr(); //status("!INTERNER FEHLER!: Deckel wurde nicht gespeichert.", true);
+	// wait some time, then turn off the LEDs.
 	case "ledwait":
 		$t = 5;
 		if(isset($_GET["time"]))
@@ -52,7 +60,82 @@ switch($func)
 		// start the turn-off-leds-function.
 		ledwait($t);
 		break;
-	default:break;
+	default: break;
+}
+
+// show totals
+function showSum()
+{
+	global $server;
+
+	$sum = 0.0;
+	$c=0;
+// get all projects
+	$projects = [];
+	$jp = getJSONFile("../DB/db_projects.gml");
+	$projects = $jp["PROJECTS"];
+
+// get all transactions
+	$items=[];
+	$json=getJSONFile("../DB/db_transactions.gml");
+	$items=$json["TRANSACTIONS"];
+
+	echo('<YealinkIPPhoneTextMenu LockIn="no" Beep="yes" Timeout="42" destroyOnExit="yes">');
+	for($i=0;$i<sizeof($items);$i++)
+	{
+		$c++;
+		$itm = $items[$i];
+		$rein = 0.0;
+		$raus = 0.0;
+		if(isset($itm["REIN"]))
+			$rein = floatval($itm["REIN"]);
+		if(isset($itm["RAUS"]))
+			$raus = floatval($itm["RAUS"]);
+		$sum = $sum + $rein - $raus;
+
+		// add the specificsum to the project.
+		for($p=0;$p<sizeof($projects);$p++)
+		{
+			$pr=$projects[$p];
+			if(intval($pr["ID"])==intval($itm["PROJECTID"]))
+			{
+				if(!isset($projects[$p]["SUM"]))
+					$projects[$p]["SUM"]=0.0;
+				$projects[$p]["SUM"]+=$rein-$raus;
+				break;
+			}
+		}
+	}
+
+ 	for($i=0;$i<sizeof($projects);$i++)
+	{
+		$pr = $projects[$i];
+		$prefix = "++ ";
+		if(!isset($pr["SUM"]))
+			$pr["SUM"]=0.0;
+		if(floatval($pr["SUM"])<0.0)
+			$prefix="! -";
+		if(floatval($pr["SUM"])==0.0)
+			$prefix="== ";
+		echo("<MenuItem>");
+		echo("<Prompt>".$prefix.$pr["NAME"]." = ".$pr["SUM"]."</Prompt>");
+		echo("<URI></URI>");
+		echo("</MenuItem>");
+	}
+
+	echo("<Title>Gesamtsumme: ".$sum." CHF</Title>");
+
+	echo('<SoftKey index="1">');
+	echo('<Label>Zurück</Label>');
+	echo('<URI>SoftKey:Exit</URI>');
+	echo('</SoftKey>');
+
+	echo("</YealinkIPPhoneTextMenu>");
+
+//	if($sum<0)
+//		status("!! 8UNG: SUMME: ".$sum."CHF / E:".$c);
+//	else
+//		status("Summe: ".$sum."CHF / E:".$c);
 }
 
 // show inventory items, how many and their price.
@@ -119,10 +202,15 @@ function showInventory()
 	echo('<Title wrap="yes">'.$txt.'</Title>');
 
 	// soft keys
-//	echo('<SoftKey index="1">');
-//	echo('<Label>Zurück</Label>');
-//	echo('<URI>SoftKey:Exit</URI>');
-//	echo('</SoftKey>');
+	echo('<SoftKey index="1">');
+	echo('<Label>Zurück</Label>');
+	echo('<URI>SoftKey:Exit</URI>');
+	echo('</SoftKey>');
+
+	echo('<SoftKey index="4">');
+	echo('<Label>$€££</Label>');
+	echo('<URI>SoftKey:Select</URI>');
+	echo('</SoftKey>');
 
 	echo('</YealinkIPPhoneTextMenu>');
 }
