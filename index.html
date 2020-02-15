@@ -80,7 +80,10 @@
 	<br />
 	<div id="angebot">Heute im Angebot: <span class="blinker angebot">Nichts</span>*<br />
 	<small>(* Nur solange Vorrat)</div>
+	<br />
+	<div><small>Steuertechnisches: Die Waren wurden im normalen Endkunden-Laden gekauft, es wurden also schon alle Steuern darauf abgeführt. Der Endpreis hier ist ein bisschen höher, sonst bringts ja nix, und die Einnahmen fliessen in den Laden oder in die Stadtentwicklung von privater Seite, also unabhängig. Falls Steuern (nochmal) abgeführt werden sollen, solle sich bitte mein Beistand/meine Beiständin darum kümmern und mir dies melden. Er weiss von dieser Webseite. Es soll ja schon legal sein. :)  Dieser Laden ist Privat zu Privat und es werden nur Bekannte und keine Unbekannten bedient.</small></div>
 	<div id="footer"><a href="http://masterbit.net">Impressum = Fickööön</a></div>
+	</small>
 </body>
 
 <script>
@@ -116,8 +119,6 @@ function showInventoryTable(proid)
 	txt+="</td><td>";
 	txt+="Name";
 	txt+="</td><td>";
-	txt+="Beschreibung";
-	txt+="</td><td>";
 	
 	txt+="Preis";
 	txt+="</td><td>";	
@@ -130,12 +131,12 @@ function showInventoryTable(proid)
 	for(var i=0;i<parser.inventory.length;i++)
 	{
 		var itm = parser.inventory[i];
+		if(itm.projectid!=proid && proid>=0)
+			continue;
 		txt+='<tr><td>';
 		txt+=itm.id;
 		txt+='</td><td>';
 		txt+=itm.name;
-		txt+='</td><td>';
-		txt+=itm.desc;
 		txt+='</td><td><font color="#FFAA00">';
 		txt+=parseFloat(itm.price).toFixed(2);
 		txt+='</font></td><td>';
@@ -192,7 +193,7 @@ switch(date.getDate())
 {
 	case 0: angebot="Luft (frisch)";break;
 	case 1: angebot="Deine Mudder";break;
-	case 2: angebot="Katze (gedünstet)";break;
+	case 2: angebot="Regenbogen (ohne Bogen)";break;
 	case 3: angebot="Lysergsäurediethylamid-Suppe";break;
 	case 4: angebot="Desoxyribonukleinsäure (zum Putzen)";break;
 	case 5: angebot="Ribonukleinsäure (fürs Bad)";break;
@@ -205,7 +206,7 @@ switch(date.getDate())
 	case 12: angebot="Blanke QR-Codes zum selber basteln";break;
 	case 13: angebot="Schwarzes Loch (muss abgeholt werden)";break;
 	case 14: angebot="Panik ('Keine' wird separat verkauft.)";break;
-	case 15: angebot="Keime (Vorzugspackung)";break;
+	case 15: angebot="Glück (Vorzugspackung)";break;
 	case 16: angebot="Warme Luft (inkl. Spezialduft)";break;
 	case 17: angebot="USS-Enterprise 1701-B (wird sonst verschrottet)";break;
 	case 18: angebot="Nazi-Rot (nur Gebrauchsanleitung)";break;
@@ -217,7 +218,7 @@ switch(date.getDate())
 	case 24: angebot="beschädigte Schweizer Flagge (Rot fehlt)";break;
 	case 25: angebot="Meter (jeweils 7)";break;
 	case 26: angebot="Wetter (gutes)";break;
-	case 27: angebot="nicht funktionierende Passwörter (beliebige Seiten)";break;
+	case 27: angebot="nicht funktionierende Passwörter (google, pornhub und steam)";break;
 	case 28: angebot="Schläge (sehr billig, nicht übertragbar)";break;
 	case 29: angebot="Anstand oder Abstand (wahlweise)";break;
 	case 30: angebot="Mauern & Zäune (unverpackt, muss in Israel oder Texas abgeholt werden, Warnung vor den Einheimischen!)";break;
